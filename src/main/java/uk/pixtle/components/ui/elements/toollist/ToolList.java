@@ -46,6 +46,7 @@ public class ToolList extends JScrollPane implements ToolUI {
     private void createScrollPane() {
         super.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         super.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        super.getVerticalScrollBar().setUnitIncrement(50);
 
         super.setViewportView(this.getToolPanel());
     }
