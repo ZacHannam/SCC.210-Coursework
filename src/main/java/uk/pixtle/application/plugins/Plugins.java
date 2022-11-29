@@ -2,11 +2,12 @@ package uk.pixtle.application.plugins;
 
 import lombok.Getter;
 import lombok.Setter;
-import uk.pixtle.application.plugins.plugins.TestPlugin;
+import uk.pixtle.application.plugins.plugins.Plugin;
+import uk.pixtle.application.plugins.plugins.ExamplePlugin;
 
 public enum Plugins {
 
-    TEST(TestPlugin.class);
+    EXAMPLE(ExamplePlugin.class);
 
     @Getter
     @Setter

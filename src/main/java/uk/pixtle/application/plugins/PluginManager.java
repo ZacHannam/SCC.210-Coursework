@@ -3,6 +3,8 @@ package uk.pixtle.application.plugins;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.ApplicationComponent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
+import uk.pixtle.application.plugins.plugins.Plugin;
+import uk.pixtle.util.LoggerMessages;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +25,7 @@ public class PluginManager extends ApplicationComponent {
                 this.registerPlugin(plugin);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
                 // TO-DO print exception
+                return;
             }
         }
     }

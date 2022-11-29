@@ -2,10 +2,14 @@ package uk.pixtle.application.ui.window;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.ui.window.canvas.Canvas;
+import uk.pixtle.application.ui.window.canvas.CanvasUI;
 import uk.pixtle.application.ui.window.color.ColorPanel;
 import uk.pixtle.application.ui.window.menubar.MenuBar;
 import uk.pixtle.application.ui.window.menubar.MenuBarUI;
+import uk.pixtle.application.ui.window.minitoollist.MiniToolList;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolListUI;
+import uk.pixtle.application.ui.window.toollist.ToolList;
 import uk.pixtle.application.ui.window.toollist.ToolListUI;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 
@@ -17,6 +21,22 @@ public class Window extends JFrame {
     @Getter
     @Setter
     public MenuBar menuBarElement;
+
+    @Getter
+    @Setter
+    public ToolList toolList;
+
+    @Getter
+    @Setter
+    public MiniToolList miniToolList;
+
+    @Getter
+    @Setter
+    public ColorPanel colorPanel;
+
+    @Getter
+    @Setter
+    public Canvas canvas;
 
     public Window() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,32 +56,23 @@ public class Window extends JFrame {
 
         ToolListUI toolList = new ToolListUI();
         super.add(toolList, toolList.getAnchors());
+        this.setToolList(toolList);
 
         ColorPanel colorPanel = new ColorPanel();
         super.add(colorPanel, colorPanel.getAnchors());
+        this.setColorPanel(colorPanel);
 
-        MiniToolListUI miniToolListUI = new MiniToolListUI();
-        super.add(miniToolListUI, miniToolListUI.getAnchors());
+        MiniToolListUI miniToolList = new MiniToolListUI();
+        super.add(miniToolList, miniToolList.getAnchors());
+        this.setMiniToolList(miniToolList);
 
         MenuBarUI menuBar = new MenuBarUI();
         super.add(menuBar, menuBar.getAnchors());
         this.setMenuBarElement(menuBar);
 
-        //--------------------------------------------------------------
-
-        /**
-         AnchoredComponent anchoredComponent2 = new AnchoredComponent();
-         anchoredComponent2.createAnchor(Anchor.DirectionType.X, 100);
-         anchoredComponent2.createAnchor(Anchor.DirectionType.X, -200);
-         anchoredComponent2.createAnchor(Anchor.DirectionType.Y, 20);
-         anchoredComponent2.createAnchor(AnchoredComponent.StandardY.BOTTOM);
-
-         JPanel canvas = new JPanel();
-         canvas.setBackground(Color.green);
-         this.add(canvas, anchoredComponent2);
-         */
-
-        //--------------------------------------------------------------
+        CanvasUI canvas = new CanvasUI();
+        super.add(canvas, canvas.getAnchors());
+        this.setCanvas(canvas);
 
         super.setVisible(true);
     }

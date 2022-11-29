@@ -1,6 +1,6 @@
 package uk.pixtle.application.ui.window.menubar;
 
-import uk.pixtle.application.plugins.Plugin;
+import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 
