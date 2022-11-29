@@ -74,6 +74,8 @@ public class Window extends JFrame {
         super.add(canvas, canvas.getAnchors());
         this.setCanvas(canvas);
 
+
+
         super.setVisible(true);
     }
 }

@@ -31,6 +31,7 @@ public class Application {
         this.setLogger(LogManager.getLogger("Pixtle"));
         this.setEventManager(new EventManager(this));
         this.setUIManager(new UIManager(this));
+
         this.setPluginManager(new PluginManager(this));
 
         // TO-DELETE

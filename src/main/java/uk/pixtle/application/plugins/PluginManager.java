@@ -3,8 +3,9 @@ package uk.pixtle.application.plugins;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.ApplicationComponent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
+import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
-import uk.pixtle.util.LoggerMessages;
+import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +36,12 @@ public class PluginManager extends ApplicationComponent {
         // Load into Tool List
 
         // Load In All implements
+        if(paramPlugin instanceof PluginMiniToolExpansion) {
+            PluginMiniToolExpansion plugin = (PluginMiniToolExpansion) paramPlugin;
+
+            MiniToolPanel miniToolPanel = this.getApplication().getUIManager().getWindow().getMiniToolList().createMiniToolPanel(plugin.getMiniToolPanelHeight());
+            plugin.instanceMiniToolPanel(miniToolPanel);
+        }
 
         // Load All Annotations
         for(Method method : paramPlugin.getClass().getDeclaredMethods()) {

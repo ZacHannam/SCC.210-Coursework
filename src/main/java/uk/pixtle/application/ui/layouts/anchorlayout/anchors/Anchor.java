@@ -9,7 +9,7 @@ import java.awt.*;
 public abstract class Anchor {
 
     public enum AnchorType {
-        PIXEL, PERCENTAGE, STANDARD_X, STANDARD_Y, DYANMIC, DISPLACED;
+        PIXEL, PERCENTAGE, STANDARD_X, STANDARD_Y, DYANMIC, DISPLACED, SLIDER;
     }
 
     public enum DirectionType {

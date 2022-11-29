@@ -2,6 +2,7 @@ package uk.pixtle.application.ui.window.toollist;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.Application;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.DynamicAnchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
@@ -54,7 +55,7 @@ public class ToolListUI extends JScrollPane implements ToolList {
 
         this.setToolPanel(new JPanel());
         this.getToolPanel().setBackground(new Color(211, 211, 211));
-
+        this.getToolPanel().setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
         // ---
 

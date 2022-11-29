@@ -73,10 +73,6 @@ public class DynamicAnchor extends Anchor {
 
     @Getter
     @Setter
-    private ValueAnchor.DirectionType directionType;
-
-    @Getter
-    @Setter
     private AnchorSize anchorSize;
 
     @Getter
