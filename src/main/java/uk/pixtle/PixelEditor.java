@@ -1,10 +1,10 @@
 package uk.pixtle;
 
-import uk.pixtle.components.ui.UIComponent;
+import uk.pixtle.application.Application;
 
 public class PixelEditor {
 
     public static void main(String[] args) {
-        new UIComponent();
+        new Application();
     }
 }
