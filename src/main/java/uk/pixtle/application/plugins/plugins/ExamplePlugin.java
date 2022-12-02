@@ -26,7 +26,7 @@ public class ExamplePlugin extends Plugin implements PluginMiniToolExpansion {
     // ---------------------- TEST METHODS ----------------------
 
 
-    @MenuBarItem(PATH = "file:test")
+    @MenuBarItem(PATH = "file:hello")
     public void hello() {
         System.out.println("Test");
     }
@@ -44,7 +44,7 @@ public class ExamplePlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 300;
+        return 400;
     }
 
     @Override
