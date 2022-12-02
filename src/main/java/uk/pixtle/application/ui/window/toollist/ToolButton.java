@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class ToolButton extends JButton {
 
-    public ToolButton() {
-
+    public ToolButton(String paramIconName) {
+        super.setIcon(new ImageIcon(paramIconName));
     }
 }

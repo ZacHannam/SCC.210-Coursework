@@ -56,7 +56,7 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
 
         this.setMiniToolListPanel(new JPanel());
         this.getMiniToolListPanel().setBackground(new Color(211,211,211));
-        this.getMiniToolListPanel().setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.getMiniToolListPanel().setPreferredSize(new Dimension(WIDTH, 1));
 
         AnchorLayout toolsLayout = new AnchorLayout(true, false);
         this.getMiniToolListPanel().setLayout(toolsLayout);
