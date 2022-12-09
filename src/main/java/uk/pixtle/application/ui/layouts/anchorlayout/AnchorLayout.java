@@ -217,8 +217,14 @@ public class AnchorLayout implements LayoutManager2 {
                 component.setBounds(Math.min(x1, x2), Math.min(y1, y2), width, height);
             }
 
-            int newHeight = this.isHeightControl() ? (int) parent.getPreferredSize().getHeight() : largestHeight;
-            int newWidth = this.isWidthControl() ? (int) parent.getPreferredSize().getWidth() : largestWidth;
+            int newHeight, newWidth;
+            if(parent.getPreferredSize() == null) {
+                newHeight = this.isHeightControl() ? 0 : largestHeight;
+                newWidth = this.isWidthControl() ? 0 : largestWidth;
+            } else {
+                newHeight = this.isHeightControl() ? (int) parent.getPreferredSize().getHeight() : largestHeight;
+                newWidth = this.isWidthControl() ? (int) parent.getPreferredSize().getWidth() : largestWidth;
+            }
 
             parent.setPreferredSize(new Dimension(newWidth, newHeight));
 
