@@ -106,6 +106,8 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
         this.getMiniToolListPanel().add(miniToolPanel, anchoredComponent);
         this.updateBottomTab();
 
+        this.repaint();
+
         return miniToolPanel;
 
     }

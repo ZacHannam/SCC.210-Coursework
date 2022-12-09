@@ -10,6 +10,7 @@ public enum Plugins {
     HexPlugin(HexPlugin.class),
     ColourPreviewPlugin(uk.pixtle.application.plugins.plugins.ColourPreviewPlugin.class),
     RGBPlugin(uk.pixtle.application.plugins.plugins.RGBPlugin.class);
+    ;
 
     @Getter
     @Setter

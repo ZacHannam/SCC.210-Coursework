@@ -60,8 +60,6 @@ public class EventManager extends ApplicationComponent {
                 this.registerEntry(type, paramObject, method);
             }
         }
-
-        System.out.println(this.getMethodsByEventType());
     }
 
     // Calling

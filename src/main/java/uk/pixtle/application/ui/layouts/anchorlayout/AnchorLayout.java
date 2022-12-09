@@ -229,7 +229,6 @@ public class AnchorLayout implements LayoutManager2 {
             parent.setPreferredSize(new Dimension(newWidth, newHeight));
 
             //TO-DO fix flickering test with 10 ToolListUI
-
         }
     }
 

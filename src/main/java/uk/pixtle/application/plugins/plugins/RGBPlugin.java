@@ -54,11 +54,9 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
         JLabel jLabel = new JLabel("RGB Plugin");
-        JTextField jTextField = new JTextField("Hex value");
         jLabel.setAutoscrolls(true);
 
         paramMiniToolPanel.add(jLabel, anchoredComponent);
-        paramMiniToolPanel.add(jTextField, anchoredComponent);
 
         paramMiniToolPanel.setBackground(Color.WHITE);
     }
