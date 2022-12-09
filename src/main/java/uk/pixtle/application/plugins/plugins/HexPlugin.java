@@ -40,7 +40,7 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 100;
+        return 25;
     }
 
     @Override
@@ -57,9 +57,11 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
         JTextField jTextField = new JTextField("Hex value");
         //jLabel.setAutoscrolls(true);
 
-        paramMiniToolPanel.add(jLabel, anchoredComponent);
-        paramMiniToolPanel.add(jTextField, anchoredComponent);
-
+        //paramMiniToolPanel.add(jLabel, anchoredComponent);
+        //paramMiniToolPanel.add(jTextField, anchoredComponent);
+        BorderLayout hexLayout = new BorderLayout();
+        paramMiniToolPanel.setLayout(hexLayout);
+        paramMiniToolPanel.add(jTextField, BorderLayout.NORTH);
         paramMiniToolPanel.setBackground(Color.LIGHT_GRAY);
     }
 
