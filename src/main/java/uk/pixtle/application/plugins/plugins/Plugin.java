@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
 
-public abstract class Plugin extends Thread {
+public abstract class Plugin {
 
     @Getter
     @Setter

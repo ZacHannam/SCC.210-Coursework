@@ -54,6 +54,7 @@ public class Window extends JFrame {
 
         //--------------------------------------------------------------
 
+
         ToolListUI toolList = new ToolListUI();
         super.add(toolList, toolList.getAnchors());
         this.setToolList(toolList);

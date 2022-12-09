@@ -7,6 +7,7 @@ import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
+import javax.swing.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,6 +30,8 @@ public class PluginManager extends ApplicationComponent {
                 return;
             }
         }
+
+        ((JPanel) super.getApplication().getUIManager().getWindow().getCanvas()).updateUI();
     }
 
     private void registerPlugin(Plugin paramPlugin) {
@@ -41,6 +44,7 @@ public class PluginManager extends ApplicationComponent {
 
             MiniToolPanel miniToolPanel = this.getApplication().getUIManager().getWindow().getMiniToolList().createMiniToolPanel(plugin.getMiniToolPanelHeight());
             plugin.instanceMiniToolPanel(miniToolPanel);
+            miniToolPanel.updateUI();
         }
 
         // Load All Annotations
