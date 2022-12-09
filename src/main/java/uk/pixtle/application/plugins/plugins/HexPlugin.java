@@ -61,7 +61,8 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
         //paramMiniToolPanel.add(jTextField, anchoredComponent);
         BorderLayout hexLayout = new BorderLayout();
         paramMiniToolPanel.setLayout(hexLayout);
-        paramMiniToolPanel.add(jTextField, BorderLayout.NORTH);
+        paramMiniToolPanel.add(jLabel, BorderLayout.WEST);
+        paramMiniToolPanel.add(jTextField, BorderLayout.CENTER);
         paramMiniToolPanel.setBackground(Color.LIGHT_GRAY);
     }
 
