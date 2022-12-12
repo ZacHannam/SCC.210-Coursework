@@ -40,7 +40,7 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 100;
+        return 25;
     }
 
     @Override
@@ -54,11 +54,15 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
         JLabel jLabel = new JLabel("RGB Plugin");
+        JTextField jTextField = new JTextField("RGB value");
         jLabel.setAutoscrolls(true);
 
-        paramMiniToolPanel.add(jLabel, anchoredComponent);
-
-        paramMiniToolPanel.setBackground(Color.WHITE);
+        //paramMiniToolPanel.add(jLabel, anchoredComponent);
+        BorderLayout rgbLayout = new BorderLayout();
+        paramMiniToolPanel.setLayout(rgbLayout);
+        paramMiniToolPanel.add(jLabel, BorderLayout.WEST);
+        paramMiniToolPanel.add(jTextField, BorderLayout.CENTER);
+        paramMiniToolPanel.setBackground(Color.LIGHT_GRAY);
     }
 
     // ---------------------- CONSTRUCTOR ----------------------

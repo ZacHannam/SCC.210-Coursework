@@ -53,7 +53,7 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
-        JLabel jLabel = new JLabel("#");
+        JLabel jLabel = new JLabel("#"); //Add action listner for text appearing
         JTextField jTextField = new JTextField("Hex value");
         //jLabel.setAutoscrolls(true);
 
