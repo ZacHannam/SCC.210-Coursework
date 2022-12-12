@@ -6,7 +6,7 @@ import uk.pixtle.application.plugins.plugins.*;
 
 public enum Plugins {
 
-    EXAMPLE(ExamplePlugin.class),
+    //EXAMPLE(ExamplePlugin.class),
     ColourPalette(ColourPalettePlugin.class),
     HexPlugin(HexPlugin.class),
     ColourPreviewPlugin(uk.pixtle.application.plugins.plugins.ColourPreviewPlugin.class),
