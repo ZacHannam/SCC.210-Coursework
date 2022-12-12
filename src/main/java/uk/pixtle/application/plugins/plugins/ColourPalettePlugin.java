@@ -36,7 +36,7 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 400;
+        return 150;
     }
 
     @Override
@@ -49,29 +49,23 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
-        //JLabel jLabel = new JLabel("Colour Palette");
-        //jLabel.setAutoscrolls(true);
-
         GridLayout colourPalettLayout = new GridLayout(0,2);
 
         paramMiniToolPanel.setLayout(colourPalettLayout);
 
-        JButton jb1 = new JButton("Button 1");
-        JButton jb2 = new JButton("Button 2");
-        JButton jb3 = new JButton("Button 3");
-        JButton jb4 = new JButton("Button 4");
-        JButton jb5 = new JButton("Button 5");
-        JButton jb6 = new JButton("Button 6");
+        JButton colourButtons[] = new JButton[9];
+        for(int i=0;i<8;i++)
+            colourButtons[i] = new JButton();
 
-        paramMiniToolPanel.add(jb1);
-        paramMiniToolPanel.add(jb2);
-        paramMiniToolPanel.add(jb3);
-        paramMiniToolPanel.add(jb4);
-        paramMiniToolPanel.add(jb5);
-        paramMiniToolPanel.add(jb6);
+        for(int i=0;i<8;i++)
+            colourButtons[i].setBackground(Color.BLACK);
+
+        for(int i=0;i<8;i++)
+            paramMiniToolPanel.add(colourButtons[i]);
 
 
-        //paramMiniToolPanel.add(jLabel, anchoredComponent);
+
+
 
         paramMiniToolPanel.setBackground(Color.WHITE);
     }
