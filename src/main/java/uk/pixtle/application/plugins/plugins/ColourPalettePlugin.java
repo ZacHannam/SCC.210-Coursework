@@ -5,7 +5,6 @@ import lombok.Setter;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ExampleEvent;
-import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
@@ -14,7 +13,7 @@ import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 import javax.swing.*;
 import java.awt.*;
 
-public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
+public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansion {
 
     // ---------------------- ABSTRACT METHODS ----------------------
 
@@ -24,9 +23,6 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
     }
 
     // ---------------------- TEST METHODS ----------------------
-
-
-
     @EventHandler
     public void test(ExampleEvent paramEvent) {
         System.out.println(paramEvent.getCreationTime().toString());
@@ -40,7 +36,7 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 25;
+        return 150;
     }
 
     @Override
@@ -53,25 +49,33 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
-        JLabel jLabel = new JLabel("#"); //Add action listner for text appearing
-        //JTextField jTextField = new JTextField("Hex value");
-        TextField jTextField = new TextField("Hex value", "Hex value");
-        //jLabel.setAutoscrolls(true);
+        GridLayout colourPalettLayout = new GridLayout(0,2);
 
-        //paramMiniToolPanel.add(jLabel, anchoredComponent);
-        //paramMiniToolPanel.add(jTextField, anchoredComponent);
-        BorderLayout hexLayout = new BorderLayout();
-        paramMiniToolPanel.setLayout(hexLayout);
-        paramMiniToolPanel.add(jLabel, BorderLayout.WEST);
-        paramMiniToolPanel.add(jTextField, BorderLayout.CENTER);
-        paramMiniToolPanel.setBackground(Color.LIGHT_GRAY);
+        paramMiniToolPanel.setLayout(colourPalettLayout);
+
+        JButton colourButtons[] = new JButton[9];
+        for(int i=0;i<8;i++)
+            colourButtons[i] = new JButton();
+
+        for(int i=0;i<8;i++)
+            colourButtons[i].setBackground(Color.BLACK);
+
+        for(int i=0;i<8;i++)
+            paramMiniToolPanel.add(colourButtons[i]);
+
+
+
+
+
+        paramMiniToolPanel.setBackground(Color.WHITE);
     }
 
     // ---------------------- CONSTRUCTOR ----------------------
 
-    public HexPlugin(Application paramApplication){
+    public ColourPalettePlugin(Application paramApplication) {
         super(paramApplication);
 
         super.getApplication().getEventManager().registerEvents(this);
     }
+
 }

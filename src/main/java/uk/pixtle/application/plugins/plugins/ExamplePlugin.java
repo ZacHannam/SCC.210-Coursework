@@ -44,7 +44,7 @@ public class ExamplePlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 400;
+        return 200;
     }
 
     @Override
