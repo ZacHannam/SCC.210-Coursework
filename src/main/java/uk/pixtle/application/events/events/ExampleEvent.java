@@ -6,7 +6,6 @@ public record ExampleEvent(
         LocalDateTime creationTime,
         String name
 
-
 ) implements Event {
 
     public ExampleEvent(
