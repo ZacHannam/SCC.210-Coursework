@@ -4,5 +4,5 @@ import uk.pixtle.application.ui.window.WindowItem;
 
 public interface ToolList extends WindowItem {
 
-
+    ToolButton createToolButton(String paramIconName);
 }

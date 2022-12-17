@@ -106,6 +106,7 @@ public class ToolListUI extends JScrollPane implements ToolList {
 
         this.getToolPanel().add(this.getBottomTab(), anchoredComponent);
     }
+
     public ToolButton createToolButton(String paramIconName) {
 
         ToolButton toolButton = new ToolButton(paramIconName);
