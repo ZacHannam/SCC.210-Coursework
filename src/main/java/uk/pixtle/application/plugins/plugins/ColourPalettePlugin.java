@@ -3,6 +3,7 @@ package uk.pixtle.application.plugins.plugins;
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
+import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
@@ -12,6 +13,8 @@ import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansion {
 
@@ -34,6 +37,7 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
     @Setter
     MiniToolPanel miniToolPanel;
 
+    ColourManager colourManager;
     @Override
     public int getMiniToolPanelHeight() {
         return 150;
@@ -42,6 +46,7 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
     @Override
     public void instanceMiniToolPanel(MiniToolPanel paramMiniToolPanel) {
         this.setMiniToolPanel(paramMiniToolPanel);
+        this.colourManager = super.getApplication().getColourManager();
 
         AnchoredComponent anchoredComponent = new AnchoredComponent();
         anchoredComponent.createAnchor(Anchor.DirectionType.X, 10);
@@ -63,7 +68,13 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
         for(int i=0;i<8;i++)
             paramMiniToolPanel.add(colourButtons[i]);
 
-
+        for(int i=0;i<8;i++)
+            colourButtons[i].addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    colourManager.setColorOfActiveColor(Color.CYAN);
+                }
+            });
 
 
 
