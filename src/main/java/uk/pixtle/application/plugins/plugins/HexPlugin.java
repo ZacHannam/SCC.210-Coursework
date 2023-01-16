@@ -90,7 +90,6 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
                 if(validate(jTextField.getText()))
                 {
                     colourManager.setColorOfActiveColor(Color.decode('#' + jTextField.getText()));
-                    System.out.println(("woah owah "));
                 }
             }
 
