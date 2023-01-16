@@ -57,7 +57,7 @@ public class ColourPreviewPlugin extends Plugin implements PluginMiniToolExpansi
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
-        JLabel jLabel = new JLabel("Colour Preview");
+        JLabel jLabel = new JLabel("");
         jLabel.setAutoscrolls(true);
 
         paramMiniToolPanel.add(jLabel, anchoredComponent);
