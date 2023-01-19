@@ -3,15 +3,21 @@ package uk.pixtle.application.plugins.plugins;
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
+import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
+import uk.pixtle.application.ui.window.minitoollist.PaletteButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansion {
 
@@ -34,6 +40,8 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
     @Setter
     MiniToolPanel miniToolPanel;
 
+    ColourManager colourManager;
+    PaletteButton colourButtons[] = new PaletteButton[9];
     @Override
     public int getMiniToolPanelHeight() {
         return 150;
@@ -42,6 +50,7 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
     @Override
     public void instanceMiniToolPanel(MiniToolPanel paramMiniToolPanel) {
         this.setMiniToolPanel(paramMiniToolPanel);
+        this.colourManager = super.getApplication().getColourManager();
 
         AnchoredComponent anchoredComponent = new AnchoredComponent();
         anchoredComponent.createAnchor(Anchor.DirectionType.X, 10);
@@ -53,17 +62,54 @@ public class ColourPalettePlugin extends Plugin implements PluginMiniToolExpansi
 
         paramMiniToolPanel.setLayout(colourPalettLayout);
 
-        JButton colourButtons[] = new JButton[9];
         for(int i=0;i<8;i++)
-            colourButtons[i] = new JButton();
-
-        for(int i=0;i<8;i++)
-            colourButtons[i].setBackground(Color.BLACK);
-
-        for(int i=0;i<8;i++)
+        {
+            colourButtons[i] = new PaletteButton();
+            colourButtons[i].setCurrentColour(Color.BLUE);
+            colourButtons[i].setBackground(colourButtons[i].getCurrentColour());
             paramMiniToolPanel.add(colourButtons[i]);
+        }
 
 
+        colourButtons[4].setCurrentColour(Color.CYAN);
+        colourButtons[4].setBackground(colourButtons[4].getCurrentColour());
+
+
+        for(int i=0;i<8;i++) {
+            int finalI = i;
+            colourButtons[i].addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent mouseEvent) {
+
+                }
+
+                @Override
+                public void mousePressed(MouseEvent mouseEvent) {
+                    if(SwingUtilities.isLeftMouseButton(mouseEvent))
+                        colourManager.setColorOfActiveColor(colourButtons[finalI].getCurrentColour());
+                    if(SwingUtilities.isRightMouseButton(mouseEvent))
+                    {
+                        colourButtons[finalI].setCurrentColour(colourManager.getColor1());
+
+                    }
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent mouseEvent) {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent mouseEvent) {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent mouseEvent) {
+
+                }
+            });
+        }
 
 
 
