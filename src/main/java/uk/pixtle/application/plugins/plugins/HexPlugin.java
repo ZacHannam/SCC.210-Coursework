@@ -46,6 +46,7 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
     ColourManager colourManager;
 
     TextField jTextField;
+    Color colour;
 
     @Override
     public int getMiniToolPanelHeight() {
@@ -89,7 +90,7 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
             public void focusLost(FocusEvent focusEvent) {
                 if(validate(jTextField.getText()))
                 {
-                    colourManager.setColorOfActiveColor(Color.decode('#' + jTextField.getText()));
+                    colourManager.setColorOfActiveColor(colour);
                 }
             }
 
@@ -105,8 +106,10 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
     }
 
     public boolean validate(String input){
+        input=input.trim(); //Gets rid of leading and trailing spaces.
+        input=input.replace("#", ""); //Gets rid of any hashtags, as we put one in anyway.
         try {
-            Color.decode('#' + input);
+            colour=Color.decode('#' + input);
         }catch(NumberFormatException e){
             return false;
         }
