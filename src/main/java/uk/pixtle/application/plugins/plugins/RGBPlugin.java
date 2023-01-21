@@ -74,7 +74,7 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
         jTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent focusEvent) {
-
+                jTextField.setForeground(Color.BLACK);
             }
 
             @Override
@@ -82,6 +82,11 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
                 if(validateRGB(jTextField.getText()))
                 {
                     colourManager.setColorOfActiveColor(colour);
+                }
+                else{
+                    if(!jTextField.getText().equals("RGB value: R,G,B")) {
+                        jTextField.setForeground(Color.RED);
+                    }
                 }
             }
 

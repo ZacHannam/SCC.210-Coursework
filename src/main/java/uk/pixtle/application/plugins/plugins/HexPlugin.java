@@ -83,7 +83,7 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
         jTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent focusEvent) {
-
+                jTextField.setForeground(Color.BLACK);
             }
 
             @Override
@@ -91,6 +91,11 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
                 if(validate(jTextField.getText()))
                 {
                     colourManager.setColorOfActiveColor(colour);
+                }
+                else{
+                    if(!jTextField.getText().equals("Hex value")) {
+                        jTextField.setForeground(Color.RED);
+                    }
                 }
             }
 
@@ -101,7 +106,6 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
 
     public HexPlugin(Application paramApplication){
         super(paramApplication);
-
         super.getApplication().getEventManager().registerEvents(this);
     }
 
