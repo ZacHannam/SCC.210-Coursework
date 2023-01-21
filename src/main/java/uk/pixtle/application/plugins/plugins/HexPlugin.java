@@ -5,6 +5,7 @@ import lombok.Setter;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.events.annotations.EventHandler;
+import uk.pixtle.application.events.events.ColourChangeEvent;
 import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
@@ -89,7 +90,6 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
                 if(validate(jTextField.getText()))
                 {
                     colourManager.setColorOfActiveColor(Color.decode('#' + jTextField.getText()));
-                    System.out.println(("woah owah "));
                 }
             }
 
@@ -111,5 +111,16 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
             return false;
         }
         return true;
+    }
+
+    @EventHandler
+    public void colourChangeEvent(ColourChangeEvent event){
+        Color currentColour = colourManager.getColor1();
+        int R = currentColour.getRed();
+        int G = currentColour.getGreen();
+        int B = currentColour.getBlue();
+
+        String Hex_rgb = Integer.toHexString(R) + Integer.toHexString(G) + Integer.toHexString(B);
+        jTextField.setText(Hex_rgb.toUpperCase());
     }
 }

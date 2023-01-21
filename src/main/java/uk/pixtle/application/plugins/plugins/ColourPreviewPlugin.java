@@ -3,7 +3,9 @@ package uk.pixtle.application.plugins.plugins;
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
+import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.events.annotations.EventHandler;
+import uk.pixtle.application.events.events.ColourChangeEvent;
 import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
@@ -38,6 +40,7 @@ public class ColourPreviewPlugin extends Plugin implements PluginMiniToolExpansi
     @Setter
     MiniToolPanel miniToolPanel;
 
+    ColourManager colourManager;
     @Override
     public int getMiniToolPanelHeight() {
         return 100;
@@ -46,6 +49,7 @@ public class ColourPreviewPlugin extends Plugin implements PluginMiniToolExpansi
     @Override
     public void instanceMiniToolPanel(MiniToolPanel paramMiniToolPanel) {
         this.setMiniToolPanel(paramMiniToolPanel);
+        colourManager = super.getApplication().getColourManager();
 
         AnchoredComponent anchoredComponent = new AnchoredComponent();
         anchoredComponent.createAnchor(Anchor.DirectionType.X, 10);
@@ -53,16 +57,18 @@ public class ColourPreviewPlugin extends Plugin implements PluginMiniToolExpansi
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
-        JLabel jLabel = new JLabel("Colour Preview");
+        JLabel jLabel = new JLabel("");
         jLabel.setAutoscrolls(true);
 
         paramMiniToolPanel.add(jLabel, anchoredComponent);
 
-        paramMiniToolPanel.setBackground(Color.WHITE);
+        paramMiniToolPanel.setBackground(colourManager.getColor1());
     }
     // ---------------------- OWN METHODS ----------------------
-    public void setColour(Color colour){ //method for updating the colour
-        this.getMiniToolPanel().setBackground(colour);
+
+    @EventHandler
+    public void colourChangeEvent(ColourChangeEvent event) {
+        this.miniToolPanel.setBackground(colourManager.getColor1());
     }
     // ---------------------- CONSTRUCTOR ----------------------
 
