@@ -11,8 +11,9 @@ public enum Plugins {
     HexPlugin(HexPlugin.class),
     RGBPlugin(uk.pixtle.application.plugins.plugins.RGBPlugin.class),
     ColourPreviewPlugin(uk.pixtle.application.plugins.plugins.ColourPreviewPlugin.class),
-    HistoryPlugin(uk.pixtle.application.plugins.plugins.HistoryPlugin.class);
+    HistoryPlugin(uk.pixtle.application.plugins.plugins.HistoryPlugin.class),
 
+    ColourWheelPlugin(uk.pixtle.application.plugins.plugins.ColourWheelPlugin.class);
     ;
 
     @Getter
