@@ -1,12 +1,11 @@
-package uk.pixtle.application.ui.window.color;
+ackage uk.pixtle.application.ui.window.color;
 
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.WindowItem;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class ColorPanel extends JPanel implements WindowItem {
 
@@ -14,56 +13,64 @@ public class ColorPanel extends JPanel implements WindowItem {
     public AnchoredComponent getAnchors() {
 
         AnchoredComponent anchoredComponent = new AnchoredComponent();
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, 20);
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, 80);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, 930);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, 970);
-
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, 0);
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, 100);
+        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -100);
+        anchoredComponent.createAnchor(AnchoredComponent.StandardY.BOTTOM);
         return anchoredComponent;
     }
+
+    JButton button1;
+
+    public void setButton1Colour(Color color) {
+        button1.setBackground(color);
+    }
+    JButton button2;
+
+    public void setButton2Colour(Color color) {
+        button2.setBackground(color);
+    }
+
 
     public ColorPanel() {
         super.setBackground(Color.white);
 
-        // creat JToggleButton
-        JToggleButton button = new JToggleButton();
 
-        // set the image in
-        Icon onIcon = new ImageIcon("OffNew.jpg");
-        Icon offIcon = new ImageIcon("OnNew.jpg");
+        setLayout(new BorderLayout());
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0,0,100,100);
 
-        // set icon and margin
-        button.setMargin(new Insets(0, 0, 0, 0));
+        button1 = new JButton();
+        button1.setOpaque(true);
+        button1.setPreferredSize(new Dimension(50,50));
+        button1.setBounds(15,15,50,50);
+        layeredPane.add(button1, Integer.valueOf(1));
+        button1.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        button1.setBorder(BorderFactory.createEtchedBorder());
+        button1.setBackground(Color.RED);
+        button1.setOpaque(true);
 
-        // set button on/off
-        button.setIcon(offIcon);
-        button.setSelectedIcon(onIcon);
+        JButton button2 = new JButton();
+        button2.setOpaque(true);
+        button2.setPreferredSize(new Dimension(50,50));
+        button2.setBounds(40,40,50,50);
+        layeredPane.add(button2, Integer.valueOf(2));
+        button2.setBackground(Color.white);
+        button2.setOpaque(true);
+        button2.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-        this.add(button);
 
-        // get the width and height
-        int containerWidth = this.getWidth();
-        int containerHeight = this.getHeight();
-        // calculate JPanel coordiante if you modify images you should change here
-        int panelWidth = 60;
-        int panelHeight = 30;
-        int x = (containerWidth - panelWidth)/2;
-        int y = (containerHeight - panelHeight)/2;
+        this.add(layeredPane);
 
-        // set button position and size
-        button.setBounds(x, y, panelWidth, panelHeight);
-        //button.setSize(panelHeight, panelWidth);
-        // add ItemListener for button
-        button.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    System.out.println("Button is ON");
-                }
-                else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    System.out.println("Button is OFF");
-                }
-            }
+
+        button1.addActionListener(e -> {
+            layeredPane.setLayer(button1,3,0);
+
         });
 
+        button2.addActionListener(e -> {
+            layeredPane.setLayer(button2,3,0);
+
+        });
     }
 }
