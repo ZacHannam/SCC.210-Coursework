@@ -120,14 +120,25 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
         return true;
     }
 
+    private String toHexString(int rgb) {
+
+        StringBuilder s = new StringBuilder(Integer.toHexString(rgb));
+
+        if(s.toString().length() == 1) {
+            s.insert(0, "0");
+        }
+
+        return s.toString();
+    }
+
     @EventHandler
     public void colourChangeEvent(ColourChangeEvent event){
         Color currentColour = colourManager.getColor1();
-        int R = currentColour.getRed();
-        int G = currentColour.getGreen();
-        int B = currentColour.getBlue();
+        int r = currentColour.getRed();
+        int g = currentColour.getGreen();
+        int b = currentColour.getBlue();
 
-        String Hex_rgb = Integer.toHexString(R) + Integer.toHexString(G) + Integer.toHexString(B);
+        String Hex_rgb = toHexString(r) + toHexString(g)  + toHexString(b);
         jTextField.setText(Hex_rgb.toUpperCase());
     }
 }
