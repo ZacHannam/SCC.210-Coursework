@@ -1,4 +1,4 @@
-ackage uk.pixtle.application.ui.window.color;
+package uk.pixtle.application.ui.window.color;
 
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;

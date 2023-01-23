@@ -112,6 +112,9 @@ public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
     public boolean validate(String input){
         input=input.trim(); //Gets rid of leading and trailing spaces.
         input=input.replace("#", ""); //Gets rid of any hashtags, as we put one in anyway.
+        if(input.length()>6){
+            return false;
+        }
         try {
             colour=Color.decode('#' + input);
         }catch(NumberFormatException e){
