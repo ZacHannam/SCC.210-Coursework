@@ -61,7 +61,7 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
         anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
         JLabel jLabel = new JLabel("RGB");
-        jTextField = new TextField("RGB value", "RGB value");
+        jTextField = new TextField("RGB value: R,G,B", "RGB value: R,G,B");
         jLabel.setAutoscrolls(true);
 
         //paramMiniToolPanel.add(jLabel, anchoredComponent);
@@ -74,7 +74,7 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
         jTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent focusEvent) {
-
+                jTextField.setForeground(Color.BLACK);
             }
 
             @Override
@@ -82,6 +82,11 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
                 if(validateRGB(jTextField.getText()))
                 {
                     colourManager.setColorOfActiveColor(colour);
+                }
+                else{
+                    if(!jTextField.getText().equals("RGB value: R,G,B")) {
+                        jTextField.setForeground(Color.RED);
+                    }
                 }
             }
 
@@ -97,12 +102,17 @@ public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
     }
 
     public boolean validateRGB(String input){
-     String[] RGB_Sections = input.split("[,]", 0);
+     input=input.trim();
+     String[] RGB_Sections = input.split("\\s*,\\s*", 0);
      int[] RGB_values=new int[3];
      for(int i=0;i<3;i++){
-         int value=Integer.parseInt(RGB_Sections[i]);
-         RGB_values[i]=value;
-         if(value<0 || value>=256){
+         try{
+             int value=Integer.parseInt(RGB_Sections[i]);
+             RGB_values[i]=value;
+             if(value<0 || value>=256){
+                 return false;
+             }
+         }catch(NumberFormatException e){
              return false;
          }
      }
