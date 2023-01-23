@@ -14,6 +14,7 @@ import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
 public class SavingPlugin extends Plugin implements PluginMiniToolExpansion {
 
@@ -28,13 +29,29 @@ public class SavingPlugin extends Plugin implements PluginMiniToolExpansion {
 
 
     @MenuBarItem(PATH = "file:Save")
-    public void save() {
+    public void save() throws IOException {
             JFileChooser fileChooser = new JFileChooser();
             int option = fileChooser.showSaveDialog(fileChooser);
         if(option == JFileChooser.APPROVE_OPTION)
         {
             File fileToSave = fileChooser.getSelectedFile();
             System.out.println("Save as file: " + fileToSave.getAbsolutePath());
+            //Write code here to save our canvas.
+            if(fileToSave.createNewFile())
+                System.out.println("File saved");
+        }
+
+    }
+
+    @MenuBarItem(PATH = "file:Load")
+    public void load() {
+        JFileChooser fileChooser = new JFileChooser();
+        int option = fileChooser.showOpenDialog(fileChooser);
+        if(option == JFileChooser.APPROVE_OPTION)
+        {
+            File fileToOpen = fileChooser.getSelectedFile();
+            System.out.println("Load file: " + fileToOpen.getAbsolutePath());
+            //Write code here to save our canvas.
 
         }
 
