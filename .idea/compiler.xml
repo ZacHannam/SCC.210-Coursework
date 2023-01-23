@@ -16,7 +16,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="scc210-2223-grp-45" options="--add-modules java.base,java.desktop" />
+      <module name="scc210-2223-grp-45" options="" />
     </option>
   </component>
 </project>
