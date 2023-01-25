@@ -2,6 +2,7 @@ package uk.pixtle.application.ui.window;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.Application;
 import uk.pixtle.application.ui.window.canvas.Canvas;
 import uk.pixtle.application.ui.window.canvas.CanvasUI;
 import uk.pixtle.application.ui.window.color.ColorPanel;
@@ -38,7 +39,7 @@ public class Window extends JFrame {
     @Setter
     public Canvas canvas;
 
-    public Window() {
+    public Window(Application paramApplication) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // full screen size
@@ -71,7 +72,7 @@ public class Window extends JFrame {
         super.add(menuBar, menuBar.getAnchors());
         this.setMenuBarElement(menuBar);
 
-        CanvasUI canvas = new CanvasUI();
+        CanvasUI canvas = new CanvasUI(paramApplication);
         super.add(canvas, canvas.getAnchors());
         this.setCanvas(canvas);
 

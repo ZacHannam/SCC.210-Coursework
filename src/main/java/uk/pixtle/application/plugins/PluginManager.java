@@ -150,4 +150,8 @@ public class PluginManager extends ApplicationComponent {
         registerAllPlugins();
     }
 
+    public void updateCanvas(Graphics paramGraphics) {
+        this.getCanvasPlugin().paint(paramGraphics);
+    }
+
 }

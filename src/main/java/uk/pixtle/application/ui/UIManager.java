@@ -20,6 +20,6 @@ public class UIManager extends ApplicationComponent {
     public UIManager(Application paramApplication) {
         super(paramApplication);
 
-        this.setWindow(new Window());
+        this.setWindow(new Window(paramApplication));
     }
 }

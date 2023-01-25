@@ -2,6 +2,8 @@ package uk.pixtle.application.ui.window.canvas;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
+import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,8 +89,7 @@ public class CanvasListener implements MouseListener {
 
                 lastPoint.setLocation(new Point(calculatedX, calculatedY));
 
-                ((CanvasUI) getParentCanvas()).updateCurrentPixel(-differenceX, -differenceY);
-
+                ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getCanvasPlugin()).mouseCanvasEvent(calculatedX, calculatedY, differenceX, differenceY);
             }
         });
 

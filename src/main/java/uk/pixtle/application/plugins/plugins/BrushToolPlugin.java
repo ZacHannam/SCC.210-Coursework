@@ -7,7 +7,6 @@ import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.DropDownInputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.InputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
-import uk.pixtle.application.ui.window.canvas.CanvasUI;
 
 public class BrushToolPlugin extends Plugin implements PluginToolExpansion {
 
@@ -16,7 +15,7 @@ public class BrushToolPlugin extends Plugin implements PluginToolExpansion {
 
         @Override
         public void notifyVariableChange(Integer paramVar) {
-            ((CanvasUI) getApplication().getUIManager().getWindow().getCanvas()).updateZoom(((paramVar - 50) * 0.01) + 1);
+            //ZZZ: ((CanvasUI) getApplication().getUIManager().getWindow().getCanvas()).updateZoom(((paramVar - 50) * 0.01) + 1);
         }
 
         @Override
