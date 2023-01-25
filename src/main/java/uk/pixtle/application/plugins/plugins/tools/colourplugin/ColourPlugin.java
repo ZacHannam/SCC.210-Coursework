@@ -1,4 +1,4 @@
-package uk.pixtle.application.plugins.plugins.tools;
+package uk.pixtle.application.plugins.plugins.tools.colourplugin;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,15 +6,12 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ColourChangeEvent;
-import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
-import uk.pixtle.application.ui.window.minitoollist.TextField;
+import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
-import uk.pixtle.application.ui.window.minitoollist.ColorSquare;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
-import uk.pixtle.application.ui.window.minitoollist.PaletteButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,12 +24,6 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     // ---------------------- ABSTRACT METHODS ------------------
 
-    // ---------------------- TEST METHODS ----------------------
-    @EventHandler
-    public void test(ExampleEvent paramEvent) {
-        System.out.println(paramEvent.getCreationTime().toString());
-    }
-
     // ---------------------- MINI TOOL EXPANSION METHODS ----------------------
 
     @Getter
@@ -42,7 +33,7 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 450;
+        return 410;
     }
 
     @Override
@@ -50,20 +41,10 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
         this.setMiniToolPanel(paramMiniToolPanel);
         this.colourManager = super.getApplication().getColourManager();
 
-        AnchoredComponent anchoredComponent = new AnchoredComponent();
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, 10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, -10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
 
+        AnchorLayout anchorLayout = new AnchorLayout();
 
-        BoxLayout bl = new BoxLayout(paramMiniToolPanel, BoxLayout.Y_AXIS);
-
-        GridLayout gl = new GridLayout(0,1);
-
-        FlowLayout fl = new FlowLayout(FlowLayout.CENTER);
-
-        paramMiniToolPanel.setLayout(gl); //Currently only works with gridlayout... don't know why
+        paramMiniToolPanel.setLayout(anchorLayout);
 
         ColourPalette(paramMiniToolPanel);
         HexText(paramMiniToolPanel);
@@ -132,7 +113,14 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
                 }
             });
         }
-        miniToolPanel.add(componentPanel);
+
+        AnchoredComponent ac = new AnchoredComponent();
+        ac.createAnchor(AnchoredComponent.StandardX.LEFT);
+        ac.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        ac.createAnchor(Anchor.DirectionType.Y, 0);
+        ac.createAnchor(Anchor.DirectionType.Y, 150);
+
+        miniToolPanel.add(componentPanel, ac);
     }
 
     TextField hexJTextField;
@@ -141,17 +129,11 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
     Color colour;
     public void HexText(MiniToolPanel paramMiniToolPanel)
     {
-        //this.setMiniToolPanel(paramMiniToolPanel);
         JPanel componentPanel = new JPanel();
-        componentPanel.setPreferredSize(new Dimension(20,50));
         JLabel jLabel = new JLabel("#"); //Add action listner for text appearing
-        //jLabel.setFont(f);
-        //JTextField jTextField = new JTextField("Hex value");
-        hexJTextField = new TextField("Hex value", "Hex value");
-        //jLabel.setAutoscrolls(true);
 
-        //paramMiniToolPanel.add(jLabel, anchoredComponent);
-        //paramMiniToolPanel.add(jTextField, anchoredComponent);
+        hexJTextField = new TextField("Hex value", "Hex value");
+
         BorderLayout hexLayout = new BorderLayout();
         componentPanel.setLayout(hexLayout);
         componentPanel.add(jLabel, BorderLayout.WEST);
@@ -178,7 +160,14 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
             }
 
         });
-        miniToolPanel.add(componentPanel);
+
+        AnchoredComponent ac = new AnchoredComponent();
+        ac.createAnchor(AnchoredComponent.StandardX.LEFT);
+        ac.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        ac.createAnchor(Anchor.DirectionType.Y, 290);
+        ac.createAnchor(Anchor.DirectionType.Y, 310);
+
+        miniToolPanel.add(componentPanel, ac);
     }
 
     private boolean HexValidate(String input){
@@ -211,7 +200,16 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
         //this.setMiniToolPanel(paramMiniToolPanel);
         JPanel componentPanel = new JPanel();
         componentPanel.setPreferredSize(new Dimension(20,50));
-        miniToolPanel.add(componentPanel);
+
+        AnchoredComponent ac = new AnchoredComponent();
+        ac.createAnchor(AnchoredComponent.StandardX.LEFT);
+        ac.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        ac.createAnchor(Anchor.DirectionType.Y, 270);
+        ac.createAnchor(Anchor.DirectionType.Y, 290);
+
+        miniToolPanel.add(componentPanel, ac);
+
+
         JLabel jLabel = new JLabel("RGB");
         RGBJTextField = new TextField("RGB value: R,G,B", "RGB value: R,G,B");
         jLabel.setAutoscrolls(true);
@@ -268,15 +266,14 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
     public void ColourPreview(MiniToolPanel paramMiniToolPanel)
     {
         //this.setMiniToolPanel(paramMiniToolPanel);
-        ColourPreviewPanel.setPreferredSize(new Dimension(20,100));
-        miniToolPanel.add(ColourPreviewPanel);
-        colourManager = super.getApplication().getColourManager();
+        AnchoredComponent ac = new AnchoredComponent();
+        ac.createAnchor(AnchoredComponent.StandardX.LEFT);
+        ac.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        ac.createAnchor(Anchor.DirectionType.Y, 160);
+        ac.createAnchor(Anchor.DirectionType.Y, 260);
 
-        AnchoredComponent anchoredComponent = new AnchoredComponent();
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, 10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, -10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
+        miniToolPanel.add(ColourPreviewPanel, ac);
+        colourManager = super.getApplication().getColourManager();
 
         ColourPreviewPanel.setBackground(colourManager.getActiveColor());
 
@@ -287,7 +284,14 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
         // this.setMiniToolPanel(paramMiniToolPanel);
         JPanel componentPanel = new JPanel();
         componentPanel.setPreferredSize(new Dimension(20,100));
-        miniToolPanel.add(componentPanel);
+
+        AnchoredComponent ac = new AnchoredComponent();
+        ac.createAnchor(AnchoredComponent.StandardX.LEFT);
+        ac.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        ac.createAnchor(Anchor.DirectionType.Y, 320);
+        ac.createAnchor(Anchor.DirectionType.Y, 420);
+
+        miniToolPanel.add(componentPanel, ac);
 
         String[] rgba_Values = {"800000", "8B0000", "A52A2A", "B22222", "DC143C", "FF0000",
                 "FF6347", "FF7F50", "CD5C5C", "F08080", "E9967A", "FA8072", "FFA07A", "FF4500",
@@ -345,7 +349,6 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
                 }
             });
         }
-
     }
 
     @EventHandler

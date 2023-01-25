@@ -1,4 +1,4 @@
-package uk.pixtle.application.ui.window.minitoollist;
+package uk.pixtle.application.plugins.plugins.tools.colourplugin;
 
 import javax.swing.*;
 import java.awt.*;

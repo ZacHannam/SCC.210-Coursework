@@ -1,4 +1,4 @@
-package uk.pixtle.application.ui.window.minitoollist;
+package uk.pixtle.application.plugins.plugins.tools.colourplugin;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,8 @@ public class PaletteButton extends JButton
 {
     public PaletteButton()
     {
-        new JButton();
+        super.setOpaque(true);
+        super.setBorder(BorderFactory.createLineBorder(Color.black, 1, false));
     }
 
 

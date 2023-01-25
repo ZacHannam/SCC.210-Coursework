@@ -5,7 +5,7 @@ import lombok.Setter;
 import uk.pixtle.application.plugins.plugins.*;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.tools.BrushToolPlugin;
-import uk.pixtle.application.plugins.plugins.tools.ColourPlugin;
+import uk.pixtle.application.plugins.plugins.tools.colourplugin.ColourPlugin;
 
 public enum Plugins {
 
