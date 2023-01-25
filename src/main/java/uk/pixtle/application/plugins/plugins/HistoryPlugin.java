@@ -15,13 +15,6 @@ import java.awt.*;
 
 public class HistoryPlugin extends Plugin implements PluginMiniToolExpansion {
 
-    // ---------------------- ABSTRACT METHODS ----------------------
-
-    @Override
-    public String getToolIconLocation() {
-        return null;
-    }
-
     // ---------------------- TEST METHODS ----------------------
     @EventHandler
     public void test(ExampleEvent paramEvent) {

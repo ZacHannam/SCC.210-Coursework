@@ -7,6 +7,7 @@ import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
+import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
@@ -14,14 +15,7 @@ import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 import javax.swing.*;
 import java.awt.*;
 
-public class HexPlugin extends Plugin implements PluginMiniToolExpansion{
-
-    // ---------------------- ABSTRACT METHODS ----------------------
-
-    @Override
-    public String getToolIconLocation() {
-        return null;
-    }
+public class HexPlugin extends Plugin implements PluginMiniToolExpansion {
 
     // ---------------------- TEST METHODS ----------------------
 

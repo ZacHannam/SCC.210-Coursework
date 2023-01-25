@@ -1,12 +1,17 @@
 package uk.pixtle.application.ui.window.canvas;
 
+import lombok.Getter;
+import lombok.Setter;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Parameter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class CanvasUI extends JPanel implements Canvas {
 
@@ -26,34 +31,93 @@ public class CanvasUI extends JPanel implements Canvas {
     }
 
 
-    /*
-    -------------------- Overwrite Methods --------------------
-     */
+    // INFINITE CANVAS THINGS
 
-    private BufferedImage test( int width, int height) {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    // 10 tall 10 wide
 
-        for(int y = 0; y < super.getHeight(); y++) {
-            for(int x = 0; x < super.getWidth(); x++) {
+    Chunk[][] availableChunks; // [x][y]
 
-                Color color;
+    int pixelsPerChunkLength = 256;
 
-                if(Math.floor(x / 20) % 2 == 0) {
-                    color = Color.black;
-                } else {
-                    color = Color.white;
-                }
+    // Current Pixel refers to pixel in top left corner
+    int currentPixelX = 100;
+    int currentPixelY = 100;
 
-                bufferedImage.setRGB(x, y, color.getRGB());
+    private void infiniteCanvas() {
+        availableChunks = new Chunk[10][10];
+
+        for(int i = 0; i < 10; i++) {
+            for(int j = 0; j < 10; j++) {
+                availableChunks[i][j] = new Chunk(pixelsPerChunkLength);
             }
         }
-        return bufferedImage;
     }
 
+    double scale = 1;
+
+    public void updateCurrentPixel(int paramCurrentPixelX, int paramCurrentPixelY) {
+        currentPixelX += (int) ((1.0 / scale) * paramCurrentPixelX);
+        currentPixelY += (int) ((1.0 / scale) * paramCurrentPixelY);
+        repaint();
+    }
+
+    public void updateZoom(double paramZoom) {
+        scale = paramZoom;
+        repaint();
+    }
+
+    @Getter
+    @Setter
+    ReentrantLock lock = new ReentrantLock(true);
+
+
     @Override
-    public void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(test(super.getWidth(), super.getHeight()), null, null);;
+    public void paint(Graphics g) {
+        super.paint(g);
+
+
+        try {
+            lock.lock();
+
+            if(lock.getQueueLength() > 0) { // Only updates enough to show the last image available instead of inbetween ones saving time and processor
+                return;
+            }
+
+            HashMap<ChunkImageProcessor, Point> renderedChunks = new HashMap<>();
+
+            for(int i = 0, chunkIDY = (int) Math.floor((currentPixelY) / pixelsPerChunkLength); i < (int) Math.ceil((super.getHeight() + (currentPixelY % pixelsPerChunkLength)) / (scale * pixelsPerChunkLength)); i++, chunkIDY++) {
+                for(int j = 0, chunkIDX = (int) Math.floor((currentPixelX) / pixelsPerChunkLength); j < (int) Math.ceil((super.getWidth() + (currentPixelX % pixelsPerChunkLength)) / (scale * pixelsPerChunkLength)); j++, chunkIDX++) {
+
+                    Chunk chunk = availableChunks[chunkIDX][chunkIDY];
+                    chunk.updateValues(scale);
+
+                    ChunkImageProcessor CIP = new ChunkImageProcessor(chunk);
+                    CIP.start();
+                    renderedChunks.put(CIP, new Point(j, i));
+
+                }
+            }
+
+            // Render the chunks
+
+            for(ChunkImageProcessor CIP : renderedChunks.keySet()) {
+                CIP.join();
+            }
+
+            // Draw the chunks
+
+            for(Map.Entry<ChunkImageProcessor, Point> entry : renderedChunks.entrySet()) {
+
+                int widthIn = (int) Math.floor((- (currentPixelX % pixelsPerChunkLength) * scale) + (entry.getValue().getX() * pixelsPerChunkLength * scale));
+                int heightIn = (int) Math.floor((- (currentPixelY % pixelsPerChunkLength) * scale) + (entry.getValue().getY() * pixelsPerChunkLength * scale));
+                g.drawImage(entry.getKey().getChunk().getLastRenderedImage(), widthIn, heightIn, null);
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally{
+            lock.unlock();
+        }
     }
 
     /*
@@ -61,6 +125,9 @@ public class CanvasUI extends JPanel implements Canvas {
      */
 
     public CanvasUI() {
-        super.addMouseListener(new CanvasListener());
+        super(true); // double buffered;
+        super.addMouseListener(new CanvasListener(this));
+
+        infiniteCanvas();
     }
 }

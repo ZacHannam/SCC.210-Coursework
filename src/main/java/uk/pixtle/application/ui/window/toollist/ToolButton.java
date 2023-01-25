@@ -2,11 +2,14 @@ package uk.pixtle.application.ui.window.toollist;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.util.ResourceHandler;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -46,11 +49,31 @@ public class ToolButton extends JButton {
     @Setter
     ToolButtonComponentAdapter toolButtonComponentAdapter;
 
-    public ToolButton(String paramIconName) {
+    @Getter
+    @Setter
+    Plugin parentPlugin;
+
+    @Getter
+    @Setter
+    ToolListUI parentToolList;
+
+    public ToolButton(ToolListUI paramParentToolList, Plugin paramParentPlugin, String paramIconName) {
+
+        this.setParentToolList(paramParentToolList);
+        this.setParentPlugin(paramParentPlugin);
 
         ImageIcon imageIcon = new ImageIcon(ResourceHandler.getResourceURL(paramIconName));
 
         this.setToolButtonComponentAdapter(new ToolButtonComponentAdapter(this, imageIcon, imageIcon.getImage()));
         super.addComponentListener(this.getToolButtonComponentAdapter());
+
+        ToolButton toolButton = this;
+        super.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getParentToolList().toolClick(toolButton, getParentPlugin());
+            }
+        });
     }
 }

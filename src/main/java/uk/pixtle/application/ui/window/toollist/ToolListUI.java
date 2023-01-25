@@ -3,6 +3,7 @@ package uk.pixtle.application.ui.window.toollist;
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
+import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.DynamicAnchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
@@ -10,7 +11,12 @@ import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ToolListUI extends JScrollPane implements ToolList {
 
@@ -22,6 +28,9 @@ public class ToolListUI extends JScrollPane implements ToolList {
     @Getter
     @Setter
     private JPanel toolPanel;
+
+    @Getter
+    private ArrayList<ToolButton> toolButtons = new ArrayList<>();
 
     /*
     -------------------- UIComponent Methods --------------------
@@ -107,9 +116,9 @@ public class ToolListUI extends JScrollPane implements ToolList {
         this.getToolPanel().add(this.getBottomTab(), anchoredComponent);
     }
 
-    public ToolButton createToolButton(String paramIconName) {
+    public ToolButton createToolButton(Plugin paramPlugin, String paramIconName) {
 
-        ToolButton toolButton = new ToolButton(paramIconName);
+        ToolButton toolButton = new ToolButton(this, paramPlugin, paramIconName);
 
         AnchoredComponent anchoredComponent = new AnchoredComponent();
 
@@ -125,8 +134,25 @@ public class ToolListUI extends JScrollPane implements ToolList {
         this.getToolPanel().add(toolButton, anchoredComponent);
         this.updateBottomTab();
 
+        this.getToolPanel().setPreferredSize(new Dimension(this.getWidth(), Integer.MAX_VALUE));
+
+        this.getToolButtons().add(toolButton);
+
+
+
         return toolButton;
 
+    }
+
+    public void toolClick(ToolButton paramToolButton, Plugin paramPlugin ) {
+
+        for(ToolButton toolButton : this.getToolButtons()) {
+            toolButton.setBorder(BorderFactory.createEmptyBorder());
+        }
+        paramToolButton.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
+
+
+        paramPlugin.getApplication().getPluginManager().pluginClick(paramPlugin);
     }
 
 

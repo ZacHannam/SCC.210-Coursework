@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.ValueAnchor;
+import uk.pixtle.application.ui.window.toollist.ToolButton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -213,7 +214,7 @@ public class AnchorLayout implements LayoutManager2 {
                 int width = Math.abs(x1 - x2);
                 int height = Math.abs(y1 - y2);
 
-                component.setSize(width, height);
+                component.setPreferredSize(new Dimension(width, height));
                 component.setBounds(Math.min(x1, x2), Math.min(y1, y2), width, height);
             }
 

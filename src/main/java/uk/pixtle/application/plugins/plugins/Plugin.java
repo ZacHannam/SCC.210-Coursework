@@ -10,8 +10,6 @@ public abstract class Plugin {
     @Setter
     Application application;
 
-    public abstract String getToolIconLocation();
-
     public Plugin(Application paramApplication) {
         this.setApplication(paramApplication);
     }

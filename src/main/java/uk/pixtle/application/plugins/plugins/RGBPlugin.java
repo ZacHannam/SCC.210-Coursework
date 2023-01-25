@@ -16,13 +16,6 @@ import java.awt.*;
 
 public class RGBPlugin extends Plugin implements PluginMiniToolExpansion{
 
-    // ---------------------- ABSTRACT METHODS ----------------------
-
-    @Override
-    public String getToolIconLocation() {
-        return null;
-    }
-
     // ---------------------- TEST METHODS ----------------------
 
 

@@ -2,13 +2,17 @@ package uk.pixtle.application.ui.window.minitoollist;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.DisplacedAnchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.DynamicAnchor;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.ValueAnchor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MiniToolListUI extends JScrollPane implements MiniToolList {
 
@@ -69,6 +73,10 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
 
     @Getter
     @Setter
+    Anchor miniToolsBeginningAnchor;
+
+    @Getter
+    @Setter
     JLabel bottomTab;
 
     private void updateBottomTab() {
@@ -97,19 +105,68 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
         anchoredComponent.createAnchor(Anchor.DirectionType.X, -PADDING);
 
         if(this.getLastYAnchor() == null) {
-            anchoredComponent.createAnchor(Anchor.DirectionType.Y, PADDING);
-            this.setLastYAnchor(anchoredComponent.createAnchor(Anchor.DirectionType.Y, PADDING+paramHeight));
+            anchoredComponent.getAnchors().add(this.getMiniToolsBeginningAnchor());
+            this.setLastYAnchor(anchoredComponent.createAnchor(Anchor.DirectionType.Y,  this.getMiniToolsBeginningAnchor(),PADDING+paramHeight));
         } else {
             anchoredComponent.createAnchor(Anchor.DirectionType.Y, this.getLastYAnchor(), PADDING);
             this.setLastYAnchor(anchoredComponent.createAnchor(Anchor.DirectionType.Y, this.getLastYAnchor(), PADDING+paramHeight));
         }
         this.getMiniToolListPanel().add(miniToolPanel, anchoredComponent);
+
         this.updateBottomTab();
+
+        this.getMiniToolListPanel().setPreferredSize(new Dimension(this.getWidth(), Integer.MAX_VALUE));
 
         this.repaint();
 
         return miniToolPanel;
 
+
+
+    }
+
+    @Getter
+    @Setter
+    ToolSettingsPanel toolSettingsPanel;
+
+    public ToolSettingsPanel createToolSettingsPanel(ArrayList<ToolSettingEntry<?>> paramToolSettingEntries) {
+
+        if(this.getToolSettingsPanel() != null) {
+            this.getMiniToolListPanel().remove(toolSettingsPanel);
+        }
+
+        ToolSettingsPanel panel = new ToolSettingsPanel(this.getWidth() - 2 * PADDING, paramToolSettingEntries);
+
+        AnchoredComponent anchoredComponent = new AnchoredComponent();
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, PADDING);
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, -PADDING);
+        anchoredComponent.createAnchor(Anchor.DirectionType.Y, PADDING);
+        Anchor last = anchoredComponent.createAnchor(Anchor.DirectionType.Y,  PADDING + (int) panel.getSize().getHeight());
+
+        ((ValueAnchor) this.getMiniToolsBeginningAnchor()).setValue(2 * PADDING + (int) panel.getSize().getHeight());
+
+        this.getMiniToolListPanel().add(panel, anchoredComponent);
+
+        this.getMiniToolListPanel().setPreferredSize(new Dimension(this.getWidth(), Integer.MAX_VALUE));
+
+        getMiniToolListPanel().updateUI();
+
+        this.setToolSettingsPanel(panel);
+        return panel;
+    }
+
+    @Override
+    public void removeToolSettingsPanel() {
+
+        // TO-DO
+
+        if(this.getToolSettingsPanel() != null) {
+            this.getMiniToolListPanel().remove(toolSettingsPanel);
+        }
+
+        ((ValueAnchor) this.getMiniToolsBeginningAnchor()).setValue(PADDING);
+
+        getMiniToolListPanel().updateUI();
     }
 
     /*
@@ -122,6 +179,7 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
         this.createScrollPane();
 
         this.setLastYAnchor(null);
+        this.setMiniToolsBeginningAnchor(new ValueAnchor(null, Anchor.DirectionType.Y, PADDING));
         this.setBottomTab(null);
     }
 }
