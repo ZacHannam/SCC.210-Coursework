@@ -61,6 +61,8 @@ public class CanvasListener implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
 
+        if(!(getParentCanvas().getApplication().getPluginManager().getActivatePlugin() instanceof PluginDrawableExpansion)) return;
+
         Point lastPoint = new Point(e.getX(), e.getY());
 
         int originalCanvasPositionX = e.getX();
@@ -84,16 +86,57 @@ public class CanvasListener implements MouseListener {
                 int calculatedX = currentMousePointerX - differenceX;
                 int calculatedY = currentMousePointerY - differenceY;
 
+                int lastX = (int) lastPoint.getX();
+                int lastY = (int) lastPoint.getY();
+
                 int differenceX = calculatedX - (int) lastPoint.getX();
                 int differenceY = calculatedY -  (int) lastPoint.getY();
 
-                lastPoint.setLocation(new Point(calculatedX, calculatedY));
+                final Point[] addedPoints = {
+                        new Point(0, 0),
+                        new Point(-1, -1),
+                        new Point(0, -1),
+                        new Point(1, -1),
+                        new Point(-1, 0),
+                        new Point(0, 0),
+                        new Point(1, 0),
+                        new Point(-1, 1),
+                        new Point(0, 1),
+                        new Point(1, 1)};
 
-                ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getCanvasPlugin()).mouseCanvasEvent(calculatedX, calculatedY, differenceX, differenceY);
+                while(true) {
+
+                    Point smallestDistancePoint = null;
+                    double smallestDistance = -1;
+
+                    for(int index = 0; index < addedPoints.length; index++) {
+                        double distance = Math.sqrt(Math.pow(calculatedX - (lastX - addedPoints[index].getX()), 2) +
+                                Math.pow(calculatedY - (lastY - addedPoints[index].getY()), 2));
+                        if(smallestDistance == -1 || distance < smallestDistance) {
+                            smallestDistance = distance;
+                            smallestDistancePoint = addedPoints[index];
+                        }
+                    }
+
+                    if(lastX != calculatedX) lastX -= (int) smallestDistancePoint.getX();
+                    if(lastY != calculatedY) lastY -= (int) smallestDistancePoint.getY();
+
+                    ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(lastX, lastY, differenceX, differenceY);
+
+                    differenceY = 0;
+                    differenceX = 0;
+
+                    if(lastX == calculatedX && lastY == calculatedY) {
+                        break;
+                    }
+                }
+
+
+                lastPoint.setLocation( new Point(calculatedX, calculatedY));
             }
         });
 
-        this.getTimer().schedule(this.getTimerTask(), 0, 50);
+        this.getTimer().schedule(this.getTimerTask(), 0, 10);
     }
 
     /**

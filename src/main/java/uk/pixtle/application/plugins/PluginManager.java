@@ -12,13 +12,9 @@ import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
-import uk.pixtle.application.ui.window.toollist.ToolButton;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -32,59 +28,97 @@ public class PluginManager extends ApplicationComponent {
     @Getter
     public HashMap<Plugins, Plugin> pluginRegistry = new HashMap<>();
 
+    /**
+     * Get the plugin by the plugin type
+     * @param paramPluginType
+     * @return
+     */
+    public Plugin getPluginByPluginType(Plugins paramPluginType) {
+        if(this.getPluginRegistry().containsKey(paramPluginType)) {
+            return this.getPluginRegistry().get(paramPluginType);
+        }
+        return null;
+    }
+
     @Getter
     @Setter
-    private CanvasPlugin canvasPlugin;
+    private CanvasPlugin activeCanvasPlugin;
 
+    @Getter
+    @Setter
+    private Plugin activatePlugin;
+
+    /**
+     * Instantiates each plugin and adds them to the plugin registry
+     */
     private void registerAllPlugins() {
 
+        // Loads the default constructor of the plugins
         final Class<?>[] constructorParam = {Application.class};
 
+        // Iterates through all the plugins to load each individually
         for(Plugins pluginValue : Plugins.values()) {
+
             Class<? extends Plugin> pluginClass = pluginValue.getPluginClass();
 
             try {
                 Plugin plugin = Objects.requireNonNull(pluginClass).getConstructor(constructorParam).newInstance(super.getApplication());
-                this.registerPlugin(plugin);
                 this.getPluginRegistry().put(pluginValue, plugin);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
-                // TO-DO print exception
                 return;
             }
 
 
         }
+    }
+
+    /**
+     * Loads all the plugins in the plugin registry
+     */
+    private void loadAllPlugins() {
+        for(Plugins pluginType : Plugins.values()) {
+            this.registerPlugin(pluginRegistry.get(pluginType));
+        }
 
         ((JPanel) super.getApplication().getUIManager().getWindow().getCanvas()).updateUI();
 
-
+        if(this.getActiveCanvasPlugin() == null) {
+            throw new RuntimeException(); // TO-DO exception
+        }
     }
 
+    /**
+     * Loads the plugins events and annotations
+     * @param paramPlugin
+     */
     private void registerPlugin(Plugin paramPlugin) {
 
-        // Load into Tool List
-
-        if(getCanvasPlugin() == null && paramPlugin instanceof CanvasPlugin) {
-            setCanvasPlugin((CanvasPlugin) paramPlugin);
+        // Select the canvas plugin
+        if(this.getActiveCanvasPlugin() == null && paramPlugin instanceof CanvasPlugin) {
+            this.setActiveCanvasPlugin((CanvasPlugin) paramPlugin);
         }
 
-        // Load In All implements
+        // Plugin Mini Tool Expansion
         if(paramPlugin instanceof PluginMiniToolExpansion) {
             PluginMiniToolExpansion plugin = (PluginMiniToolExpansion) paramPlugin;
 
+            // Creates the mini tool panel
             MiniToolPanel miniToolPanel = this.getApplication().getUIManager().getWindow().getMiniToolList().createMiniToolPanel(plugin.getMiniToolPanelHeight());
             plugin.instanceMiniToolPanel(miniToolPanel);
             miniToolPanel.updateUI();
         }
 
+        // Plugin Tool Expansion
         if(paramPlugin instanceof PluginToolExpansion) {
+
+            // Creates the tool button on the side
             this.getApplication().getUIManager().getWindow().getToolList().createToolButton(paramPlugin, ((PluginToolExpansion) paramPlugin).getIconFilePath());
         }
 
-        // Load All Annotations
+        // Load annotated methods
         for(Method method : paramPlugin.getClass().getDeclaredMethods()) {
 
-            // MENU BAR ITEMS
+            // Load menu bar items
             for(Annotation annotation : method.getDeclaredAnnotationsByType(MenuBarItem.class)) {
                 if(!method.getReturnType().equals(Void.TYPE) || method.getParameterCount() != 0) {
                     // TO-DO exception
@@ -99,6 +133,11 @@ public class PluginManager extends ApplicationComponent {
         }
     }
 
+    /**
+     * Get all the tool setting entries
+     * @param paramPlugin
+     * @return list of tool settings in the plugin
+     */
     public ArrayList<ToolSettingEntry<?>> getToolSettingEntries(Plugin paramPlugin) {
 
         ArrayList<ToolSettingEntry<?>> toolSettingEntries = new ArrayList<>();
@@ -125,16 +164,20 @@ public class PluginManager extends ApplicationComponent {
         return toolSettingEntries;
     }
 
-    public Plugin getPluginByPluginType(Plugins paramPluginType) {
-        if(this.getPluginRegistry().containsKey(paramPluginType)) {
-            return this.getPluginRegistry().get(paramPluginType);
+    /**
+     *
+     * @param paramPlugin
+     */
+    public void activatePlugin(Plugin paramPlugin) {
+
+        // Sets the active plugin border
+        if(this.getActivatePlugin() != null) {
+            super.getApplication().getUIManager().getWindow().getToolList().clearPluginBorder(this.getActivatePlugin());
         }
-        return null;
-    }
 
-    public void pluginClick(Plugin paramPlugin) {
+        super.getApplication().getUIManager().getWindow().getToolList().addActiveBorder(paramPlugin);
 
-        // SET ACTIVE
+        // Load tool settings entry panel
         ArrayList<ToolSettingEntry<?>> toolSettingEntries = getToolSettingEntries(paramPlugin);
 
         if(toolSettingEntries.size() != 0) {
@@ -142,16 +185,27 @@ public class PluginManager extends ApplicationComponent {
         } else {
             super.getApplication().getUIManager().getWindow().getMiniToolList().removeToolSettingsPanel();
         }
+
+        this.setActivatePlugin(paramPlugin);
+    }
+
+    public void updateCanvas(Graphics paramGraphics) {
+        this.getActiveCanvasPlugin().paint(paramGraphics);
+    }
+
+    private void setDefaultPlugin() {
+        if(this.getPluginRegistry().size() > 0) {
+            this.activatePlugin(this.getPluginByPluginType(Plugins.values()[0]));
+        }
     }
 
     public PluginManager(Application paramApplication) {
         super(paramApplication);
 
-        registerAllPlugins();
-    }
+        this.registerAllPlugins();
+        this.loadAllPlugins();
+        this.setDefaultPlugin();
 
-    public void updateCanvas(Graphics paramGraphics) {
-        this.getCanvasPlugin().paint(paramGraphics);
     }
 
 }

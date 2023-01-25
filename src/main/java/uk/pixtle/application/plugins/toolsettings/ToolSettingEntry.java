@@ -20,8 +20,8 @@ public abstract class ToolSettingEntry<T> {
     public void notifyVariableChange(T paramValue) {}
 
     /*
-    Return true if valid, return false if not
-     */
+        Return true if valid, return false if not
+         */
     public abstract boolean validateInput(T paramInput);
 
     /*

@@ -2,6 +2,8 @@ package uk.pixtle.application.plugins.toolsettings.inputdevices;
 
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 
+import javax.swing.*;
+
 public abstract class SliderInputDevice extends InputDevice {
 
     public SliderInputDevice(ToolSettingEntry paramParentEntry) {
@@ -15,4 +17,6 @@ public abstract class SliderInputDevice extends InputDevice {
 
     public abstract int getMinValue();
     public abstract int getMaxValue();
+    public abstract void renderer(JSlider paramSlider);
+    public abstract boolean paintCurrentValue();
 }

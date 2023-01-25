@@ -144,18 +144,31 @@ public class ToolListUI extends JScrollPane implements ToolList {
 
     }
 
-    public void toolClick(ToolButton paramToolButton, Plugin paramPlugin ) {
-
+    public void clearActiveBorders() {
         for(ToolButton toolButton : this.getToolButtons()) {
             toolButton.setBorder(BorderFactory.createEmptyBorder());
         }
-        paramToolButton.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
-
-
-        paramPlugin.getApplication().getPluginManager().pluginClick(paramPlugin);
     }
 
+    public void clearPluginBorder(Plugin paramPlugin) {
+        for(ToolButton toolButton : this.getToolButtons()) {
+            if(toolButton.getParentPlugin() == paramPlugin) {
+                toolButton.setBorder(BorderFactory.createEmptyBorder());
+            }
+        }
+    }
 
+    public void addActiveBorder(Plugin paramPlugin) {
+        for(ToolButton toolButton : this.getToolButtons()) {
+            if(toolButton.getParentPlugin() == paramPlugin) {
+                toolButton.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
 
+            }
+        }
 
+    }
+
+    public void toolClick(ToolButton paramToolButton, Plugin paramPlugin ) {
+        paramPlugin.getApplication().getPluginManager().activatePlugin(paramPlugin);
+    }
 }

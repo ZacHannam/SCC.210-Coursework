@@ -60,7 +60,7 @@ public class Window extends JFrame {
         super.add(toolList, toolList.getAnchors());
         this.setToolList(toolList);
 
-        ColorPanel colorPanel = new ColorPanel();
+        ColorPanel colorPanel = new ColorPanel(paramApplication);
         super.add(colorPanel, colorPanel.getAnchors());
         this.setColorPanel(colorPanel);
 

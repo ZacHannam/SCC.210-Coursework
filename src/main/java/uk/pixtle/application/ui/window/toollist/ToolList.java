@@ -6,4 +6,7 @@ import uk.pixtle.application.ui.window.WindowItem;
 public interface ToolList extends WindowItem {
 
     ToolButton createToolButton(Plugin paramPlugin, String paramIconName);
+    public void clearActiveBorders();
+    public void clearPluginBorder(Plugin paramPlugin);
+    public void addActiveBorder(Plugin paramPlugin);
 }

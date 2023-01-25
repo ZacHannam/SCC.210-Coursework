@@ -1,5 +1,7 @@
 package uk.pixtle.application.ui.window.color;
 
+import uk.pixtle.application.Application;
+import uk.pixtle.application.colour.ColourSlots;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.WindowItem;
@@ -32,7 +34,7 @@ public class ColorPanel extends JPanel implements WindowItem {
     }
 
 
-    public ColorPanel() {
+    public ColorPanel(Application paramApplication) {
         super.setBackground(Color.white);
 
 
@@ -50,7 +52,7 @@ public class ColorPanel extends JPanel implements WindowItem {
         button1.setBackground(Color.RED);
         button1.setOpaque(true);
 
-        JButton button2 = new JButton();
+        button2 = new JButton();
         button2.setOpaque(true);
         button2.setPreferredSize(new Dimension(50,50));
         button2.setBounds(40,40,50,50);
@@ -65,11 +67,13 @@ public class ColorPanel extends JPanel implements WindowItem {
 
         button1.addActionListener(e -> {
             layeredPane.setLayer(button1,3,0);
+            paramApplication.getColourManager().setActiveColorSlot(ColourSlots.COLOUR_1);
 
         });
 
         button2.addActionListener(e -> {
             layeredPane.setLayer(button2,3,0);
+            paramApplication.getColourManager().setActiveColorSlot(ColourSlots.COLOUR_2);
 
         });
     }

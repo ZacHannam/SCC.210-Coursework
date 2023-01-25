@@ -34,14 +34,10 @@ public class Application {
 
     public Application() {
         this.setLogger(LogManager.getLogger("Pixtle"));
+
         this.setEventManager(new EventManager(this));
         this.setUIManager(new UIManager(this));
-
         this.setColourManager(new ColourManager(this));
         this.setPluginManager(new PluginManager(this));
-
-        // TO-DELETE
-        this.getEventManager().callEvent(new ExampleEvent("Hello"));
-        //this.getEventManager().callEvent;
     }
 }

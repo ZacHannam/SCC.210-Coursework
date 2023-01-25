@@ -5,16 +5,103 @@ import lombok.Setter;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
-import uk.pixtle.application.ui.window.canvas.CanvasUI;
+import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
+import uk.pixtle.application.plugins.toolsettings.ToolSetting;
+import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
+import uk.pixtle.application.plugins.toolsettings.inputdevices.InputDevice;
+import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion {
+
+    // Abstract Methods
+
+    public void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing) {
+
+        for(int i = 0; i < paramDrawing.getHeight(); i++) {
+            for (int j = 0; j < paramDrawing.getWidth(); j++) {
+                int targetPixelX = currentPixelX + (int) Math.ceil(paramScreenX * (1 / scale)) + j - 1;
+                int targetPixelY = currentPixelY + (int) Math.ceil(paramScreenY * (1 / scale)) + i - 1;
+
+                int chunkIDX = (int) Math.floor((targetPixelX) / pixelsPerChunkLength);
+                int chunkIDY = (int) Math.floor((targetPixelY) / pixelsPerChunkLength);
+
+                try {
+
+                    if(paramDrawing.getColor(j, i) != null) {
+                        availableChunks[chunkIDX][chunkIDY].getActualImage().setRGB(targetPixelX % pixelsPerChunkLength, targetPixelY % pixelsPerChunkLength, paramDrawing.getColor(j, i).getRGB());
+                        availableChunks[chunkIDX][chunkIDY].setRenderingChange(true);
+                    }
+
+                } catch(ArrayIndexOutOfBoundsException exception) {continue;};
+            }
+        }
+        repaint();
+    }
+
+    // Tool Settings
+    @ToolSetting
+    private ToolSettingEntry<Integer> zoom = new ToolSettingEntry<Integer>(1){
+
+        @Override
+        public void notifyVariableChange(Integer paramVar) {
+            double mappedScale = Math.pow(2, 0.07 * paramVar);
+            scaleAround(mappedScale, 0, 0);
+            repaint();
+        }
+
+        @Override
+        public boolean validateInput(Integer paramInput) {
+            return true;
+        }
+
+        @Override
+        public String getTitle() {
+            return "- Zoom +";
+        }
+
+        @Override
+        public InputDevice getInputDevice() {
+            return new SliderInputDevice(this) {
+
+                @Override
+                public int getMinValue() {
+                    return -30;
+                }
+
+                @Override
+                public int getMaxValue() {
+                    return 60;
+                }
+
+                @Override
+                public boolean paintCurrentValue() {
+                    return false;
+                }
+
+                @Override
+                public void renderer(JSlider paramSlider) {
+                    paramSlider.setPaintLabels(false);
+                }
+            };
+        }
+    };
+
+    // Plugin Drawable Expansion
+
+    @Override
+    public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY, int paramDifferenceX, int paramDifferenceY) {
+
+        this.updateCurrentPixel(-paramDifferenceX, -paramDifferenceY);
+    }
+
+    // Infinite Canvas Plugin
 
     Chunk[][] availableChunks;
 
@@ -34,7 +121,13 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         }
     }
 
+    @Getter
+    @Setter
     double scale = 1;
+
+    public void scaleAround(double paramScale, int paramX, int paramY) {
+        setScale(paramScale);
+    }
 
     public void updateCurrentPixel(int paramCurrentPixelX, int paramCurrentPixelY) {
         currentPixelX += (int) ((1.0 / scale) * paramCurrentPixelX);
@@ -103,11 +196,5 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         super(paramApplication);
 
         infiniteCanvas();
-    }
-
-    @Override
-    public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY, int paramDifferenceX, int paramDifferenceY) {
-
-        this.updateCurrentPixel(-paramDifferenceX, -paramDifferenceY);
     }
 }

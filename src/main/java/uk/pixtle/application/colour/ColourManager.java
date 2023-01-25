@@ -11,18 +11,33 @@ import java.awt.*;
 public class ColourManager extends ApplicationComponent {
 
     @Getter
-    @Setter
     private Color color2;
 
-    @Setter
+    public void setColor2(Color paramColor) {
+        super.getApplication().getUIManager().getWindow().getColorPanel().setButton2Colour(paramColor);
+        this.color2 = paramColor;
+    }
+
     @Getter
     private Color color1;
 
+    public void setColor1(Color paramColor) {
+        super.getApplication().getUIManager().getWindow().getColorPanel().setButton1Colour(paramColor);
+        this.color1 = paramColor;
+    }
+
     @Getter
-    @Setter
     private ColourSlots activeColorSlot;
 
-    public void setColorOfActiveColor(Color paramColor) {
+    public void setActiveColorSlot(ColourSlots paramColourSlot) {
+        System.out.println(paramColourSlot);
+        this.activeColorSlot = paramColourSlot;
+        super.getApplication().getEventManager().callEvent(new ColourChangeEvent(
+                this.getActiveColorSlot(), this.getActiveColor()
+        ));
+    }
+
+    public void setColorOfActiveSlot(Color paramColor) {
         switch(this.getActiveColorSlot()) {
             case COLOUR_1:
                 this.setColor1(paramColor);
@@ -43,13 +58,25 @@ public class ColourManager extends ApplicationComponent {
         } else {
             this.setActiveColorSlot(ColourSlots.COLOUR_1);
         }
+
+        super.getApplication().getEventManager().callEvent(new ColourChangeEvent(
+                this.getActiveColorSlot(), this.getActiveColor()
+        ));
+    }
+
+    public Color getActiveColor() {
+        if(this.getActiveColorSlot() == ColourSlots.COLOUR_1) {
+            return this.getColor1();
+        } else {
+            return this.getColor2();
+        }
     }
 
     public ColourManager(Application paramApplication) {
         super(paramApplication);
 
-        this.setColor1(Color.WHITE);
+        this.setColor1(Color.GREEN);
         this.setColor2(Color.BLACK);
-        this.setActiveColorSlot(ColourSlots.COLOUR_1);
+        this.setActiveColorSlot(ColourSlots.COLOUR_2);
     }
 }

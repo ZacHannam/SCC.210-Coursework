@@ -3,6 +3,7 @@ package uk.pixtle.application.ui.window.minitoollist;
 import lombok.Getter;
 import lombok.Setter;
 import org.w3c.dom.Text;
+import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.DropDownInputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
@@ -55,20 +56,31 @@ public final class ToolSettingsPanel extends JPanel {
                     slider.setMinimum(((SliderInputDevice) toolSettingEntry.getInputDevice()).getMinValue());
                     slider.setValue((int) toolSettingEntry.getValue());
 
-                    panel.add(slider);
+                    ((SliderInputDevice) toolSettingEntry.getInputDevice()).renderer(slider);
 
-                    JLabel sliderLabel = createDefaultLabel(String.valueOf(slider.getValue()), 10, Color.black);
-                    panel.add(sliderLabel);
+                    panel.add(slider);
 
                     slider.addChangeListener(new ChangeListener() {
                         @Override
                         public void stateChanged(ChangeEvent e) {
-                            sliderLabel.setText(String.valueOf(slider.getValue()));
                             ((ToolSettingEntry<Integer>) toolSettingEntry).setValue(slider.getValue());
                             ((ToolSettingEntry<Integer>) toolSettingEntry).notifyVariableChange(slider.getValue());
                         }
                     });
 
+                    if(((SliderInputDevice) toolSettingEntry.getInputDevice()).paintCurrentValue()) {
+                        JLabel sliderLabel = createDefaultLabel(String.valueOf(slider.getValue()), 10, Color.black);
+                        panel.add(sliderLabel);
+
+                        slider.addChangeListener(new ChangeListener() {
+                            @Override
+                            public void stateChanged(ChangeEvent e) {
+                                sliderLabel.setText(String.valueOf(slider.getValue()));
+                            }
+                        });
+                    }
+
+                    ((ToolSettingEntry<Integer>) toolSettingEntry).notifyVariableChange(slider.getValue());
 
                     break;
 
