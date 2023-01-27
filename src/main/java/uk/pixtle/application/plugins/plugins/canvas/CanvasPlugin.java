@@ -14,7 +14,7 @@ public abstract class CanvasPlugin extends Plugin implements PluginToolExpansion
 
     @Override
     public String getIconFilePath() {
-        return "Pen-0001.png";
+        return "Canvas_Tool_Hand.jpg";
     }
 
     public abstract void paint(Graphics paramGraphics);
