@@ -2,8 +2,10 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.json.JSONObject;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
+import uk.pixtle.application.plugins.expansions.PluginSavableExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
@@ -18,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion {
+public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginSavableExpansion {
 
     // Abstract Methods
 
@@ -196,5 +198,16 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         super(paramApplication);
 
         infiniteCanvas();
+    }
+
+    @Override
+    public JSONObject save() {
+        System.out.println("Saved");
+        return null;
+    }
+
+    @Override
+    public void load(JSONObject paramSavedJSON) {
+
     }
 }

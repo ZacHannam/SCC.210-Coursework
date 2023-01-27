@@ -94,7 +94,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
                 @Override
                 public String[] getValues() {
-                    return new String[]{"Sphere", "Block"};
+                    return new String[]{"Sphere", "Block", "Triangle"};
                 }
             };
         }
