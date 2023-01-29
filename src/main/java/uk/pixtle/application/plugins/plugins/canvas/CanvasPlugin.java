@@ -18,8 +18,9 @@ public abstract class CanvasPlugin extends Plugin implements PluginToolExpansion
     }
 
     public abstract void paint(Graphics paramGraphics);
-
-    public abstract void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing);
+    public abstract void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing, boolean paramCenter);
+    public abstract Color getPixelColour(int paramScreenX, int paramScreenY);
+    public abstract void setPixelColour(int paramScreenX, int paramScreenY, Color paramColour);
 
     public void repaint() {
         ((JPanel) super.getApplication().getUIManager().getWindow().getCanvas()).repaint();
@@ -28,4 +29,6 @@ public abstract class CanvasPlugin extends Plugin implements PluginToolExpansion
     public CanvasPlugin(Application paramApplication) {
         super(paramApplication);
     }
+
+
 }

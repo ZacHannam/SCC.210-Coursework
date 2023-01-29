@@ -3,39 +3,45 @@ package uk.pixtle.application.plugins.plugins.tools;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
+import org.json.JSONString;
+import org.json.JSONTokener;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.Plugins;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
-import uk.pixtle.application.plugins.expansions.PluginSavableExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
+import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
+import uk.pixtle.util.JSONImport;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.Map;
+import java.util.Scanner;
 
 public class FileLoader extends Plugin implements PluginMiniToolExpansion {
+
+    @Getter
+    @Setter
+    private String currentFile;
 
     // ---------------------- TEST METHODS ----------------------
 
     public void saveFile(String path) {
         JSONObject savedJSON = new JSONObject();
 
-        for(Map.Entry<Plugins, Plugin> entry :  super.getApplication().getPluginManager().getPluginRegistry().entrySet()) {
-            if(entry.getValue() instanceof PluginSavableExpansion) {
-                PluginSavableExpansion savePlugin = (PluginSavableExpansion)  entry.getValue();
-                savedJSON.put(entry.getKey().toString(), savePlugin.save());
-            }
+        for(Map.Entry<Plugins, Plugin> entry :  super.getApplication().getPluginManager().getPluginsByPolicy(PluginSavePolicy.class).entrySet()) {
+            PluginSavePolicy savePlugin = (PluginSavePolicy)  entry.getValue();
+            savedJSON.put(entry.getKey().toString(), savePlugin.save());
         }
 
         File file = new File(path);
@@ -51,19 +57,66 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
         try {
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(savedJSON.toString());
+            fileWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        this.setCurrentFile(path);
+    }
+
+    public void loadFile(String path) {
+
+        StringBuilder jsonDataAsString = new StringBuilder();
+
+        try {
+            File file = new File(path);
+            Scanner reader = new Scanner(file);
+            while (reader.hasNextLine()) {
+                String data = reader.nextLine();
+                jsonDataAsString.append(data);
+            }
+            reader.close();
+        } catch (FileNotFoundException e) {
+            // TO-DO error
+            return;
+        }
+
+        JSONObject jsonObject = new JSONObject(jsonDataAsString.toString());
+
+        for(String key : jsonObject.keySet()) {
+            try {
+                Plugins pluginType = Plugins.valueOf(key);
+                Plugin plugin = super.getApplication().getPluginManager().getPluginByPluginType(pluginType);
+                if(plugin instanceof PluginSavePolicy) {
+                    ((PluginSavePolicy) plugin).load(jsonObject.getJSONObject(key));
+                }
+            } catch(NullPointerException e) {
+                // to do error
+            }
+        }
+
+
+        for(Map.Entry<Plugins, Plugin> entry :  super.getApplication().getPluginManager().getPluginsByPolicy(PluginSavePolicy.class).entrySet()) {
+            PluginSavePolicy savePlugin = (PluginSavePolicy)  entry.getValue();
+        }
+
+        this.setCurrentFile(path);
+
     }
 
     @MenuBarItem(PATH = "file:Save")
     public void save() {
-
+        if(this.getCurrentFile() == null) {
+            saveAs();
+        } else {
+            saveFile(this.getCurrentFile());
+        }
     }
 
 
     @MenuBarItem(PATH = "file:Save As")
-    public void saveAs() throws IOException {
+    public void saveAs() {
         JFileChooser fileChooser = new JFileChooser();
         FileFilter fileFilter = new FileNameExtensionFilter("Pixtle File", "pix");
         fileChooser.setFileFilter(fileFilter);
@@ -75,9 +128,11 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
         {
             File fileToSave = fileChooser.getSelectedFile();
             System.out.println("Save as file: " + fileToSave.getAbsolutePath());
-            //Write code here to save our canvas.
-            if(fileToSave.createNewFile())
-                System.out.println("File saved");
+            String path = fileToSave.getAbsolutePath();
+            if(!path.endsWith(".pix")) {
+                path += ".pix";
+            }
+            saveFile(path);
         }
 
     }
@@ -94,16 +149,9 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
         if(option == JFileChooser.APPROVE_OPTION)
         {
             File fileToOpen = fileChooser.getSelectedFile();
-            System.out.println("Load file: " + fileToOpen.getAbsolutePath());
-            //Write code here to save our canvas.
-
+            loadFile(fileToOpen.getAbsolutePath());
         }
 
-    }
-
-    @EventHandler
-    public void test(ExampleEvent paramEvent) {
-        System.out.println(paramEvent.getCreationTime().toString());
     }
 
     // ---------------------- MINI TOOL EXPANSION METHODS ----------------------
@@ -114,25 +162,76 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 200;
+        return 110;
     }
 
     @Override
     public void instanceMiniToolPanel(MiniToolPanel paramMiniToolPanel) {
         this.setMiniToolPanel(paramMiniToolPanel);
 
-        AnchoredComponent anchoredComponent = new AnchoredComponent();
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, 10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.X, -10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, 10);
-        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -10);
+        AnchoredComponent fileLoaderText = new AnchoredComponent();
+        fileLoaderText.createAnchor(Anchor.DirectionType.Y, 0);
+        fileLoaderText.createAnchor(AnchoredComponent.StandardX.LEFT);
+        fileLoaderText.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        fileLoaderText.createAnchor(Anchor.DirectionType.Y, 20);
 
-        JLabel jLabel = new JLabel("Example Plugin");
-        jLabel.setAutoscrolls(true);
+        JLabel text = new JLabel("Files");
+        text.setHorizontalAlignment(0);
+        text.setFont(new Font ("Consolas", Font.PLAIN, 18));
+        text.setForeground(Color.black);
 
-        paramMiniToolPanel.add(jLabel, anchoredComponent);
+        paramMiniToolPanel.add(text, fileLoaderText);
 
-        paramMiniToolPanel.setBackground(Color.WHITE);
+        AnchoredComponent saveButtonAnchoredComponent = new AnchoredComponent();
+        saveButtonAnchoredComponent.createAnchor(Anchor.DirectionType.Y, 20);
+        saveButtonAnchoredComponent.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        saveButtonAnchoredComponent.createAnchor(AnchoredComponent.StandardX.LEFT);
+        saveButtonAnchoredComponent.createAnchor(Anchor.DirectionType.Y, 50);
+
+        JButton saveButton = new JButton("Save");
+        saveButton.setBorder(BorderFactory.createLineBorder(Color.lightGray, 3, true));
+        paramMiniToolPanel.add(saveButton, saveButtonAnchoredComponent);
+
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                save();
+            }
+        });
+
+        AnchoredComponent saveAsButtonAnchoredComponent = new AnchoredComponent();
+        saveAsButtonAnchoredComponent.createAnchor(Anchor.DirectionType.Y, 50);
+        saveAsButtonAnchoredComponent.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        saveAsButtonAnchoredComponent.createAnchor(AnchoredComponent.StandardX.LEFT);
+        saveAsButtonAnchoredComponent.createAnchor(Anchor.DirectionType.Y, 80);
+
+        JButton saveAsButton = new JButton("Save as");
+        saveAsButton.setBorder(BorderFactory.createLineBorder(Color.lightGray, 3, true));
+        paramMiniToolPanel.add(saveAsButton, saveAsButtonAnchoredComponent);
+
+        saveAsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveAs();
+            }
+        });
+
+        AnchoredComponent loadButtonAnchoredComponent = new AnchoredComponent();
+        loadButtonAnchoredComponent.createAnchor(Anchor.DirectionType.Y, 80);
+        loadButtonAnchoredComponent.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        loadButtonAnchoredComponent.createAnchor(AnchoredComponent.StandardX.LEFT);
+        loadButtonAnchoredComponent.createAnchor(Anchor.DirectionType.Y, 110);
+
+        JButton loadButton = new JButton("Load");
+        loadButton.setBorder(BorderFactory.createLineBorder(Color.lightGray, 3, true));
+        paramMiniToolPanel.add(loadButton, loadButtonAnchoredComponent);
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                load();
+            }
+        });
     }
 
     // ---------------------- CONSTRUCTOR ----------------------
@@ -141,6 +240,8 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
         super(paramApplication);
 
         super.getApplication().getEventManager().registerEvents(this);
+
+        this.setCurrentFile(null);
     }
 
 }

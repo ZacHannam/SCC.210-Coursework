@@ -6,6 +6,7 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.ApplicationComponent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
+import uk.pixtle.application.plugins.policies.PluginPolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
@@ -19,14 +20,29 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class PluginManager extends ApplicationComponent {
 
     @Getter
     public HashMap<Plugins, Plugin> pluginRegistry = new HashMap<>();
+
+    /**
+     * Search for plugins by a policy
+     * @param paramPolicy
+     * @return
+     */
+    public HashMap<Plugins, Plugin> getPluginsByPolicy(Class<? extends PluginPolicy> paramPolicy) {
+        HashMap<Plugins, Plugin> plugins = new HashMap<>();
+
+        for(Map.Entry<Plugins, Plugin> entry: this.getPluginRegistry().entrySet()) {
+            if(Arrays.stream(entry.getValue().getClass().getInterfaces()).toList().contains(paramPolicy)) {
+                plugins.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return plugins;
+    }
 
     /**
      * Get the plugin by the plugin type
@@ -65,6 +81,7 @@ public class PluginManager extends ApplicationComponent {
                 Plugin plugin = Objects.requireNonNull(pluginClass).getConstructor(constructorParam).newInstance(super.getApplication());
                 this.getPluginRegistry().put(pluginValue, plugin);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException exception) {
+                exception.printStackTrace();
                 return;
             }
 
@@ -110,7 +127,6 @@ public class PluginManager extends ApplicationComponent {
 
         // Plugin Tool Expansion
         if(paramPlugin instanceof PluginToolExpansion) {
-
             // Creates the tool button on the side
             this.getApplication().getUIManager().getWindow().getToolList().createToolButton(paramPlugin, ((PluginToolExpansion) paramPlugin).getIconFilePath());
         }
