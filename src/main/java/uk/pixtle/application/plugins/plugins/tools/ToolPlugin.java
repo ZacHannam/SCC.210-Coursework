@@ -5,6 +5,8 @@ import uk.pixtle.application.plugins.plugins.Plugin;
 
 public abstract class ToolPlugin extends Plugin {
 
+    public void onEnable(){}
+
     public boolean isPluginActive() {
         return this.getApplication().getPluginManager().getActivatePlugin() == this;
     }

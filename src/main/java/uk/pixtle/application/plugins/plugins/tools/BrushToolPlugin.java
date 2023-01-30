@@ -106,6 +106,11 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
         this.renderDrawing();
     }
 
+    @Override
+    public void onEnable() {
+        this.renderDrawing();
+    }
+
     @Getter
     @Setter
     Drawing renderedDrawing;
