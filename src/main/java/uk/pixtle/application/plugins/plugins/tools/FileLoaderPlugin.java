@@ -31,7 +31,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FileLoader extends Plugin implements PluginMiniToolExpansion {
+public class FileLoaderPlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Getter
     @Setter
@@ -231,7 +231,7 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
 
     // ---------------------- CONSTRUCTOR ----------------------
 
-    public FileLoader(Application paramApplication) {
+    public FileLoaderPlugin(Application paramApplication) {
         super(paramApplication);
 
         super.getApplication().getEventManager().registerEvents(this);
