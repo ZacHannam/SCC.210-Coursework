@@ -3,11 +3,7 @@ package uk.pixtle.application.plugins.plugins.tools;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
-import org.json.JSONString;
-import org.json.JSONTokener;
 import uk.pixtle.application.Application;
-import uk.pixtle.application.events.annotations.EventHandler;
-import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.Plugins;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
@@ -16,7 +12,6 @@ import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
-import uk.pixtle.util.JSONImport;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -28,7 +23,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FileLoader extends Plugin implements PluginMiniToolExpansion {
+public class FileLoaderPlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Getter
     @Setter
@@ -234,7 +229,7 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
 
     // ---------------------- CONSTRUCTOR ----------------------
 
-    public FileLoader(Application paramApplication) {
+    public FileLoaderPlugin(Application paramApplication) {
         super(paramApplication);
 
         super.getApplication().getEventManager().registerEvents(this);
