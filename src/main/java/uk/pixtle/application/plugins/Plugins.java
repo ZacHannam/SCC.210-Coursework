@@ -5,17 +5,17 @@ import lombok.Setter;
 import uk.pixtle.application.plugins.plugins.*;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.tools.BrushToolPlugin;
-import uk.pixtle.application.plugins.plugins.tools.FileLoader;
+import uk.pixtle.application.plugins.plugins.tools.ColourDropperPlugin;
+import uk.pixtle.application.plugins.plugins.tools.FileLoaderPlugin;
 import uk.pixtle.application.plugins.plugins.tools.colourplugin.ColourPlugin;
-
-import java.io.File;
 
 public enum Plugins {
 
     INFINITE_CANVAS_PLUGIN(InfiniteCanvasPlugin.class),
     COLOUR_PLUGIN(ColourPlugin.class),
     BRUSH_TOOL(BrushToolPlugin.class),
-    FILE_LOADER(FileLoader .class);
+    FILE_LOADER(FileLoaderPlugin.class),
+    COLOUR_DROPPER(ColourDropperPlugin.class);
 
     @Getter
     @Setter
