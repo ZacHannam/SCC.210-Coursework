@@ -7,6 +7,7 @@ import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanva
 import uk.pixtle.application.plugins.plugins.tools.BrushToolPlugin;
 import uk.pixtle.application.plugins.plugins.tools.ColourDropperPlugin;
 import uk.pixtle.application.plugins.plugins.tools.FileLoaderPlugin;
+import uk.pixtle.application.plugins.plugins.tools.TextToolPlugin;
 import uk.pixtle.application.plugins.plugins.tools.colourplugin.ColourPlugin;
 
 public enum Plugins {
@@ -15,7 +16,8 @@ public enum Plugins {
     COLOUR_PLUGIN(ColourPlugin.class),
     BRUSH_TOOL(BrushToolPlugin.class),
     FILE_LOADER(FileLoaderPlugin.class),
-    COLOUR_DROPPER(ColourDropperPlugin.class);
+    COLOUR_DROPPER(ColourDropperPlugin.class),
+    TEXT_TOOL(TextToolPlugin.class);
 
     @Getter
     @Setter
