@@ -97,9 +97,7 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
         }
 
 
-        for(Map.Entry<Plugins, Plugin> entry :  super.getApplication().getPluginManager().getPluginsByPolicy(PluginSavePolicy.class).entrySet()) {
-            PluginSavePolicy savePlugin = (PluginSavePolicy)  entry.getValue();
-        }
+
 
         this.setCurrentFile(path);
 
