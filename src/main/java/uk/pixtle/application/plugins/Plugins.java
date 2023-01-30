@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.plugins.plugins.*;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
-import uk.pixtle.application.plugins.plugins.tools.BrushToolPlugin;
-import uk.pixtle.application.plugins.plugins.tools.ColourDropperPlugin;
-import uk.pixtle.application.plugins.plugins.tools.FileLoaderPlugin;
-import uk.pixtle.application.plugins.plugins.tools.TextToolPlugin;
+import uk.pixtle.application.plugins.plugins.tools.*;
 import uk.pixtle.application.plugins.plugins.tools.colourplugin.ColourPlugin;
 
 public enum Plugins {
@@ -16,6 +13,7 @@ public enum Plugins {
     COLOUR_PLUGIN(ColourPlugin.class),
     BRUSH_TOOL(BrushToolPlugin.class),
     FILE_LOADER(FileLoaderPlugin.class),
+    FILE_EXPORTER(FileExportingPlugin.class),
     COLOUR_DROPPER(ColourDropperPlugin.class),
     TEXT_TOOL(TextToolPlugin.class);
 
