@@ -16,8 +16,6 @@ import uk.pixtle.application.ui.window.canvas.CanvasUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -312,22 +310,26 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
      */
 
     @Override
-    public JSONObject save() {
-        System.out.println(this.getChunkMap().size());
-        JSONObject saveData = new JSONObject();
+    public JSONObject save() throws Exception {
+        try {
+            System.out.println(this.getChunkMap().size());
+            JSONObject saveData = new JSONObject();
 
-        JSONObject chunkData = new JSONObject();
-        for(Map.Entry<String, Chunk> entry : this.getChunkMap().entrySet()) {
-            chunkData.put(entry.getKey(), entry.getValue().getSaveData());
+            JSONObject chunkData = new JSONObject();
+            for (Map.Entry<String, Chunk> entry : this.getChunkMap().entrySet()) {
+                chunkData.put(entry.getKey(), entry.getValue().getSaveData());
+            }
+            saveData.put("chunkData", chunkData);
+            saveData.put("currentX", this.getCurrentPixelX());
+            saveData.put("currentY", this.getCurrentPixelY());
+            saveData.put("backgroundColour", this.getBackgroundColor());
+            saveData.put("scale", this.getZoom());
+            saveData.put("pixelsPerChunk", this.getPixelsPerChunk());
+
+            return saveData;
+        } catch(Exception e) {
+            throw e;
         }
-        saveData.put("chunkData", chunkData);
-        saveData.put("currentX", this.getCurrentPixelX());
-        saveData.put("currentY", this.getCurrentPixelY());
-        saveData.put("backgroundColour", this.getBackgroundColor());
-        saveData.put("scale", this.getZoom());
-        saveData.put("pixelsPerChunk", this.getPixelsPerChunk());
-
-        return saveData;
     }
 
     private Color decodeColour(String paramColour) {
@@ -360,13 +362,13 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
                 this.getChunkMap().put(key, chunk);
             }
 
+            repaint();
+
         }catch(Exception e) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
+            throw e;
+        }
 
-        // To-Do chunk data
-
-        repaint();
 
 
     }
