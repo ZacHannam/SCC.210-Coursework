@@ -2,6 +2,7 @@ package uk.pixtle.application.plugins.plugins.tools;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
 import org.json.JSONString;
 import org.json.JSONTokener;
@@ -16,6 +17,8 @@ import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
+import uk.pixtle.application.ui.window.notifications.Notification;
+import uk.pixtle.application.ui.window.notifications.Notifications;
 import uk.pixtle.util.JSONImport;
 
 import javax.swing.*;
@@ -37,39 +40,40 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
     // ---------------------- TEST METHODS ----------------------
 
     public void saveFile(String path) {
-        JSONObject savedJSON = new JSONObject();
-
-        for(Map.Entry<Plugins, Plugin> entry :  super.getApplication().getPluginManager().getPluginsByPolicy(PluginSavePolicy.class).entrySet()) {
-            PluginSavePolicy savePlugin = (PluginSavePolicy)  entry.getValue();
-            savedJSON.put(entry.getKey().toString(), savePlugin.save());
-        }
-
-        File file = new File(path);
-        if(file == null) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        file.setWritable(true);
         try {
+            JSONObject savedJSON = new JSONObject();
+
+            for(Map.Entry<Plugins, Plugin> entry :  super.getApplication().getPluginManager().getPluginsByPolicy(PluginSavePolicy.class).entrySet()) {
+                PluginSavePolicy savePlugin = (PluginSavePolicy)  entry.getValue();
+                savedJSON.put(entry.getKey().toString(), savePlugin.save());
+            }
+
+            File file = new File(path);
+            if(file == null) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            file.setWritable(true);
             FileWriter fileWriter = new FileWriter(path);
             fileWriter.write(savedJSON.toString());
             fileWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+            this.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "File Saved", "Successfully saved file: " + path + ".", 5);
+
+        } catch(Exception exception) {
+            this.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "Error Saving File", "Error saving file: " + path + ".\n More details:\n" + exception.getMessage() + "\n" + ExceptionUtils.getStackTrace(exception), -1);
         }
 
         this.setCurrentFile(path);
     }
 
-    public void loadFile(String path) {
-
-        StringBuilder jsonDataAsString = new StringBuilder();
-
+    public void loadFile(String path){
         try {
+            StringBuilder jsonDataAsString = new StringBuilder();
+
             File file = new File(path);
             Scanner reader = new Scanner(file);
             while (reader.hasNextLine()) {
@@ -77,32 +81,24 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
                 jsonDataAsString.append(data);
             }
             reader.close();
-        } catch (FileNotFoundException e) {
-            // TO-DO error
-            return;
-        }
 
-        JSONObject jsonObject = new JSONObject(jsonDataAsString.toString());
+            JSONObject jsonObject = new JSONObject(jsonDataAsString.toString());
 
-        for(String key : jsonObject.keySet()) {
-            try {
+            for (String key : jsonObject.keySet()) {
                 Plugins pluginType = Plugins.valueOf(key);
                 Plugin plugin = super.getApplication().getPluginManager().getPluginByPluginType(pluginType);
-                if(plugin instanceof PluginSavePolicy) {
+                if (plugin instanceof PluginSavePolicy) {
                     ((PluginSavePolicy) plugin).load(jsonObject.getJSONObject(key));
                 }
-            } catch(NullPointerException e) {
-                // to do error
+                this.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "File Loaded", "Successfully loaded file: " + path + ".", 10);
             }
+
+            this.setCurrentFile(path);
+
+        } catch(Exception exception) {
+            this.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "Error Loading File", "Error loading file: " + path + ".\n More details:\n" + exception.getMessage() + "\n" + ExceptionUtils.getStackTrace(exception), -1);
+            return;
         }
-
-
-        for(Map.Entry<Plugins, Plugin> entry :  super.getApplication().getPluginManager().getPluginsByPolicy(PluginSavePolicy.class).entrySet()) {
-            PluginSavePolicy savePlugin = (PluginSavePolicy)  entry.getValue();
-        }
-
-        this.setCurrentFile(path);
-
     }
 
     @MenuBarItem(PATH = "file:Save")
@@ -127,7 +123,6 @@ public class FileLoader extends Plugin implements PluginMiniToolExpansion {
         if(option == JFileChooser.APPROVE_OPTION)
         {
             File fileToSave = fileChooser.getSelectedFile();
-            System.out.println("Save as file: " + fileToSave.getAbsolutePath());
             String path = fileToSave.getAbsolutePath();
             if(!path.endsWith(".pix")) {
                 path += ".pix";
