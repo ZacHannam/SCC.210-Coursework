@@ -20,10 +20,6 @@ public class SavingPlugin extends Plugin implements PluginMiniToolExpansion {
 
     // ---------------------- ABSTRACT METHODS ----------------------
 
-    @Override
-    public String getToolIconLocation() {
-        return null;
-    }
 
     // ---------------------- TEST METHODS ----------------------
 
