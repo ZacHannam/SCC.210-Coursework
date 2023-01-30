@@ -6,6 +6,7 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.ApplicationComponent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
+import uk.pixtle.application.plugins.plugins.tools.ToolPlugin;
 import uk.pixtle.application.plugins.policies.PluginPolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
@@ -203,6 +204,10 @@ public class PluginManager extends ApplicationComponent {
         }
 
         this.setActivatePlugin(paramPlugin);
+
+        if(paramPlugin instanceof ToolPlugin) {
+            ((ToolPlugin) paramPlugin).onEnable();
+        }
     }
 
     public void updateCanvas(Graphics paramGraphics) {

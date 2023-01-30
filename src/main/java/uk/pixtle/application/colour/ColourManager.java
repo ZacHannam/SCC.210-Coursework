@@ -38,6 +38,7 @@ public class ColourManager extends ApplicationComponent {
     }
 
     public void setColorOfActiveSlot(Color paramColor) {
+
         switch(this.getActiveColorSlot()) {
             case COLOUR_1:
                 this.setColor1(paramColor);
@@ -50,6 +51,8 @@ public class ColourManager extends ApplicationComponent {
         super.getApplication().getEventManager().callEvent(new ColourChangeEvent(
                 this.getActiveColorSlot(), paramColor
         ));
+
+
     }
 
     public void swapActiveColourSlot() {
