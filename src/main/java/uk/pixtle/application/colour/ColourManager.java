@@ -75,8 +75,8 @@ public class ColourManager extends ApplicationComponent {
     public ColourManager(Application paramApplication) {
         super(paramApplication);
 
-        this.setColor1(Color.GREEN);
-        this.setColor2(Color.BLACK);
-        this.setActiveColorSlot(ColourSlots.COLOUR_2);
+        this.setColor1(Color.BLACK);
+        this.setColor2(Color.WHITE);
+        this.setActiveColorSlot(ColourSlots.COLOUR_1);
     }
 }

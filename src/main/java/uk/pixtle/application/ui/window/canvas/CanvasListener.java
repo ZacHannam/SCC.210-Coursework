@@ -93,7 +93,6 @@ public class CanvasListener implements MouseListener {
                 int differenceY = calculatedY -  (int) lastPoint.getY();
 
                 final Point[] addedPoints = {
-                        new Point(0, 0),
                         new Point(-1, -1),
                         new Point(0, -1),
                         new Point(1, -1),
@@ -104,31 +103,40 @@ public class CanvasListener implements MouseListener {
                         new Point(0, 1),
                         new Point(1, 1)};
 
+                int currentPixelX = lastX;
+                int currentPixelY = lastY;
+
+                ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(lastX, lastY, differenceX, differenceY);
+
+                differenceY = 0;
+                differenceX = 0;
+
                 while(true) {
 
-                    Point smallestDistancePoint = null;
                     double smallestDistance = -1;
 
-                    for(int index = 0; index < addedPoints.length; index++) {
-                        double distance = Math.sqrt(Math.pow(calculatedX - (lastX - addedPoints[index].getX()), 2) +
-                                Math.pow(calculatedY - (lastY - addedPoints[index].getY()), 2));
+                    int smallestNewLocationX = 0;
+                    int smallestNewLocationY = 0;
+
+                    for(Point point : addedPoints) {
+                        int newLocationX = currentPixelX + (int) point.getX();
+                        int newLocationY = currentPixelY + (int) point.getY();
+
+                        double distance = Math.sqrt(Math.pow(newLocationX - calculatedX, 2) + Math.pow(newLocationY - calculatedY, 2));
                         if(smallestDistance == -1 || distance < smallestDistance) {
                             smallestDistance = distance;
-                            smallestDistancePoint = addedPoints[index];
+                            smallestNewLocationY = newLocationY;
+                            smallestNewLocationX = newLocationX;
                         }
                     }
 
-                    if(lastX != calculatedX) lastX -= (int) smallestDistancePoint.getX();
-                    if(lastY != calculatedY) lastY -= (int) smallestDistancePoint.getY();
+                    ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(smallestNewLocationX, smallestNewLocationY, differenceX, differenceY);
 
-                    ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(lastX, lastY, differenceX, differenceY);
-
-                    differenceY = 0;
-                    differenceX = 0;
-
-                    if(lastX == calculatedX && lastY == calculatedY) {
+                    if(currentPixelX == calculatedX && currentPixelY == calculatedY) {
                         break;
                     }
+                    currentPixelX = smallestNewLocationX;
+                    currentPixelY = smallestNewLocationY;
                 }
 
 

@@ -12,7 +12,6 @@ import java.util.HashMap;
 
 public class AnchoredComponent {
 
-
     public enum StandardY {
         TOP, BOTTOM, MIDDLE;
     }

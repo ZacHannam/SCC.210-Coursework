@@ -94,7 +94,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
                 @Override
                 public String[] getValues() {
-                    return new String[]{"Sphere", "Block"};
+                    return new String[]{"Sphere", "Block", "Triangle"};
                 }
             };
         }
@@ -115,7 +115,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
         if(!this.isPluginActive()) return;
 
-        Drawing drawing = new Drawing(brushSize.getValue() - 1, brushSize.getValue() - 1);
+        Drawing drawing = new Drawing(brushSize.getValue(), brushSize.getValue());
 
         switch(brushType.getValue()) {
             case "Sphere":
@@ -147,16 +147,29 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
 
         this.setRenderedDrawing(drawing);
+        this.changed = true;
 
     }
 
+    int lastX = -1, lastY = -1;
+    boolean changed = true;
     @Override
     public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY,  int paramDifferenceX, int paramDifferenceY) {
 
         if(this.getRenderedDrawing() == null) {
             renderDrawing();
         }
-        super.getApplication().getPluginManager().getActiveCanvasPlugin().printImageOnCanvas(paramCalculatedX - (int) (brushSize.getValue() / 2.0), paramCalculatedY - (int) (brushSize.getValue() / 2.0), this.getRenderedDrawing());
+
+        if(paramCalculatedX != lastX || paramCalculatedY != lastY || changed) {
+            int x = paramCalculatedX, y = paramCalculatedY;
+
+            super.getApplication().getPluginManager().getActiveCanvasPlugin().printImageOnCanvas(x, y, this.getRenderedDrawing(), true);
+
+            lastX = paramCalculatedX;
+            lastY = paramCalculatedY;
+            changed = false;
+        }
+
     }
 
     public BrushToolPlugin(Application paramApplication) {

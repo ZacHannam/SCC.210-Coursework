@@ -34,7 +34,6 @@ public class CanvasUI extends JPanel implements Canvas {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        super.setBackground(Color.lightGray);
 
         if(application.getPluginManager() != null) {
             application.getPluginManager().getActiveCanvasPlugin().paint(g);
