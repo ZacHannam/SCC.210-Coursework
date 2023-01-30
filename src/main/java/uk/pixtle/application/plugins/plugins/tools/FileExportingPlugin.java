@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.HashMap;
 
 public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExpansion {
     public FileExportingPlugin(Application paramApplication) {
@@ -33,13 +34,16 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
     public void exportFile(String PATH){
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        //BufferedImage exportImg = new BufferedImage(super.getApplication().getPluginManager().getActiveCanvasPlugin().getChunkMap());
+        HashMap map=super.getApplication().getPluginManager().getActiveCanvasPlugin().getChunkMap();
+        //Need to iterate through chunks?
+
+        //BufferedImage exportImg = new BufferedImage();
         //ImageIO.write(this.getActualImage(), "png", byteArrayOutputStream);
 
 
     }
 
-    @MenuBarItem(PATH = "file:Export:Export as")
+    @MenuBarItem(PATH = "file:Export")
     public void export() {
         JFileChooser fileChooser = new JFileChooser();
         FileFilter fileFilter = new FileNameExtensionFilter("PNG File", "png");
