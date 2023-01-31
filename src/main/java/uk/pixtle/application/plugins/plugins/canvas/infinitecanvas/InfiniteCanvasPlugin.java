@@ -223,12 +223,26 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.updateCurrentPixel(-paramDifferenceX, -paramDifferenceY);
     }
 
+    private boolean canDraw(boolean paramNotifyExceptions) {
+        if(this.getLayerManager().getActiveLayer() == null) {
+            if(paramNotifyExceptions) super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "No Layer Found", "There is currently no active layer, please create or select one!", 10, false);
+            return false;
+        }
+
+        if(!this.getLayerManager().getActiveLayer().isShown()) {
+            if(paramNotifyExceptions) super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "Layer is hidden!", "The layer you're currently editing is hidden", 3, false);
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Get the colour of an individual pixel on screen
      * @param paramScreenX
      * @param paramScreenY
      */
     public Color getPixelColour(int paramScreenX, int paramScreenY) {
+
         long targetPixelX = currentPixelX + (int) Math.ceil(paramScreenX * (1 / this.getZoom())) - 1;
         long targetPixelY = currentPixelY + (int) Math.ceil(paramScreenY * (1 / this.getZoom())) - 1;
 
@@ -246,11 +260,14 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     /**
      * Set the colour of an individual pixel on the screen
+     * @param paramLayer - the layer to draw on
      * @param paramScreenX
      * @param paramScreenY
      * @param paramColour - use null for removed colour
      */
-    public void setPixelColour(int paramScreenX, int paramScreenY, Color paramColour) {
+    public void setPixelColour(Layer paramLayer, int paramScreenX, int paramScreenY, Color paramColour) {
+        if(!canDraw(true)) return;
+
         long targetPixelX = currentPixelX + (int) Math.ceil(paramScreenX * (1 / this.getZoom())) - 1;
         long targetPixelY = currentPixelY + (int) Math.ceil(paramScreenY * (1 / this.getZoom())) - 1;
 
@@ -263,30 +280,20 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
         Chunk chunk = this.getChunkAt(chunkIDX, chunkIDY);
 
-        if(paramColour == null) {
-            chunk.getActualImage().setRGB((int) (targetPixelX % this.getPixelsPerChunk()), (int) (targetPixelY % this.getPixelsPerChunk()), this.getBackgroundColor().getRGB());
-        } else {
-            chunk.getActualImage().setRGB((int) (targetPixelX % this.getPixelsPerChunk()), (int) (targetPixelY % this.getPixelsPerChunk()), paramColour.getRGB());
+        if(!chunk.isActualImageForLayer(paramLayer.getLayerID())) {
+            chunk.createActualImageForLayer(paramLayer.getLayerID());
         }
-        chunk.setRenderingChange(true);
 
+        chunk.getActualImageByLayer(paramLayer.getLayerID()).setRGB((int) (targetPixelX % this.getPixelsPerChunk()), (int) (targetPixelY % this.getPixelsPerChunk()), paramColour.getRGB());
+
+        chunk.setRenderingChange(true);
         repaint();
     }
 
 
     @Override
     public void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing, boolean paramCenter) {
-
-
-        if(this.getLayerManager().getActiveLayer() == null) {
-            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "No Layer Found", "There is currently no active layer, please create or select one!", 10, false);
-            return;
-        }
-
-        if(!this.getLayerManager().getActiveLayer().isShown()) {
-            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "Layer is hidden!", "The layer you're currently editing is hidden", 3, false);
-            return;
-        }
+        if(!canDraw(true)) return;
 
         long targetPixelX = currentPixelX + (int) Math.ceil(paramScreenX * (1 / this.getZoom())) - 1;
         long targetPixelY = currentPixelY + (int) Math.ceil(paramScreenY * (1 / this.getZoom())) - 1;

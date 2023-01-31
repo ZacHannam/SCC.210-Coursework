@@ -30,7 +30,6 @@ public class ColourManager extends ApplicationComponent {
     private ColourSlots activeColorSlot;
 
     public void setActiveColorSlot(ColourSlots paramColourSlot) {
-        System.out.println(paramColourSlot);
         this.activeColorSlot = paramColourSlot;
         super.getApplication().getEventManager().callEvent(new ColourChangeEvent(
                 this.getActiveColorSlot(), this.getActiveColor()

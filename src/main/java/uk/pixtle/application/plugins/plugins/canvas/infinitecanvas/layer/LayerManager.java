@@ -51,23 +51,28 @@ public class LayerManager {
 
     public void load(JSONObject paramData) throws Exception {
 
-        for(int i = 0; i < paramData.getJSONArray("layerOrder").length(); i++) {
-            this.getLayerOrder().add(paramData.getJSONArray("layerOrder").getInt(i));
-        }
+        this.getLayers().clear();
+        this.getLayerOrder().clear();
 
         this.setLayerCount(paramData.getInt("layerCount"));
 
-        for(String key : paramData.getJSONObject("layers").keySet()) {
+        for (String key : paramData.getJSONObject("layers").keySet()) {
             JSONObject layerData = paramData.getJSONObject("layers").getJSONObject(key);
             Layer layer = new Layer(this, Integer.valueOf(key));
             layer.load(layerData);
 
             this.getLayers().put(layer.getLayerID(), layer);
 
-            if(layer.getLayerID() == paramData.getInt("activeLayer")) {
+            if (layer.getLayerID() == paramData.getInt("activeLayer")) {
                 this.setActiveLayer(layer);
             }
         }
+
+        for(int i = 0; i < paramData.getJSONArray("layerOrder").length(); i++) {
+            this.getLayerOrder().add(paramData.getJSONArray("layerOrder").getInt(i));
+        }
+
+        this.getInfiniteCanvasPlugin().redrawLayers();
     }
 
     public void hideLayer(int paramLayerID) {

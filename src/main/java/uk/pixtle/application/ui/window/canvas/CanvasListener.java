@@ -50,7 +50,6 @@ public class CanvasListener implements MouseListener {
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("Mouse Start: " + e.getX() + " " + e.getY());
     }
 
     /**
@@ -164,7 +163,6 @@ public class CanvasListener implements MouseListener {
      */
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println("Mouse Entered Canvas");
     }
 
     /**

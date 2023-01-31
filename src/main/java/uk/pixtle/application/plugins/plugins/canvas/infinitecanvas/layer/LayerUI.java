@@ -220,7 +220,6 @@ public class LayerUI extends JPanel {
     }
 
     public LayerUI(Layer paramLayer) {
-        System.out.println(paramLayer);
         this.setLayer(paramLayer);
         this.setSelfReference(this);
 
