@@ -2,6 +2,7 @@ package uk.pixtle.application.ui.window.minitoollist;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
@@ -13,6 +14,7 @@ import uk.pixtle.application.ui.layouts.anchorlayout.anchors.ValueAnchor;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MiniToolListUI extends JScrollPane implements MiniToolList {
 
@@ -25,6 +27,10 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
     @Getter
     @Setter
     private JPanel miniToolListPanel;
+
+    @Getter
+    @Setter
+    private HashMap<Plugin, DisplacedAnchor> finalAnchors;
 
     /*
     -------------------- UIComponent Methods --------------------
@@ -96,9 +102,9 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
         this.getMiniToolListPanel().add(this.getBottomTab(), anchoredComponent);
     }
 
-    public MiniToolPanel createMiniToolPanel(int paramHeight) {
+    public MiniToolPanel createMiniToolPanel(Plugin paramPlugin, int paramHeight) {
 
-        MiniToolPanel miniToolPanel = new MiniToolPanel(new Dimension(this.getWidth() - 2 * PADDING, paramHeight));
+        MiniToolPanel miniToolPanel = new MiniToolPanel(paramPlugin, new Dimension(this.getWidth() - 2 * PADDING, paramHeight));
 
         AnchoredComponent anchoredComponent = new AnchoredComponent();
         anchoredComponent.createAnchor(Anchor.DirectionType.X, PADDING);
@@ -106,11 +112,14 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
 
         if(this.getLastYAnchor() == null) {
             anchoredComponent.getAnchors().add(this.getMiniToolsBeginningAnchor());
-            this.setLastYAnchor(anchoredComponent.createAnchor(Anchor.DirectionType.Y,  this.getMiniToolsBeginningAnchor(),PADDING+paramHeight));
+            this.setLastYAnchor(anchoredComponent.createAnchor(Anchor.DirectionType.Y,  this.getMiniToolsBeginningAnchor(), paramHeight));
         } else {
             anchoredComponent.createAnchor(Anchor.DirectionType.Y, this.getLastYAnchor(), PADDING);
             this.setLastYAnchor(anchoredComponent.createAnchor(Anchor.DirectionType.Y, this.getLastYAnchor(), PADDING+paramHeight));
         }
+
+        this.getFinalAnchors().put(paramPlugin, (DisplacedAnchor) this.getLastYAnchor());
+
         this.getMiniToolListPanel().add(miniToolPanel, anchoredComponent);
 
         this.updateBottomTab();
@@ -120,9 +129,19 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
         this.repaint();
 
         return miniToolPanel;
+    }
 
+    public void updateHeightOfMMiniToolPanel(Plugin paramPlugin, int paramNewHeight) {
+        if(!this.getFinalAnchors().containsKey(paramPlugin)) {
+            return;
+        }
 
+        this.getFinalAnchors().get(paramPlugin).setDisplacement(paramNewHeight);
 
+        this.updateBottomTab();
+        this.getMiniToolListPanel().setPreferredSize(new Dimension(this.getWidth(), Integer.MAX_VALUE));
+
+        this.repaint();
     }
 
     @Getter
@@ -174,6 +193,8 @@ public class MiniToolListUI extends JScrollPane implements MiniToolList {
      */
 
     public MiniToolListUI() {
+
+        this.setFinalAnchors(new HashMap<>());
 
         this.createMiniToolList();
         this.createScrollPane();

@@ -33,14 +33,13 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 410;
+        return 420;
     }
 
     @Override
     public void instanceMiniToolPanel(MiniToolPanel paramMiniToolPanel) {
         this.setMiniToolPanel(paramMiniToolPanel);
         this.colourManager = super.getApplication().getColourManager();
-
 
         AnchorLayout anchorLayout = new AnchorLayout();
 
@@ -197,7 +196,6 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     public void RGBText(MiniToolPanel paramMiniToolPanel)
     {
-        //this.setMiniToolPanel(paramMiniToolPanel);
         JPanel componentPanel = new JPanel();
         componentPanel.setPreferredSize(new Dimension(20,50));
 
@@ -262,7 +260,7 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
         return true;
     }
 
-    MiniToolPanel ColourPreviewPanel = new MiniToolPanel(new Dimension(1,100));
+    JPanel ColourPreviewPanel = new JPanel();
     public void ColourPreview(MiniToolPanel paramMiniToolPanel)
     {
         //this.setMiniToolPanel(paramMiniToolPanel);

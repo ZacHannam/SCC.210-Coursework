@@ -5,22 +5,38 @@ import lombok.Setter;
 import org.json.JSONObject;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
+import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk.Chunk;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk.ChunkImageProcessor;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.BackgroundLayerUI;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerUI;
 import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.InputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
+import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.DynamicAnchor;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.ValueAnchor;
 import uk.pixtle.application.ui.window.canvas.CanvasUI;
+import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
+import uk.pixtle.application.ui.window.notifications.Notification;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginSavePolicy {
+public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginMiniToolExpansion, PluginSavePolicy {
 
     /*
                 TOOL SETTINGS
@@ -127,8 +143,13 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     private ReentrantLock lock;
 
     @Getter
-    @Setter
     private Color backgroundColor;
+
+    public void setBackgroundColor(Color paramColor) {
+        this.backgroundColor = paramColor;
+        ((JPanel)this.getApplication().getUIManager().getWindow().getCanvas()).setBackground(paramColor);
+        this.getBackgroundLayerUI().updatePreviewColor(paramColor);
+    }
 
     public void zoomAround(double paramScale, int paramX, int paramY) {
         this.setZoom(paramScale);
@@ -150,6 +171,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
             }
 
             HashMap<ChunkImageProcessor, Point> renderedChunks = new HashMap<>();
+            ArrayList<Integer> visibleLayersInOrder = this.getLayerManager().getVisibleLayersInRenderOrder();
 
             for (long i = 0, chunkIDY = (long) Math.floor((this.getCurrentPixelY()) / this.getPixelsPerChunk()); i < (int) Math.ceil((((JPanel) super.getApplication().getUIManager().getWindow().getCanvas()).getHeight() + (this.getCurrentPixelY() % this.getPixelsPerChunk() * this.getZoom())) / (this.getZoom() * this.getPixelsPerChunk())); i++, chunkIDY++) {
                 for (long j = 0, chunkIDX = (long) Math.floor((this.getCurrentPixelX()) / this.getPixelsPerChunk()); j < (int) Math.ceil((((JPanel) super.getApplication().getUIManager().getWindow().getCanvas()).getWidth() + (this.getCurrentPixelX() % this.getPixelsPerChunk() * this.getZoom())) / (this.getZoom() * this.getPixelsPerChunk())); j++, chunkIDX++) {
@@ -162,7 +184,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
                     }
 
                     Chunk chunk = this.getChunkAt(chunkIDX, chunkIDY);
-                    chunk.updateValues(this.getZoom());
+                    chunk.updateValues(this.getZoom(), visibleLayersInOrder);
 
 
                     ChunkImageProcessor CIP = new ChunkImageProcessor(chunk);
@@ -255,6 +277,17 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     @Override
     public void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing, boolean paramCenter) {
 
+
+        if(this.getLayerManager().getActiveLayer() == null) {
+            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "No Layer Found", "There is currently no active layer, please create or select one!", 10, false);
+            return;
+        }
+
+        if(!this.getLayerManager().getActiveLayer().isShown()) {
+            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "Layer is hidden!", "The layer you're currently editing is hidden", 3, false);
+            return;
+        }
+
         long targetPixelX = currentPixelX + (int) Math.ceil(paramScreenX * (1 / this.getZoom())) - 1;
         long targetPixelY = currentPixelY + (int) Math.ceil(paramScreenY * (1 / this.getZoom())) - 1;
 
@@ -295,7 +328,11 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
                             lastChunk = chunk;
                         }
 
-                        chunk.getActualImage().setRGB((int) (pixelX % this.getPixelsPerChunk()), (int) (pixelY % this.getPixelsPerChunk()), paramDrawing.getColor(j, i).getRGB());
+                        if(!chunk.isActualImageForLayer(this.getLayerManager().getActiveLayer().getLayerID())) {
+                            chunk.createActualImageForLayer(this.getLayerManager().getActiveLayer().getLayerID());
+                        }
+
+                        chunk.getActualImageByLayer(this.getLayerManager().getActiveLayer().getLayerID()).setRGB((int) (pixelX % this.getPixelsPerChunk()), (int) (pixelY % this.getPixelsPerChunk()), paramDrawing.getColor(j, i).getRGB());
                         chunk.setRenderingChange(true);
                     }
 
@@ -311,25 +348,22 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Override
     public JSONObject save() throws Exception {
-        try {
-            System.out.println(this.getChunkMap().size());
-            JSONObject saveData = new JSONObject();
+        JSONObject saveData = new JSONObject();
 
-            JSONObject chunkData = new JSONObject();
-            for (Map.Entry<String, Chunk> entry : this.getChunkMap().entrySet()) {
-                chunkData.put(entry.getKey(), entry.getValue().getSaveData());
-            }
-            saveData.put("chunkData", chunkData);
-            saveData.put("currentX", this.getCurrentPixelX());
-            saveData.put("currentY", this.getCurrentPixelY());
-            saveData.put("backgroundColour", this.getBackgroundColor());
-            saveData.put("scale", this.getZoom());
-            saveData.put("pixelsPerChunk", this.getPixelsPerChunk());
-
-            return saveData;
-        } catch(Exception e) {
-            throw e;
+        JSONObject chunkData = new JSONObject();
+        for (Map.Entry<String, Chunk> entry : this.getChunkMap().entrySet()) {
+            chunkData.put(entry.getKey(), entry.getValue().save());
         }
+
+        saveData.put("chunkData", chunkData);
+        saveData.put("currentX", this.getCurrentPixelX());
+        saveData.put("currentY", this.getCurrentPixelY());
+        saveData.put("backgroundColour", this.getBackgroundColor());
+        saveData.put("scale", this.getZoom());
+        saveData.put("pixelsPerChunk", this.getPixelsPerChunk());
+        saveData.put("layerManager", this.getLayerManager().save());
+
+        return saveData;
     }
 
     private Color decodeColour(String paramColour) {
@@ -344,38 +378,163 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     }
 
     @Override
-    public void load(JSONObject paramSavedJSON) {
+    public void load(JSONObject paramSavedJSON) throws Exception {
 
-        try {
-            this.getChunkMap().clear();
-            this.setCurrentPixelX(paramSavedJSON.getLong("currentX"));
-            this.setCurrentPixelY(paramSavedJSON.getLong("currentY"));
-            this.setZoom(paramSavedJSON.getDouble("scale"));
-            this.setPixelsPerChunk(paramSavedJSON.getInt("pixelsPerChunk"));
-            this.setBackgroundColor(this.decodeColour(paramSavedJSON.getString("backgroundColour")));
+        this.getChunkMap().clear();
+        this.setLayerManager(new LayerManager(this));
 
-            for(String key : paramSavedJSON.getJSONObject("chunkData").keySet()) {
-                String data = paramSavedJSON.getJSONObject("chunkData").getString(key);
+        this.setCurrentPixelX(paramSavedJSON.getLong("currentX"));
+        this.setCurrentPixelY(paramSavedJSON.getLong("currentY"));
+        this.setZoom(paramSavedJSON.getDouble("scale"));
+        this.setPixelsPerChunk(paramSavedJSON.getInt("pixelsPerChunk"));
+        this.setBackgroundColor(this.decodeColour(paramSavedJSON.getString("backgroundColour")));
 
-                Chunk chunk = new Chunk(this.getPixelsPerChunk(), this.getBackgroundColor());
-                chunk.load(data);
-                this.getChunkMap().put(key, chunk);
-            }
+        for(String key : paramSavedJSON.getJSONObject("chunkData").keySet()) {
+            JSONObject data = paramSavedJSON.getJSONObject("chunkData").getJSONObject(key);
 
-            repaint();
-
-        }catch(Exception e) {
-            e.printStackTrace();
-            throw e;
+            Chunk chunk = new Chunk(this.getPixelsPerChunk(), this.getBackgroundColor());
+            chunk.load(data);
+            this.getChunkMap().put(key, chunk);
         }
 
+        this.getLayerManager().load(paramSavedJSON.getJSONObject("layerManager"));
 
+        repaint();
+    }
+
+    /*
+                MINI TOOL PANEL
+     */
+
+    @Getter
+    @Setter
+    private Anchor beginBackgroundAnchor;
+
+    @Getter
+    @Setter
+    private ArrayList<LayerUI> layerUIs;
+
+    @Getter
+    @Setter
+    private MiniToolPanel miniToolPanel;
+
+    @Override
+    public int getMiniToolPanelHeight() {
+        return 85;
+    }
+
+    public void redrawLayers() {
+        this.getMiniToolPanel().updateHeight(this.getLayerManager().getLayers().size() * 50 + 85);
+
+        for(LayerUI layerUI : this.getLayerUIs()) {
+            this.getMiniToolPanel().remove(layerUI);
+        }
+        layerUIs.clear();
+
+        int index = 0;
+        for(int layerID : this.getLayerManager().getLayerOrder()) {
+
+            AnchoredComponent layerAnchors = new AnchoredComponent();
+            layerAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
+            layerAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
+            layerAnchors.createAnchor(Anchor.DirectionType.Y, 35 + (index * 50));
+            layerAnchors.createAnchor(Anchor.DirectionType.Y, 35 + ((index + 1) * 50));
+
+            LayerUI layer = new LayerUI(this.getLayerManager().getLayers().get(layerID));
+            this.getMiniToolPanel().add(layer, layerAnchors);
+
+            this.getLayerUIs().add(layer);
+
+            index++;
+        }
+
+        ((ValueAnchor) this.getBeginBackgroundAnchor()).setValue(35 + (this.getLayerManager().getLayerOrder().size() * 50));
+
+        this.getMiniToolPanel().revalidate();
+        this.getMiniToolPanel().repaint();
+    }
+
+    @Getter
+    @Setter
+    BackgroundLayerUI backgroundLayerUI;
+
+    @Override
+    public void instanceMiniToolPanel(MiniToolPanel paramMiniToolPanel) {
+
+        this.setMiniToolPanel(paramMiniToolPanel);
+
+        /*
+        Top Panel
+         */
+
+        AnchoredComponent addLayerButtonAnchors = new AnchoredComponent();
+        addLayerButtonAnchors.createAnchor(Anchor.DirectionType.X, -35);
+        addLayerButtonAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        addLayerButtonAnchors.createAnchor(Anchor.DirectionType.Y, 0);
+        addLayerButtonAnchors.createAnchor(Anchor.DirectionType.Y, 35);
+
+        JButton addLayerButton = new JButton();
+        addLayerButton.setText("+");
+        addLayerButton.setOpaque(false);
+        addLayerButton.setBorder(BorderFactory.createEmptyBorder());
+
+        addLayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getLayerManager().createNewLayer();
+            }
+        });
+
+
+        paramMiniToolPanel.add(addLayerButton, addLayerButtonAnchors);
+
+        AnchoredComponent textAnchors = new AnchoredComponent();
+        textAnchors.createAnchor(Anchor.DirectionType.X, -35);
+        textAnchors.createAnchor(Anchor.DirectionType.X, 5);
+        textAnchors.createAnchor(Anchor.DirectionType.Y, 0);
+        textAnchors.createAnchor(Anchor.DirectionType.Y, 35);
+
+        JLabel textLabel = new JLabel();
+        textLabel.setText("Layers");
+        paramMiniToolPanel.add(textLabel, textAnchors);
+
+        /*
+        Background Layer
+         */
+
+        AnchoredComponent backgroundAnchors = new AnchoredComponent();
+        backgroundAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
+        backgroundAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        this.setBeginBackgroundAnchor(backgroundAnchors.createAnchor(Anchor.DirectionType.Y, 35));
+        backgroundAnchors.createAnchor(Anchor.DirectionType.Y, this.getBeginBackgroundAnchor(), 50);
+
+        BackgroundLayerUI background = new BackgroundLayerUI(this);
+        background.updateBackgroundColourPreview(this.getBackgroundColor());
+        paramMiniToolPanel.add(background, backgroundAnchors);
+
+        this.setBackgroundLayerUI(background);
+
+        this.setLayerUIs(new ArrayList<>());
 
     }
 
     /*
+               LAYERS
+     */
+
+    @Getter
+    @Setter
+    public LayerManager layerManager;
+
+    /*
                 CONSTRUCTOR
      */
+
+    @Override
+    public void onLoadingFinish() {
+        this.getLayerManager().createNewLayer();
+        this.setBackgroundColor(Color.white);
+    }
 
     public InfiniteCanvasPlugin(Application paramApplication) {
         super(paramApplication);
@@ -385,12 +544,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.setPixelsPerChunk(256);
         this.setCurrentPixelX(Long.MAX_VALUE / this.getPixelsPerChunk() / 2);
         this.setCurrentPixelY(Long.MAX_VALUE / this.getPixelsPerChunk() / 2);
-
-        System.out.println(Long.MAX_VALUE / this.getPixelsPerChunk());
-
-        this.setBackgroundColor(Color.white);
+        this.setLayerManager(new LayerManager(this));
         ((CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas()).setBackground(this.getBackgroundColor());
-
         repaint();
     }
 }
