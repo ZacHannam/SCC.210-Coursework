@@ -121,7 +121,7 @@ public class PluginManager extends ApplicationComponent {
             PluginMiniToolExpansion plugin = (PluginMiniToolExpansion) paramPlugin;
 
             // Creates the mini tool panel
-            MiniToolPanel miniToolPanel = this.getApplication().getUIManager().getWindow().getMiniToolList().createMiniToolPanel(plugin.getMiniToolPanelHeight());
+            MiniToolPanel miniToolPanel = this.getApplication().getUIManager().getWindow().getMiniToolList().createMiniToolPanel(paramPlugin, plugin.getMiniToolPanelHeight());
             plugin.instanceMiniToolPanel(miniToolPanel);
             miniToolPanel.updateUI();
         }
@@ -210,6 +210,12 @@ public class PluginManager extends ApplicationComponent {
         }
     }
 
+    public void callOnLoadingFinish() {
+        for(Plugin plugin : this.getPluginRegistry().values()) {
+            plugin.onLoadingFinish();
+        }
+    }
+
     public void updateCanvas(Graphics paramGraphics) {
         this.getActiveCanvasPlugin().paint(paramGraphics);
     }
@@ -226,6 +232,8 @@ public class PluginManager extends ApplicationComponent {
         this.registerAllPlugins();
         this.loadAllPlugins();
         this.setDefaultPlugin();
+
+        this.callOnLoadingFinish();
 
     }
 

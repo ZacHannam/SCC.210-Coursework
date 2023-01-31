@@ -353,6 +353,14 @@ public class Notification extends JPanel {
         timer.schedule(task, 1000, 1000);
     }
 
+    @Getter
+    @Setter
+    public String rawTitle;
+
+    @Getter
+    @Setter
+    public String rawText;
+
     public Notification(NotificationManager paramNotificationManager, ColourModes paramColourMode, String paramTitle, String paramText, int paramSelfDeleteTime, LocalDateTime paramTime) {
         this.setNotificationManager(paramNotificationManager);
         this.setColourMode(paramColourMode);
@@ -367,6 +375,9 @@ public class Notification extends JPanel {
         this.createTextArea(paramText);
         this.createExitButton();
         this.setSelfDelete(paramSelfDeleteTime);
+
+        this.setRawTitle(paramTitle);
+        this.setRawText(paramText);
     }
 
     public Notification(NotificationManager paramNotificationManager, ColourModes paramColourMode, String paramTitle, String paramText, int paramSelfDeleteTime) {

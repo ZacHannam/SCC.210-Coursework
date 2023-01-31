@@ -96,6 +96,7 @@ public class FileLoaderPlugin extends Plugin implements PluginMiniToolExpansion 
             this.setCurrentFile(path);
 
         } catch(Exception exception) {
+            exception.printStackTrace();
             this.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "Error Loading File", "Error loading file: " + path + ".\n More details:\n" + exception.getMessage() + "\n" + ExceptionUtils.getStackTrace(exception), -1);
             return;
         }
