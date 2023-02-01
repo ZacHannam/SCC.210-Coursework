@@ -172,7 +172,7 @@ public class CanvasListener implements MouseListener {
      */
     @Override
     public void mouseExited(MouseEvent e) {
-        this.stopTimerTask();
+        this.mouseReleased(e);
     }
 
     public CanvasListener(Canvas paramParentCanvas) {

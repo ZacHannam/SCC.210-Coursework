@@ -38,8 +38,8 @@ public class LayerUI extends JPanel {
         AnchoredComponent titleAnchors = new AnchoredComponent();
         titleAnchors.createAnchor(Anchor.DirectionType.Y, -12);
         titleAnchors.createAnchor(Anchor.DirectionType.Y, 12);
-        titleAnchors.createAnchor(Anchor.DirectionType.X, 100);
-        titleAnchors.createAnchor(Anchor.DirectionType.X, 3);
+        titleAnchors.createAnchor(Anchor.DirectionType.X, 125);
+        titleAnchors.createAnchor(Anchor.DirectionType.X, 8);
 
         uk.pixtle.application.plugins.plugins.tools.colourplugin.TextField title = new uk.pixtle.application.plugins.plugins.tools.colourplugin.TextField (this.getLayer().getTitle(), this.getLayer().getOriginalTitle());
         title.setText(this.getLayer().getTitle());
@@ -55,64 +55,6 @@ public class LayerUI extends JPanel {
             }
         });
     }
-
-
-
-    @Getter
-    @Setter
-    private JButton upButton;
-
-    @Getter
-    @Setter
-    private JButton downButton;
-
-    private void createUpAndDownButtons() {
-
-        if(this.getLayer().getLayerManager().getLayerOrder().get(0) != this.getLayer().getLayerID()) {
-
-            AnchoredComponent upButtonAnchors = new AnchoredComponent();
-            upButtonAnchors.createAnchor(Anchor.DirectionType.Y, 1);
-            upButtonAnchors.createAnchor(Anchor.DirectionType.Y, 0.5);
-            upButtonAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
-            upButtonAnchors.createAnchor(Anchor.DirectionType.X, DynamicAnchor.AnchorSize.MIN, 1, 1);
-
-            JButton upButton = new JButton();
-            upButton.setText("▲");
-            this.setUpButton(upButton);
-            super.add(upButton, upButtonAnchors);
-
-            upButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    getLayer().getLayerManager().moveLayerUp(getLayer().getLayerID());
-                }
-            });
-        }
-
-        if(this.getLayer().getLayerManager().getLayerOrder().get(this.getLayer().getLayerManager().getLayerOrder().size() - 1) != this.getLayer().getLayerID()) {
-
-            AnchoredComponent downButtonAnchors = new AnchoredComponent();
-            downButtonAnchors.createAnchor(Anchor.DirectionType.Y, -1);
-            downButtonAnchors.createAnchor(Anchor.DirectionType.Y, 0.5);
-            downButtonAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
-            downButtonAnchors.createAnchor(Anchor.DirectionType.X, DynamicAnchor.AnchorSize.MIN, 1, 1);
-
-
-            JButton downButton = new JButton();
-            downButton.setText("▼");
-            this.setDownButton(downButton);
-            super.add(downButton, downButtonAnchors);
-
-            downButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    getLayer().getLayerManager().moveLayerDown(getLayer().getLayerID());
-                }
-            });
-        }
-
-    }
-
 
     @Getter
     @Setter
@@ -138,7 +80,7 @@ public class LayerUI extends JPanel {
         AnchoredComponent visibleButtonAnchors = new AnchoredComponent();
         visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, -12);
         visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, 12);
-        visibleButtonAnchors.createAnchor(Anchor.DirectionType.X, -28);
+        visibleButtonAnchors.createAnchor(Anchor.DirectionType.X, -8);
         visibleButtonAnchors.createAnchor(Anchor.DirectionType.X, DynamicAnchor.AnchorSize.MIN, 1, 1);
 
         JButton visibleButton = new JButton();
@@ -228,7 +170,6 @@ public class LayerUI extends JPanel {
 
         super.setLayout(new AnchorLayout());
 
-        this.createUpAndDownButtons();
         this.createVisibleButton();
         this.createPopUpMenu();
         this.createTitle();

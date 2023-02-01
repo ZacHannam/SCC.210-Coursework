@@ -11,10 +11,7 @@ import uk.pixtle.application.plugins.plugins.canvas.drawing.ColorAndAlpha;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk.Chunk;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk.ChunkImageProcessor;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.BackgroundLayerUI;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerUI;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.*;
 import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
@@ -417,15 +414,11 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Getter
     @Setter
-    private Anchor beginBackgroundAnchor;
-
-    @Getter
-    @Setter
-    private ArrayList<LayerUI> layerUIs;
-
-    @Getter
-    @Setter
     private MiniToolPanel miniToolPanel;
+
+    @Getter
+    @Setter
+    private LayerUIDrawer layerUIDrawer;
 
     @Override
     public int getMiniToolPanelHeight() {
@@ -435,30 +428,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     public void redrawLayers() {
         this.getMiniToolPanel().updateHeight(this.getLayerManager().getLayers().size() * 50 + 85);
 
-        for(LayerUI layerUI : this.getLayerUIs()) {
-            this.getMiniToolPanel().remove(layerUI);
-        }
-        layerUIs.clear();
-
-        int index = 0;
-        for(int layerID : this.getLayerManager().getLayerOrder()) {
-
-            AnchoredComponent layerAnchors = new AnchoredComponent();
-            layerAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
-            layerAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
-            layerAnchors.createAnchor(Anchor.DirectionType.Y, 35 + (index * 50));
-            layerAnchors.createAnchor(Anchor.DirectionType.Y, 35 + ((index + 1) * 50));
-
-            LayerUI layer = new LayerUI(this.getLayerManager().getLayers().get(layerID));
-            this.getMiniToolPanel().add(layer, layerAnchors);
-
-            this.getLayerUIs().add(layer);
-
-            index++;
-        }
-
-        ((ValueAnchor) this.getBeginBackgroundAnchor()).setValue(35 + (this.getLayerManager().getLayerOrder().size() * 50));
-
+        this.getLayerUIDrawer().repaint();
+        this.getLayerUIDrawer().revalidate();
         this.getMiniToolPanel().revalidate();
         this.getMiniToolPanel().repaint();
     }
@@ -494,7 +465,6 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
             }
         });
 
-
         paramMiniToolPanel.add(addLayerButton, addLayerButtonAnchors);
 
         AnchoredComponent textAnchors = new AnchoredComponent();
@@ -508,23 +478,35 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         paramMiniToolPanel.add(textLabel, textAnchors);
 
         /*
+        Layers
+         */
+
+        AnchoredComponent layersAnchor = new AnchoredComponent();
+        layersAnchor.createAnchor(AnchoredComponent.StandardX.LEFT);
+        layersAnchor.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        layersAnchor.createAnchor(Anchor.DirectionType.Y, 35);
+        layersAnchor.createAnchor(Anchor.DirectionType.Y, -50);
+
+        LayerUIDrawer layerUIDrawer = new LayerUIDrawer(this.getLayerManager());
+        paramMiniToolPanel.add(layerUIDrawer, layersAnchor);
+        this.setLayerUIDrawer(layerUIDrawer);
+
+
+        /*
         Background Layer
          */
 
         AnchoredComponent backgroundAnchors = new AnchoredComponent();
         backgroundAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
         backgroundAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
-        this.setBeginBackgroundAnchor(backgroundAnchors.createAnchor(Anchor.DirectionType.Y, 35));
-        backgroundAnchors.createAnchor(Anchor.DirectionType.Y, this.getBeginBackgroundAnchor(), 50);
+        backgroundAnchors.createAnchor(Anchor.DirectionType.Y, -50);
+        backgroundAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
 
         BackgroundLayerUI background = new BackgroundLayerUI(this);
         background.updateBackgroundColourPreview(this.getBackgroundColor());
         paramMiniToolPanel.add(background, backgroundAnchors);
 
         this.setBackgroundLayerUI(background);
-
-        this.setLayerUIs(new ArrayList<>());
-
     }
 
     /*
