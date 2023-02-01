@@ -7,6 +7,7 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
+import uk.pixtle.application.plugins.plugins.canvas.drawing.ColorAndAlpha;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk.Chunk;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk.ChunkImageProcessor;
@@ -116,7 +117,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         }
 
         //Chunk chunk = new Chunk(this.getPixelsPerChunk(), this.getBackgroundColor());
-        Chunk chunk = new Chunk(this.getPixelsPerChunk(), this.getBackgroundColor());
+        Chunk chunk = new Chunk(this.getPixelsPerChunk());
         this.getChunkMap().put(this.convertChunkCoordinateToString(x, y), chunk);
 
         return chunk;
@@ -204,8 +205,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
             for (Map.Entry<ChunkImageProcessor, Point> entry : renderedChunks.entrySet()) {
 
-                int widthIn = (int) Math.ceil((-(this.getCurrentPixelX() % this.getPixelsPerChunk()) * this.getZoom()) + (entry.getValue().getX() * this.getPixelsPerChunk() * this.getZoom()));
-                int heightIn = (int) Math.ceil((-(this.getCurrentPixelY() % this.getPixelsPerChunk()) * this.getZoom()) + (entry.getValue().getY() * this.getPixelsPerChunk() * this.getZoom()));
+                int widthIn = (int) Math.floor((-(this.getCurrentPixelX() % this.getPixelsPerChunk()) * this.getZoom()) + (entry.getValue().getX() * this.getPixelsPerChunk() * this.getZoom()));
+                int heightIn = (int) Math.floor((-(this.getCurrentPixelY() % this.getPixelsPerChunk()) * this.getZoom()) + (entry.getValue().getY() * this.getPixelsPerChunk() * this.getZoom()));
 
                 paramGraphics.drawImage(entry.getKey().getChunk().getLastRenderedImage(), widthIn, heightIn, null);
             }
@@ -263,9 +264,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
      * @param paramLayer - the layer to draw on
      * @param paramScreenX
      * @param paramScreenY
-     * @param paramColour - use null for removed colour
      */
-    public void setPixelColour(Layer paramLayer, int paramScreenX, int paramScreenY, Color paramColour) {
+    public void setPixelColour(Layer paramLayer, int paramScreenX, int paramScreenY, ColorAndAlpha paramColourAndAlpha) {
         if(!canDraw(true)) return;
 
         long targetPixelX = currentPixelX + (int) Math.ceil(paramScreenX * (1 / this.getZoom())) - 1;
@@ -284,7 +284,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
             chunk.createActualImageForLayer(paramLayer.getLayerID());
         }
 
-        chunk.getActualImageByLayer(paramLayer.getLayerID()).setRGB((int) (targetPixelX % this.getPixelsPerChunk()), (int) (targetPixelY % this.getPixelsPerChunk()), paramColour.getRGB());
+        ColorAndAlpha colorAndAlpha = paramColourAndAlpha;
+        chunk.setRGB(paramLayer, (int) (targetPixelX % this.getPixelsPerChunk()), (int) (targetPixelY % this.getPixelsPerChunk()), colorAndAlpha.getColor().getRGB(), colorAndAlpha.getAlpha());
 
         chunk.setRenderingChange(true);
         repaint();
@@ -339,7 +340,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
                             chunk.createActualImageForLayer(this.getLayerManager().getActiveLayer().getLayerID());
                         }
 
-                        chunk.getActualImageByLayer(this.getLayerManager().getActiveLayer().getLayerID()).setRGB((int) (pixelX % this.getPixelsPerChunk()), (int) (pixelY % this.getPixelsPerChunk()), paramDrawing.getColor(j, i).getRGB());
+                        ColorAndAlpha colorAndAlpha = paramDrawing.getColor(j, i);
+                        chunk.setRGB(this.getLayerManager().getActiveLayer(), (int) (pixelX % this.getPixelsPerChunk()), (int) (pixelY % this.getPixelsPerChunk()), colorAndAlpha.getColor().getRGB(), colorAndAlpha.getAlpha());
                         chunk.setRenderingChange(true);
                     }
 
@@ -399,7 +401,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         for(String key : paramSavedJSON.getJSONObject("chunkData").keySet()) {
             JSONObject data = paramSavedJSON.getJSONObject("chunkData").getJSONObject(key);
 
-            Chunk chunk = new Chunk(this.getPixelsPerChunk(), this.getBackgroundColor());
+            Chunk chunk = new Chunk(this.getPixelsPerChunk());
             chunk.load(data);
             this.getChunkMap().put(key, chunk);
         }

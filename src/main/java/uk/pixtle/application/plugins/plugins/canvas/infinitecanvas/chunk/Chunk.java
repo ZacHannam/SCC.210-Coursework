@@ -83,7 +83,7 @@ public class Chunk {
 
     }
 
-    public Chunk(int paramSize, Color paramBackgroundColor) {
+    public Chunk(int paramSize) {
         //this.setActualImage(new BufferedImage(paramSize, paramSize, Image.SCALE_FAST));
         this.setSize(paramSize);
         this.setActualImages(new HashMap<>());
@@ -118,4 +118,10 @@ public class Chunk {
 
     }
 
+    public void setRGB(Layer paramLayer, int paramX, int paramY, int paramRGB, int paramAlpha) {
+        if(paramAlpha > 255) return;
+
+        int rgba = (paramAlpha << 24) | (paramRGB & 0x00FFFFFF);
+        this.getActualImageByLayer(paramLayer.getLayerID()).setRGB(paramX, paramY, rgba);
+    }
 }

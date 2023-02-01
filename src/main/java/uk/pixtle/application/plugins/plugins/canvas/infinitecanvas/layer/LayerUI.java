@@ -179,6 +179,8 @@ public class LayerUI extends JPanel {
     @Setter
     LayerUI selfReference;
 
+
+
     private void createListener() {
         MouseListener mouseListener = new  MouseListener() {
             @Override
@@ -196,12 +198,10 @@ public class LayerUI extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-
             }
 
             @Override
