@@ -20,15 +20,10 @@ public class Layer {
 
     @Getter
     @Setter
-    private String originalTitle;
-
-    @Getter
-    @Setter
     private boolean shown;
 
     public void load(JSONObject paramData) throws Exception {
         this.setTitle(paramData.getString("title"));
-        this.setOriginalTitle(paramData.getString("originalTitle"));
         this.setShown(paramData.getBoolean("shown"));
 
     }
@@ -37,7 +32,6 @@ public class Layer {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", this.getTitle());
-        jsonObject.put("originalTitle", this.getOriginalTitle());
         jsonObject.put("shown", this.isShown());
 
         return jsonObject;

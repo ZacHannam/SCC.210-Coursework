@@ -389,6 +389,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.getChunkMap().clear();
         this.setLayerManager(new LayerManager(this));
 
+        this.getLayerUIDrawer().setLayerManager(this.getLayerManager());
+
         this.setCurrentPixelX(paramSavedJSON.getLong("currentX"));
         this.setCurrentPixelY(paramSavedJSON.getLong("currentY"));
         this.setZoom(paramSavedJSON.getDouble("scale"));

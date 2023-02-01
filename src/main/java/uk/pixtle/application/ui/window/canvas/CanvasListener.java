@@ -62,6 +62,8 @@ public class CanvasListener implements MouseListener {
 
         if(!(getParentCanvas().getApplication().getPluginManager().getActivatePlugin() instanceof PluginDrawableExpansion)) return;
 
+        this.setTimer(new Timer());
+
         Point lastPoint = new Point(e.getX(), e.getY());
 
         int originalCanvasPositionX = e.getX();
@@ -127,8 +129,10 @@ public class CanvasListener implements MouseListener {
                             smallestNewLocationY = newLocationY;
                             smallestNewLocationX = newLocationX;
                         }
-                    }
 
+
+                    }
+                    
                     ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(smallestNewLocationX, smallestNewLocationY, differenceX, differenceY);
 
                     if(currentPixelX == calculatedX && currentPixelY == calculatedY) {
@@ -143,7 +147,7 @@ public class CanvasListener implements MouseListener {
             }
         });
 
-        this.getTimer().schedule(this.getTimerTask(), 0, 10);
+        this.getTimer().schedule(this.getTimerTask(), 0, 5);
     }
 
     /**

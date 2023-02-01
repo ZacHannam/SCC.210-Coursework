@@ -157,7 +157,6 @@ public class LayerManager {
         Layer layer = new Layer(this, layerID);
 
         layer.setTitle("Layer " + this.getLayerCount());
-        layer.setOriginalTitle("Layer " + this.getLayerCount());
 
         this.getLayers().put(layerID, layer);
         this.getLayerOrder().add(0, layerID);

@@ -23,7 +23,7 @@ public class LayerUI extends JPanel {
 
     @Getter
     @Setter
-    private uk.pixtle.application.plugins.plugins.tools.colourplugin.TextField title;
+    private JTextField title;
 
     private void activeCheck() {
         if(this.getLayer().getLayerManager().getActiveLayer() == this.getLayer()) {
@@ -41,17 +41,19 @@ public class LayerUI extends JPanel {
         titleAnchors.createAnchor(Anchor.DirectionType.X, 125);
         titleAnchors.createAnchor(Anchor.DirectionType.X, 8);
 
-        uk.pixtle.application.plugins.plugins.tools.colourplugin.TextField title = new uk.pixtle.application.plugins.plugins.tools.colourplugin.TextField (this.getLayer().getTitle(), this.getLayer().getOriginalTitle());
+        JTextField title = new JTextField(this.getLayer().getTitle());
         title.setText(this.getLayer().getTitle());
-        title.setFocusCycleRoot(false);
         this.setTitle(title);
         super.add(title, titleAnchors);
 
         title.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 getLayer().setTitle(title.getText());
 
+                title.setText(title.getText());
+                KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
             }
         });
     }
@@ -121,44 +123,10 @@ public class LayerUI extends JPanel {
     @Setter
     LayerUI selfReference;
 
-
-
-    private void createListener() {
-        MouseListener mouseListener = new  MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                switch(e.getButton()) {
-                    case 3:
-                        getPopupMenu().show(getSelfReference(), e.getX(), e.getY());
-                        break;
-                    case 1:
-                    default:
-                        getLayer().getLayerManager().setActiveLayer(getLayer());
-                }
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        };
-
-        super.addMouseListener(mouseListener);
-        //this.getTitle().addMouseListener(mouseListener);
+    public void leftClick(MouseEvent e) {
+        try {
+            this.getPopupMenu().show(getSelfReference(), e.getX(), e.getY());
+        } catch (IllegalComponentStateException exception) {}
     }
 
     public LayerUI(Layer paramLayer) {
@@ -174,6 +142,5 @@ public class LayerUI extends JPanel {
         this.createPopUpMenu();
         this.createTitle();
         this.activeCheck();
-        this.createListener();
     }
 }

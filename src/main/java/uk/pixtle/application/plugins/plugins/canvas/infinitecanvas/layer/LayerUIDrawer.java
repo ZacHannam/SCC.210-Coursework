@@ -99,16 +99,23 @@ public class LayerUIDrawer extends JLayeredPane{
 
                     private TimerTask task;
                     private long clickDownTime;
+                    private MouseEvent lastEvent;
 
                     @Override
                     public void mouseClicked(MouseEvent e) {
-
+                        switch(e.getButton()) {
+                            case 1:
+                                getLayerManager().setActiveLayer(layer.getLayer());
+                            case 3:
+                                layer.leftClick(e);
+                        }
                     }
 
                     @Override
                     public void mousePressed(MouseEvent e) {
 
                         clickDownTime = System.currentTimeMillis();
+                        lastEvent = e;
 
                         setLayer(layer, 3);
                         setDraggedLayerUI(layer);
@@ -149,7 +156,7 @@ public class LayerUIDrawer extends JLayeredPane{
                         }
 
                         if(System.currentTimeMillis() - clickDownTime <= 250) {
-                            getLayerManager().setActiveLayer(layer.getLayer());
+                            mouseClicked(lastEvent);
                         }
                         clickDownTime = 0;
 
