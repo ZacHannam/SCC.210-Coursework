@@ -3,6 +3,7 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk.Chunk;
 
 public class Layer {
 
@@ -22,10 +23,22 @@ public class Layer {
     @Setter
     private boolean shown;
 
+    @Getter
+    private float opacity;
+
+    public void setOpacity(float paramOpacity) {
+        this.opacity = paramOpacity;
+        for(Chunk chunk : this.getLayerManager().getInfiniteCanvasPlugin().getChunkMap().values()) {
+            if(chunk.getActualImages().containsKey(this.getLayerID())) {
+                chunk.setRenderingChange(true);
+            }
+        }
+    }
+
     public void load(JSONObject paramData) throws Exception {
         this.setTitle(paramData.getString("title"));
         this.setShown(paramData.getBoolean("shown"));
-
+        this.setOpacity(paramData.getFloat("opacity"));
     }
 
     public JSONObject save() throws Exception {
@@ -33,6 +46,7 @@ public class Layer {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", this.getTitle());
         jsonObject.put("shown", this.isShown());
+        jsonObject.put("opacity", this.getOpacity());
 
         return jsonObject;
     }
@@ -41,5 +55,6 @@ public class Layer {
         this.setLayerManager(paramLayerManager);
         this.setLayerID(paramLayerID);
         this.setShown(true);
+        this.setOpacity(1);
     }
 }

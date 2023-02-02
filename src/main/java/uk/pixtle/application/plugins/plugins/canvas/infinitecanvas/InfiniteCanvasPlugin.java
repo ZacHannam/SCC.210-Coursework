@@ -114,7 +114,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         }
 
         //Chunk chunk = new Chunk(this.getPixelsPerChunk(), this.getBackgroundColor());
-        Chunk chunk = new Chunk(this.getPixelsPerChunk());
+        Chunk chunk = new Chunk(this, this.getPixelsPerChunk());
         this.getChunkMap().put(this.convertChunkCoordinateToString(x, y), chunk);
 
         return chunk;
@@ -400,7 +400,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         for(String key : paramSavedJSON.getJSONObject("chunkData").keySet()) {
             JSONObject data = paramSavedJSON.getJSONObject("chunkData").getJSONObject(key);
 
-            Chunk chunk = new Chunk(this.getPixelsPerChunk());
+            Chunk chunk = new Chunk(this, this.getPixelsPerChunk());
             chunk.load(data);
             this.getChunkMap().put(key, chunk);
         }

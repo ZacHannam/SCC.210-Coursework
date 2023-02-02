@@ -15,7 +15,7 @@ public class Drawing {
     @Setter
     ColorAndAlpha[][] drawingMap;
 
-    public void setColor(int paramX, int paramY, Color paramColor, int paramAlpha) {
+    public void setColor(int paramX, int paramY, Color paramColor, float paramAlpha) {
         this.getDrawingMap()[paramX][paramY] = new ColorAndAlpha(paramColor, paramAlpha);
     }
 
