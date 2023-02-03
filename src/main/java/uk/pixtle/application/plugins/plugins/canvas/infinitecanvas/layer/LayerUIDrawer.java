@@ -20,7 +20,7 @@ public class LayerUIDrawer extends JLayeredPane{
 
     @Getter
     @Setter
-    private int accurateHeight;
+    public JPopupMenu popupMenuShowing;
 
     @Getter
     @Setter
@@ -69,8 +69,6 @@ public class LayerUIDrawer extends JLayeredPane{
 
         if(this.getDraggedLayerUI() == null) {
 
-            this.setAccurateHeight(50 * this.getLayerManager().getLayerOrder().size());
-
             for (LayerUI layerUI : this.getLayerUIs()) {
                 this.remove(layerUI);
             }
@@ -87,7 +85,7 @@ public class LayerUIDrawer extends JLayeredPane{
                 ValueAnchor anchor = (ValueAnchor) layerAnchors.createAnchor(Anchor.DirectionType.Y, (index * 50));
                 layerAnchors.createAnchor(Anchor.DirectionType.Y, anchor, 50);
 
-                LayerUI layer = new LayerUI(this.getLayerManager().getLayers().get(layerID));
+                LayerUI layer = new LayerUI(this, this.getLayerManager().getLayers().get(layerID));
                 setLayer(layer, 1);
                 this.add(layer, layerAnchors);
 
@@ -106,8 +104,10 @@ public class LayerUIDrawer extends JLayeredPane{
                         switch(e.getButton()) {
                             case 1:
                                 getLayerManager().setActiveLayer(layer.getLayer());
+                                break;
                             case 3:
                                 layer.leftClick(e);
+                                break;
                         }
                     }
 
@@ -132,7 +132,7 @@ public class LayerUIDrawer extends JLayeredPane{
                                 int relativeMousePositionY = finalIndex * 50 + e.getY() - (startY - newY);
                                 int relativeMousePositionX = e.getX() - (startX - newX);
                                 int y = newY - startY + differenceY;
-                                if(y < 0 || relativeMousePositionY < 0 || relativeMousePositionY > getAccurateHeight() || relativeMousePositionX < 0 || relativeMousePositionX > 160) {
+                                if(y < 0 || relativeMousePositionY < 0 || relativeMousePositionY > (50 * getLayerManager().getLayerOrder().size() - 1) || relativeMousePositionX < 0 || relativeMousePositionX > 160) {
                                     mouseReleased(e);
                                     return;
                                 }
@@ -185,6 +185,7 @@ public class LayerUIDrawer extends JLayeredPane{
         this.setLayerManager(paramLayerManager);
         this.setLayerUIs(new ArrayList<>());
         this.setStartPosAnchor(new HashMap<>());
+        this.setPopupMenuShowing(null);
 
         this.setLayout(new AnchorLayout());
 

@@ -2,6 +2,7 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,7 +25,22 @@ public class ChunkImageProcessor extends Thread {
         for(int layerID : this.getChunk().getVisibleLayersInOrder()) {
             if(this.getChunk().isActualImageForLayer(layerID)) {
                 BufferedImage bufferedImage = this.getChunk().getActualImageByLayer(layerID);
-                g2.drawImage(bufferedImage, 0, 0, null);
+
+                if(chunk.getInfiniteCanvasPlugin().getLayerManager().getLayers().get(layerID).getOpacity() != 1) {
+                    BufferedImage newImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);
+                    for(int i = 0; i < bufferedImage.getHeight(); i++) {
+                        for(int j = 0; j < bufferedImage.getWidth(); j++) {
+                            int oldAlpha = (bufferedImage.getRGB(j, i) >> 24) & 0xFF;
+
+                            int alpha = (int) Math.floor(oldAlpha * chunk.getInfiniteCanvasPlugin().getLayerManager().getLayers().get(layerID).getOpacity());
+                            int rgba = (alpha << 24) | (bufferedImage.getRGB(j, i) & 0x00FFFFFF);
+                            newImage.setRGB(j, i, rgba);
+                        }
+                    }
+                    g2.drawImage(newImage, 0, 0, null);
+                } else {
+                    g2.drawImage(bufferedImage, 0, 0, null);
+                }
             }
         }
 
@@ -36,6 +52,8 @@ public class ChunkImageProcessor extends Thread {
             outputImage.getGraphics().drawImage(img, 0, 0, null);
 
             chunk.setLastRenderedImage(outputImage);
+        } else {
+            chunk.setLastRenderedImage(actualImage);
         }
         chunk.setRenderingChange(false);
     }

@@ -3,6 +3,7 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 
 import javax.imageio.ImageIO;
@@ -55,6 +56,10 @@ public class Chunk {
     @Setter
     private boolean renderingChange;
 
+    @Getter
+    @Setter
+    private InfiniteCanvasPlugin infiniteCanvasPlugin;
+
 
     public void updateValues(double paramScale, ArrayList<Integer> paramVisibleLayersInOrder){
 
@@ -83,8 +88,8 @@ public class Chunk {
 
     }
 
-    public Chunk(int paramSize) {
-        //this.setActualImage(new BufferedImage(paramSize, paramSize, Image.SCALE_FAST));
+    public Chunk(InfiniteCanvasPlugin paramInfiniteCanvasPlugin, int paramSize) {
+        this.setInfiniteCanvasPlugin(paramInfiniteCanvasPlugin);
         this.setSize(paramSize);
         this.setActualImages(new HashMap<>());
     }
@@ -118,10 +123,11 @@ public class Chunk {
 
     }
 
-    public void setRGB(Layer paramLayer, int paramX, int paramY, int paramRGB, int paramAlpha) {
-        if(paramAlpha > 255) return;
+    public void setRGB(Layer paramLayer, int paramX, int paramY, int paramRGB, float paramAlpha) {
+        int alpha = (int) Math.floor(paramAlpha * 255);
+        if(alpha > 255) return;
 
-        int rgba = (paramAlpha << 24) | (paramRGB & 0x00FFFFFF);
+        int rgba = (alpha << 24) | (paramRGB & 0x00FFFFFF);
         this.getActualImageByLayer(paramLayer.getLayerID()).setRGB(paramX, paramY, rgba);
     }
 }

@@ -71,7 +71,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
     };
 
     @ToolSetting
-    private ToolSettingEntry<Integer> brushOpacity = new ToolSettingEntry<Integer>(255){
+    private ToolSettingEntry<Integer> brushOpacity = new ToolSettingEntry<Integer>(100){
 
         @Override
         public void notifyVariableChange(Integer paramVar) {
@@ -99,7 +99,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
                 @Override
                 public int getMaxValue() {
-                    return 255;
+                    return 100;
                 }
 
                 @Override
@@ -174,7 +174,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
                 for(int i = 0; i < drawing.getHeight(); i++) {
                     for(int j = 0; j < drawing.getWidth(); j++) {
                         if(Math.sqrt(Math.pow((centreX - j), 2) + Math.pow((centreY - i), 2)) <= centreY) {
-                            drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), this.brushOpacity.getValue());
+                            drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
                         }
                     }
                 }
@@ -184,7 +184,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
                 for(int i = 0; i < drawing.getHeight(); i++) {
                     for(int j = 0; j < drawing.getWidth(); j++) {
-                        drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), this.brushOpacity.getValue());
+                        drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
                     }
                 }
 
