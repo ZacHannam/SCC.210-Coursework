@@ -15,10 +15,7 @@ import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
@@ -33,13 +30,14 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 420;
+        return 410;
     }
 
     @Override
     public void instanceMiniToolPanel(MiniToolPanel paramMiniToolPanel) {
         this.setMiniToolPanel(paramMiniToolPanel);
         this.colourManager = super.getApplication().getColourManager();
+
 
         AnchorLayout anchorLayout = new AnchorLayout();
 
@@ -124,6 +122,7 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     TextField hexJTextField;
     TextField RGBJTextField;
+    JButton enterButton;
 
     Color colour;
     public void HexText(MiniToolPanel paramMiniToolPanel)
@@ -132,12 +131,34 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
         JLabel jLabel = new JLabel("#"); //Add action listner for text appearing
 
         hexJTextField = new TextField("Hex value", "Hex value");
+        enterButton=new JButton("Submit");
+        enterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //Adding on keyboard shortcut too.
+                /*
+                Color currentColour = colourManager.getActiveColor();
+                HexValidate(hexJTextField.getText());
+                Color hexCol= colour;
+                validateRGB(RGBJTextField.getText());
+                Color rgbCol=colour;
+                if(currentColour==rgbCol){
+                    colourManager.setColorOfActiveSlot(hexCol);
+                }
+                else if(currentColour==hexCol){
+                    colourManager.setColorOfActiveSlot(rgbCol);
+                }
+                */
+            }
+        });
 
         BorderLayout hexLayout = new BorderLayout();
         componentPanel.setLayout(hexLayout);
         componentPanel.add(jLabel, BorderLayout.WEST);
         componentPanel.add(hexJTextField, BorderLayout.CENTER);
+        componentPanel.add(enterButton, BorderLayout.EAST);
         componentPanel.setBackground(Color.LIGHT_GRAY);
+
 
         hexJTextField.addFocusListener(new FocusListener() {
             @Override
@@ -158,6 +179,12 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
                 }
             }
 
+        });
+        hexJTextField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
+            }
         });
 
         AnchoredComponent ac = new AnchoredComponent();
@@ -196,6 +223,7 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     public void RGBText(MiniToolPanel paramMiniToolPanel)
     {
+        //this.setMiniToolPanel(paramMiniToolPanel);
         JPanel componentPanel = new JPanel();
         componentPanel.setPreferredSize(new Dimension(20,50));
 
@@ -211,6 +239,7 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
         JLabel jLabel = new JLabel("RGB");
         RGBJTextField = new TextField("RGB value: R,G,B", "RGB value: R,G,B");
         jLabel.setAutoscrolls(true);
+
 
         //paramMiniToolPanel.add(jLabel, anchoredComponent);
         BorderLayout rgbLayout = new BorderLayout();
@@ -238,6 +267,12 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
                 }
             }
 
+        });
+        RGBJTextField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
+            }
         });
     }
 
