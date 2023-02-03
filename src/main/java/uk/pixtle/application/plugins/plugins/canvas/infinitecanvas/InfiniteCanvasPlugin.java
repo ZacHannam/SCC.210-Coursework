@@ -29,6 +29,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -168,6 +169,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
                 return;
             }
 
+            // Draw the chunks
+
             HashMap<ChunkImageProcessor, Point> renderedChunks = new HashMap<>();
             ArrayList<Integer> visibleLayersInOrder = this.getLayerManager().getVisibleLayersInRenderOrder();
 
@@ -200,11 +203,20 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
             // Draw the chunks
 
+            // Create the background image
+
+            BufferedImage backgroundImage = new BufferedImage((int) Math.ceil(getPixelsPerChunk() * this.getZoom()), (int) Math.ceil(getPixelsPerChunk() * this.getZoom()), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2 = (Graphics2D) backgroundImage.getGraphics();
+            g2.setPaint(this.getBackgroundColor());
+            g2.fillRect(0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
+
+
             for (Map.Entry<ChunkImageProcessor, Point> entry : renderedChunks.entrySet()) {
 
                 int widthIn = (int) Math.floor((-(this.getCurrentPixelX() % this.getPixelsPerChunk()) * this.getZoom()) + (entry.getValue().getX() * this.getPixelsPerChunk() * this.getZoom()));
                 int heightIn = (int) Math.floor((-(this.getCurrentPixelY() % this.getPixelsPerChunk()) * this.getZoom()) + (entry.getValue().getY() * this.getPixelsPerChunk() * this.getZoom()));
 
+                paramGraphics.drawImage(backgroundImage, widthIn, heightIn, null); // set the background image for each chunk
                 paramGraphics.drawImage(entry.getKey().getChunk().getLastRenderedImage(), widthIn, heightIn, null);
             }
 

@@ -89,7 +89,6 @@ public class Chunk {
     }
 
     public Chunk(InfiniteCanvasPlugin paramInfiniteCanvasPlugin, int paramSize) {
-        //this.setActualImage(new BufferedImage(paramSize, paramSize, Image.SCALE_FAST));
         this.setInfiniteCanvasPlugin(paramInfiniteCanvasPlugin);
         this.setSize(paramSize);
         this.setActualImages(new HashMap<>());

@@ -52,6 +52,8 @@ public class ChunkImageProcessor extends Thread {
             outputImage.getGraphics().drawImage(img, 0, 0, null);
 
             chunk.setLastRenderedImage(outputImage);
+        } else {
+            chunk.setLastRenderedImage(actualImage);
         }
         chunk.setRenderingChange(false);
     }
