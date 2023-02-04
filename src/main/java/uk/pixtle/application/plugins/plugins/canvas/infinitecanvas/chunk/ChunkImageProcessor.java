@@ -1,11 +1,16 @@
 package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.chunk;
 
+import com.twelvemonkeys.image.ConvolveWithEdgeOp;
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 
 public class ChunkImageProcessor extends Thread {
 
@@ -37,10 +42,11 @@ public class ChunkImageProcessor extends Thread {
                             newImage.setRGB(j, i, rgba);
                         }
                     }
-                    g2.drawImage(newImage, 0, 0, null);
-                } else {
-                    g2.drawImage(bufferedImage, 0, 0, null);
+                    bufferedImage = newImage;
                 }
+
+
+                g2.drawImage(bufferedImage, 0, 0, null);
             }
         }
 
