@@ -134,6 +134,8 @@ public class LayerManager {
         int locationInArray = layerOrder.indexOf(paramLayerID);
         layerOrder.add( locationInArray+ 2, paramLayerID);
         layerOrder.remove(locationInArray);
+
+        this.getInfiniteCanvasPlugin().repaint();
     }
 
     public void moveLayerUp(int paramLayerID) {
@@ -148,6 +150,8 @@ public class LayerManager {
         int locationInArray = layerOrder.indexOf(paramLayerID);
         layerOrder.remove(locationInArray);
         layerOrder.add( locationInArray - 1, paramLayerID);
+
+        this.getInfiniteCanvasPlugin().repaint();
     }
 
     public void createNewLayer() {

@@ -15,6 +15,8 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class LayerUIDrawer extends JLayeredPane{
 
@@ -35,26 +37,29 @@ public class LayerUIDrawer extends JLayeredPane{
     @Setter
     private LayerUI draggedLayerUI;
 
-    public void paintDragged(LayerUI paramLayerUI, int paramY) {
+    public void paintDragged(LayerUI paramLayerUI, int paramLastY, int paramY) {
 
         if(!this.getStartPosAnchor().containsKey(paramLayerUI)) {
             return;
         }
-        this.getStartPosAnchor().get(paramLayerUI).setValue(paramY);
+        int i = paramLastY <= paramY ? 1 : -1;
+        for(int y = paramLastY; y != paramY; y = y + i) {
+            this.getStartPosAnchor().get(paramLayerUI).setValue(y);
 
-        for(ValueAnchor anchor : this.getStartPosAnchor().values()) {
-            if(anchor == this.getStartPosAnchor().get(paramLayerUI)) continue;
+            for (ValueAnchor anchor : this.getStartPosAnchor().values()) {
+                if (anchor == this.getStartPosAnchor().get(paramLayerUI)) continue;
 
-            if((int) anchor.getValue() - paramY < 25 && (int) anchor.getValue() - paramY >= 0) {
-                anchor.setValue((int) anchor.getValue() - 50);
-                this.getLayerManager().moveLayerDown(paramLayerUI.getLayer().getLayerID());
+                if ((int) anchor.getValue() - y < 25 && (int) anchor.getValue() - y >= 0) {
+                    anchor.setValue((int) anchor.getValue() - 50);
+                    this.getLayerManager().moveLayerDown(paramLayerUI.getLayer().getLayerID());
+                }
+
+                if (y - (int) anchor.getValue() < 25 && (int) anchor.getValue() - y <= 0) {
+                    anchor.setValue((int) anchor.getValue() + 50);
+                    this.getLayerManager().moveLayerUp(paramLayerUI.getLayer().getLayerID());
+                }
+
             }
-
-            if(paramY - (int) anchor.getValue() < 25 && (int) anchor.getValue() - paramY <= 0) {
-                anchor.setValue((int) anchor.getValue() + 50);
-                this.getLayerManager().moveLayerUp(paramLayerUI.getLayer().getLayerID());
-            }
-
         }
         this.repaint();
         this.revalidate();
@@ -121,6 +126,8 @@ public class LayerUIDrawer extends JLayeredPane{
                         setDraggedLayerUI(layer);
 
                         int differenceY = (finalIndex * 50);
+                        final int[] lastY = {differenceY};
+
                         int startY = (int) MouseInfo.getPointerInfo().getLocation().getY();
                         int startX = (int) MouseInfo.getPointerInfo().getLocation().getX();
                         java.util.Timer timer = new java.util.Timer();
@@ -136,7 +143,8 @@ public class LayerUIDrawer extends JLayeredPane{
                                     mouseReleased(e);
                                     return;
                                 }
-                                paintDragged(layer, y);
+                                paintDragged(layer, lastY[0], y);
+                                lastY[0] = y;
                             }
                         };
 
