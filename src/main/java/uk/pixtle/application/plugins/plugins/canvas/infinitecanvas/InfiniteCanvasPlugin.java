@@ -23,6 +23,7 @@ import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
+import uk.pixtle.application.ui.window.notifications.Notification;
 
 import javax.swing.*;
 import java.awt.*;
@@ -393,6 +394,17 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Override
     public void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing, boolean paramCenter) {
+
+        if(this.getLayerManager().getActiveLayer() == null) {
+            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "No Layer Found", "There is currently no active layer, please create or select one!", 10, false);
+            return;
+        }
+
+        if(!this.getLayerManager().getActiveLayer().isVisible()) {
+            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "Layer is hidden!", "The layer you're currently editing is hidden", 3, false);
+            return;
+        }
+
         this.getLayerManager().getActiveLayer().printImageOnCanvas(paramScreenX, paramScreenY, paramDrawing, paramCenter);
         super.repaint();
     }

@@ -71,23 +71,6 @@ public class DrawingLayerImageProcessor extends LayerImageProcessor {
                 bufferedImageGraphics.drawImage(entry.getKey().getChunk().getLastRenderedImage(), widthIn, heightIn, null);
             }
 
-                /*
-                        SET THE OPACITY OF LAYER
-                 */
-
-            if (drawingLayer.getOpacity() != 1) {
-                BufferedImage newImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);
-                for (int i = 0; i < bufferedImage.getHeight(); i++) {
-                    for (int j = 0; j < bufferedImage.getWidth(); j++) {
-                        int oldAlpha = (bufferedImage.getRGB(j, i) >> 24) & 0xFF;
-
-                        int alpha = (int) Math.floor(oldAlpha * drawingLayer.getOpacity());
-                        int rgba = (alpha << 24) | (bufferedImage.getRGB(j, i) & 0x00FFFFFF);
-                        newImage.setRGB(j, i, rgba);
-                    }
-                }
-                bufferedImage = newImage;
-            }
             return bufferedImage;
         } catch(InterruptedException exception) {
             return null;

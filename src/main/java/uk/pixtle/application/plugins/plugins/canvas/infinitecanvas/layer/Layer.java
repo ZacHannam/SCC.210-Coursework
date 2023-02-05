@@ -10,6 +10,10 @@ import java.awt.image.BufferedImage;
 
 public abstract class Layer {
 
+    public static final boolean DEFAULT_FLIP_X = false;
+    public static final boolean DEFAULT_FLIP_Y = false;
+    public static final boolean DEFAULT_INVERTCOLOURS = false;
+    public static final boolean DEFAULT_BLURRED = false;
     public static final boolean DEFAULT_VISIBILITY = true;
     public static final float DEFAULT_OPACITY = (float) 1;
 
@@ -79,8 +83,58 @@ public abstract class Layer {
         this.visible = paramVisible;
 
         this.getLayerManager().getInfiniteCanvasPlugin().repaint();
-        // TO-DO REPEAT UI
     }
+
+    @Getter
+    private boolean blurred;
+
+    public void setBlurred(boolean paramBlurred) {
+        if(paramBlurred == this.isBlurred()) {
+            return;
+        }
+        this.blurred = paramBlurred;
+
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+    }
+
+    @Getter
+    private boolean invertColours;
+
+    public void setInvertColours(boolean paramInvertColours) {
+        if(paramInvertColours == this.isInvertColours()) {
+            return;
+        }
+        this.invertColours = paramInvertColours;
+
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+    }
+
+    @Getter
+    private boolean flipY;
+
+    public void setFlipY(boolean paramFlipY) {
+        if(paramFlipY == this.isFlipY()) {
+            return;
+        }
+        this.flipY = paramFlipY;
+
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+    }
+
+    @Getter
+    private boolean flipX;
+
+    public void setFlipX(boolean paramFlipX) {
+        if(paramFlipX == this.isFlipX()) {
+            return;
+        }
+        this.flipX = paramFlipX;
+
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+    }
+
+
+
 
     /*
 
@@ -110,6 +164,10 @@ public abstract class Layer {
         jsonObject.put("opacity", this.getOpacity());
         jsonObject.put("visible", this.isVisible());
         jsonObject.put("title", this.getTitle());
+        jsonObject.put("blurred", this.isBlurred());
+        jsonObject.put("invertColours", this.isInvertColours());
+        jsonObject.put("flipY", this.isFlipY());
+        jsonObject.put("flipX", this.isFlipX());
 
         return jsonObject;
     }
@@ -119,6 +177,11 @@ public abstract class Layer {
         this.setOpacity(paramSavedData.getFloat("opacity"));
         this.setVisible(paramSavedData.getBoolean("visible"));
         this.setTitle(paramSavedData.getString("title"));
+        this.setBlurred(paramSavedData.getBoolean("blurred"));
+        this.setInvertColours(paramSavedData.getBoolean("invertColours"));
+        this.setFlipY(paramSavedData.getBoolean("flipY"));
+        this.setFlipX(paramSavedData.getBoolean("flipX"));
+
         this.loadLayerData(paramSavedData.getJSONObject("layerData"));
     }
 
@@ -132,6 +195,10 @@ public abstract class Layer {
         this.setLayerManager(paramLayerManager);
 
         this.setReRender(true);
+        this.setFlipY(this.DEFAULT_FLIP_Y);
+        this.setFlipX(this.DEFAULT_FLIP_X);
+        this.setInvertColours(this.DEFAULT_INVERTCOLOURS);
+        this.setBlurred(this.DEFAULT_BLURRED);
         this.setVisible(this.DEFAULT_VISIBILITY);
         this.setOpacity(this.DEFAULT_OPACITY);
 
