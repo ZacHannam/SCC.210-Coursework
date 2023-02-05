@@ -34,7 +34,6 @@ public class DrawingLayer extends Layer {
         return new DrawingLayerImageProcessor(this);
     }
 
-    @Override
     public void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing, boolean paramCenter) {
 
         int currentPositionY = this.getLayerManager().getInfiniteCanvasPlugin().getCurrentPixelY();
@@ -90,6 +89,10 @@ public class DrawingLayer extends Layer {
                 }
             }
         }
+    }
+
+    public boolean loadNew() {
+        return true;
     }
 
     /*

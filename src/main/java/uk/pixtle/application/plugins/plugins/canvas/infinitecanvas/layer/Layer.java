@@ -27,7 +27,7 @@ public abstract class Layer {
     public abstract JSONObject saveLayerData() throws Exception;
     public abstract void loadLayerData(JSONObject paramSavedData) throws Exception;
     public abstract LayerImageProcessor getLayerImageProcessor();
-    public abstract void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing, boolean paramCenter);
+    public abstract boolean loadNew();
 
     /*
 
@@ -149,6 +149,20 @@ public abstract class Layer {
     @Getter
     @Setter
     private BufferedImage lastRenderedImage;
+
+    /*
+
+                OVERRIDABLE METHODS
+
+     */
+
+    public void onLayerEnable() {
+
+    }
+
+    public void onLayerDisable() {
+
+    }
 
     /*
 

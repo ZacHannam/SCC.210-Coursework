@@ -12,7 +12,9 @@ import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerImageProcessor;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.Chunk;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.BackgroundLayerUI;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.LayerUIDrawer;
 import uk.pixtle.application.plugins.policies.PluginSavePolicy;
@@ -22,6 +24,7 @@ import uk.pixtle.application.plugins.toolsettings.inputdevices.InputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
+import uk.pixtle.application.ui.window.canvas.CanvasUI;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 import uk.pixtle.application.ui.window.notifications.Notification;
 
@@ -119,6 +122,28 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     private double zoom;
 
     public void zoomAround(double paramScale, int paramX, int paramY) {
+
+        if(paramScale == this.getZoom()) return;
+
+        CanvasUI canvasUI = ((CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas());
+
+        double pixelsBeforeX = canvasUI.getWidth() * (1/this.getZoom());
+        double pixelsAfterX = canvasUI.getWidth() * (1/paramScale);
+
+        double pixelsBeforeY = canvasUI.getHeight() * (1/this.getZoom());
+        double pixelsAfterY = canvasUI.getHeight() * (1/paramScale);
+
+        if(this.getZoom() == 0) {
+            pixelsBeforeX = pixelsAfterX;
+            pixelsBeforeY = pixelsAfterY;
+        }
+
+        int differenceX = (int) Math.floor((pixelsBeforeX - pixelsAfterX) / 2);
+        int differenceY = (int) Math.floor((pixelsBeforeY - pixelsAfterY) / 2);
+
+        this.setCurrentPixelX(this.getCurrentPixelX() + differenceX);
+        this.setCurrentPixelY(this.getCurrentPixelY() + differenceY);
+
         this.setZoom(paramScale);
         this.repaint();
     }
@@ -161,6 +186,15 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.setCanvasLock(new ReentrantLock());
         this.setCurrentPixelX(Integer.MAX_VALUE / 2);
         this.setCurrentPixelY(Integer.MAX_VALUE / 2);
+    }
+
+    public Point getCenterPixel() {
+
+        int screenWidth = ((CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas()).getWidth();
+        int screenHeight = ((CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas()).getHeight();
+
+        return new Point((int) Math.floor(screenWidth/2) + this.getCurrentPixelX(), (int) Math.floor(screenHeight/2) + this.getCurrentPixelY());
+
     }
 
     /*
@@ -400,12 +434,17 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
             return;
         }
 
-        if(!this.getLayerManager().getActiveLayer().isVisible()) {
-            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "Layer is hidden!", "The layer you're currently editing is hidden", 3, false);
+        if(this.getLayerManager().getActiveLayer().getLayerType() != LayerType.DRAWING) {
+            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "Cannot draw on this layer", "You cannot draw on this type of layer. Create a drawing layer!", 10, false);
             return;
         }
 
-        this.getLayerManager().getActiveLayer().printImageOnCanvas(paramScreenX, paramScreenY, paramDrawing, paramCenter);
+        if(!this.getLayerManager().getActiveLayer().isVisible()) {
+            super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "Layer is hidden!", "The layer you're currently editing is hidden!", 3, false);
+            return;
+        }
+
+        ((DrawingLayer) this.getLayerManager().getActiveLayer()).printImageOnCanvas(paramScreenX, paramScreenY, paramDrawing, paramCenter);
         super.repaint();
     }
 
@@ -431,10 +470,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Override
     public void onLoadingFinish() {
-        this.getLayerManager().createNewLayer();
         this.setBackgroundColor(Color.white);
-
-        System.out.println("A: " + currentPixelX + " " + currentPixelY);
+        this.getLayerManager().createNewLayer(LayerType.DRAWING);
     }
 
     public InfiniteCanvasPlugin(Application paramApplication) {

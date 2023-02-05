@@ -5,8 +5,15 @@ import lombok.Setter;
 import org.json.JSONObject;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
+import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
+import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.notifications.Notification;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class LayerManager {
@@ -31,7 +38,13 @@ public class LayerManager {
     private Layer activeLayer;
 
     public void setActiveLayer(Layer paramLayer) {
+
+        if(this.getActiveLayer() != null){
+            this.getActiveLayer().onLayerDisable();
+        }
+
         this.activeLayer = paramLayer;
+        this.getActiveLayer().onLayerEnable();
 
         // REPAINT UI
     }
@@ -125,15 +138,164 @@ public class LayerManager {
         this.getInfiniteCanvasPlugin().repaint();
     }
 
+    @Getter
+    @Setter
+    JPopupMenu popupMenu;
+
+    @Getter
+    @Setter
+    Dimension popupSize = new Dimension(450, 170);
+
+    public void createLayerSelectorPopup() {
+
+
+        JPopupMenu typeSelector = new JPopupMenu();
+        typeSelector.setPreferredSize(this.getPopupSize());
+        typeSelector.setLayout(new AnchorLayout());
+
+        AnchoredComponent imageLayerAnchors = new AnchoredComponent();
+        imageLayerAnchors.createAnchor(Anchor.DirectionType.Y, 20);
+        imageLayerAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+        imageLayerAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
+        imageLayerAnchors.createAnchor(Anchor.DirectionType.X, 150);
+
+        JButton imageLayerButton = new JButton("Image");
+        imageLayerButton.setOpaque(false);
+        imageLayerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
+
+        imageLayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                typeSelector.setVisible(false);
+                createNewLayer(LayerType.IMAGE);
+            }
+        });
+
+        typeSelector.add(imageLayerButton, imageLayerAnchors);
+
+        AnchoredComponent drawingLayerAnchors = new AnchoredComponent();
+        drawingLayerAnchors.createAnchor(Anchor.DirectionType.Y, 20);
+        drawingLayerAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+        drawingLayerAnchors.createAnchor(Anchor.DirectionType.X, 150);
+        drawingLayerAnchors.createAnchor(Anchor.DirectionType.X, 300);
+
+        JButton drawingLayerButton = new JButton("Drawing");
+        drawingLayerButton.setOpaque(false);
+        drawingLayerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
+
+        drawingLayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                typeSelector.setVisible(false);
+                createNewLayer(LayerType.DRAWING);
+            }
+        });
+
+        typeSelector.add(drawingLayerButton, drawingLayerAnchors);
+
+        AnchoredComponent textLayerAnchors = new AnchoredComponent();
+        textLayerAnchors.createAnchor(Anchor.DirectionType.Y, 20);
+        textLayerAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+        textLayerAnchors.createAnchor(Anchor.DirectionType.X, 450);
+        textLayerAnchors.createAnchor(Anchor.DirectionType.X, 300);
+
+        JButton textLayerButton = new JButton("Text");
+        textLayerButton.setOpaque(false);
+        textLayerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
+
+        textLayerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //createNewLayer(LayerType.TEXT);
+                typeSelector.setVisible(false);
+            }
+        });
+
+        typeSelector.add(textLayerButton, textLayerAnchors);
+
+        AnchoredComponent exitButtonAnchors = new AnchoredComponent();
+        exitButtonAnchors.createAnchor(AnchoredComponent.StandardY.TOP);
+        exitButtonAnchors.createAnchor(Anchor.DirectionType.Y, 20);
+        exitButtonAnchors.createAnchor(Anchor.DirectionType.X, 450);
+        exitButtonAnchors.createAnchor(Anchor.DirectionType.X, 430);
+
+        JButton exitButton = new JButton("x");
+        exitButton.setOpaque(false);
+        exitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
+        typeSelector.add(exitButton, exitButtonAnchors);
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                typeSelector.setVisible(false);
+            }
+        });
+
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+            @Override
+            public void eventDispatched(AWTEvent event) {
+
+                if (event instanceof MouseEvent) {
+                    MouseEvent m = (MouseEvent) event;
+                    if (m.getID() == MouseEvent.MOUSE_CLICKED) {
+                        typeSelector.setVisible(false);
+                        Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+                    }
+                }
+                if (event instanceof WindowEvent) {
+                    WindowEvent we = (WindowEvent) event;
+                    if (we.getID() == WindowEvent.WINDOW_DEACTIVATED || we.getID() == WindowEvent.WINDOW_STATE_CHANGED) {
+                        typeSelector.setVisible(false);
+                        Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+                    }
+                }
+            }
+
+        }, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK);
+
+        this.setPopupMenu(typeSelector);
+    }
+
     public void createNewLayer() {
+
+        if(this.getPopupMenu().isVisible()) {
+            return;
+        }
+
+        JFrame window = this.getInfiniteCanvasPlugin().getApplication().getUIManager().getWindow();
+
+        int height = window.getHeight();
+        int width = window.getWidth();
+        int x = (int) window.getLocationOnScreen().getX();
+        int y = (int) window.getLocationOnScreen().getY();
+
+        int locationX = x + (int) Math.floor(width / 2) - (int) Math.floor(this.getPopupSize().getWidth() / 2);
+        int locationY = y + (int) Math.floor(height / 2) - (int) Math.floor(this.getPopupSize().getHeight() / 2);
+
+        this.getPopupMenu().show(null, locationX, locationY);
+    }
+
+    public void createNewLayer(LayerType paramLayerType) {
+
+        Layer layer = null;
+        switch(paramLayerType) {
+            case DRAWING:
+                layer = new DrawingLayer(this);
+                break;
+            case IMAGE:
+                layer = new ImageLayer(this);
+                break;
+        }
+
         this.setLayerNumberCounter(this.getLayerNumberCounter() + 1);
-
-        Layer layer = new DrawingLayer(this);
-
         layer.setTitle("Layer " + this.getLayerNumberCounter());
 
-        this.getLayers().add(0, layer);
+        if(!layer.loadNew()) {
+            this.setLayerNumberCounter(this.getLayerNumberCounter() - 1);
+            return;
+        }
 
+        this.getLayers().add(0, layer);
         this.setActiveLayer(layer);
 
         this.getInfiniteCanvasPlugin().redrawLayers();
@@ -194,5 +356,6 @@ public class LayerManager {
     public LayerManager(InfiniteCanvasPlugin paramInfiniteCanvasPlugin) {
         this.setInfiniteCanvasPlugin(paramInfiniteCanvasPlugin);
         this.setLayers(new ArrayList<>());
+        this.createLayerSelectorPopup();
     }
 }
