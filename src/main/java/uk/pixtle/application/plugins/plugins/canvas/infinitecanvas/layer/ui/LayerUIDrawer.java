@@ -1,8 +1,9 @@
-package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer;
+package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Value;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
@@ -15,8 +16,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimerTask;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class LayerUIDrawer extends JLayeredPane{
 
@@ -51,12 +50,12 @@ public class LayerUIDrawer extends JLayeredPane{
 
                 if ((int) anchor.getValue() - y < 25 && (int) anchor.getValue() - y >= 0) {
                     anchor.setValue((int) anchor.getValue() - 50);
-                    this.getLayerManager().moveLayerDown(paramLayerUI.getLayer().getLayerID());
+                    this.getLayerManager().moveLayerDown(paramLayerUI.getLayer());
                 }
 
                 if (y - (int) anchor.getValue() < 25 && (int) anchor.getValue() - y <= 0) {
                     anchor.setValue((int) anchor.getValue() + 50);
-                    this.getLayerManager().moveLayerUp(paramLayerUI.getLayer().getLayerID());
+                    this.getLayerManager().moveLayerUp(paramLayerUI.getLayer());
                 }
 
             }
@@ -82,7 +81,7 @@ public class LayerUIDrawer extends JLayeredPane{
             this.getStartPosAnchor().clear();
 
             int index = 0;
-            for (int layerID : this.getLayerManager().getLayerOrder()) {
+            for (Layer layer : this.getLayerManager().getLayers()) {
 
                 AnchoredComponent layerAnchors = new AnchoredComponent();
                 layerAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
@@ -90,15 +89,15 @@ public class LayerUIDrawer extends JLayeredPane{
                 ValueAnchor anchor = (ValueAnchor) layerAnchors.createAnchor(Anchor.DirectionType.Y, (index * 50));
                 layerAnchors.createAnchor(Anchor.DirectionType.Y, anchor, 50);
 
-                LayerUI layer = new LayerUI(this, this.getLayerManager().getLayers().get(layerID));
-                setLayer(layer, 1);
-                this.add(layer, layerAnchors);
+                LayerUI layerUI = new LayerUI(this, layer);
+                setLayer(layerUI, 1);
+                this.add(layerUI, layerAnchors);
 
-                this.getLayerUIs().add(layer);
-                this.getStartPosAnchor().put(layer, anchor);
+                this.getLayerUIs().add(layerUI);
+                this.getStartPosAnchor().put(layerUI, anchor);
 
                 int finalIndex = index;
-                layer.addMouseListener(new MouseListener() {
+                layerUI.addMouseListener(new MouseListener() {
 
                     private TimerTask task;
                     private long clickDownTime;
@@ -108,10 +107,10 @@ public class LayerUIDrawer extends JLayeredPane{
                     public void mouseClicked(MouseEvent e) {
                         switch(e.getButton()) {
                             case 1:
-                                getLayerManager().setActiveLayer(layer.getLayer());
+                                getLayerManager().setActiveLayer(layer);
                                 break;
                             case 3:
-                                layer.leftClick(e);
+                                layerUI.leftClick(e);
                                 break;
                         }
                     }
@@ -122,8 +121,8 @@ public class LayerUIDrawer extends JLayeredPane{
                         clickDownTime = System.currentTimeMillis();
                         lastEvent = e;
 
-                        setLayer(layer, 3);
-                        setDraggedLayerUI(layer);
+                        setLayer(layerUI, 3);
+                        setDraggedLayerUI(layerUI);
 
                         int differenceY = (finalIndex * 50);
                         final int[] lastY = {differenceY};
@@ -139,11 +138,11 @@ public class LayerUIDrawer extends JLayeredPane{
                                 int relativeMousePositionY = finalIndex * 50 + e.getY() - (startY - newY);
                                 int relativeMousePositionX = e.getX() - (startX - newX);
                                 int y = newY - startY + differenceY;
-                                if(y < 0 || relativeMousePositionY < 0 || relativeMousePositionY > (50 * getLayerManager().getLayerOrder().size() - 1) || relativeMousePositionX < 0 || relativeMousePositionX > 160) {
+                                if(y < 0 || relativeMousePositionY < 0 || relativeMousePositionY > (50 * getLayerManager().getLayers().size() - 1) || relativeMousePositionX < 0 || relativeMousePositionX > 160) {
                                     mouseReleased(e);
                                     return;
                                 }
-                                paintDragged(layer, lastY[0], y);
+                                paintDragged(layerUI, lastY[0], y);
                                 lastY[0] = y;
                             }
                         };
@@ -156,7 +155,7 @@ public class LayerUIDrawer extends JLayeredPane{
                     @Override
                     public void mouseReleased(MouseEvent e) {
 
-                        setLayer(layer, 1);
+                        setLayer(layerUI, 1);
 
                         setDraggedLayerUI(null);
                         if (this.task != null) {

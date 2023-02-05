@@ -2,25 +2,14 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
 import uk.pixtle.application.ui.window.notifications.Notification;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
 
 public class LayerManager {
-
-    @Getter
-    @Setter
-    private ArrayList<Integer> layerOrder;
-
-    @Getter
-    @Setter
-    private int layerCount;
 
     @Getter
     @Setter
@@ -28,91 +17,75 @@ public class LayerManager {
 
     @Getter
     @Setter
-    private HashMap<Integer, Layer> layers;
+    private ArrayList<Layer> layers;
+
+    public int getLayerIndex(Layer paramLayer) {
+        if(this.getLayers().contains(paramLayer)) {
+            return this.getLayers().indexOf(paramLayer);
+        }
+        // THROW ERROR
+        return -1;
+    }
 
     @Getter
     private Layer activeLayer;
 
-    public JSONObject save() throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("layerOrder", this.getLayerOrder());
-        jsonObject.put("layerCount", this.getLayerCount());
-        jsonObject.put("activeLayer", this.getActiveLayer().getLayerID());
+    public void setActiveLayer(Layer paramLayer) {
+        this.activeLayer = paramLayer;
 
-        JSONObject layers = new JSONObject();
-        for(Layer layer : this.getLayers().values()) {
-            layers.put(String.valueOf(layer.getLayerID()), layer.save());
-        }
-
-        jsonObject.put("layers", layers);
-
-        return jsonObject;
+        // REPAINT UI
     }
 
-    public void load(JSONObject paramData) throws Exception {
+    /*
 
-        this.getLayers().clear();
-        this.getLayerOrder().clear();
+                METHODS
 
-        this.setLayerCount(paramData.getInt("layerCount"));
+     */
 
-        for (String key : paramData.getJSONObject("layers").keySet()) {
-            JSONObject layerData = paramData.getJSONObject("layers").getJSONObject(key);
-            Layer layer = new Layer(this, Integer.valueOf(key));
-            layer.load(layerData);
-
-            this.getLayers().put(layer.getLayerID(), layer);
-
-            if (layer.getLayerID() == paramData.getInt("activeLayer")) {
-                this.setActiveLayer(layer);
-            }
+    public void setReRender(boolean paramReRender) {
+        for(Layer layer : this.getLayers()) {
+            layer.setReRender(paramReRender);
         }
-
-        for(int i = 0; i < paramData.getJSONArray("layerOrder").length(); i++) {
-            this.getLayerOrder().add(paramData.getJSONArray("layerOrder").getInt(i));
-        }
-
-        this.getInfiniteCanvasPlugin().redrawLayers();
     }
 
-    public void hideLayer(int paramLayerID) {
-        if(this.getLayers().containsKey(paramLayerID)){
-            this.getLayers().get(paramLayerID).setShown(false);
+    public void hideLayer(Layer paramLayer) {
+        if(this.getLayers().contains(paramLayer)){
+            this.getLayers().get(getLayerIndex(paramLayer)).setVisible(false);
             this.getInfiniteCanvasPlugin().repaint();
         }
     }
 
-    public void showLayer(int paramLayerID) {
-        if(this.getLayers().containsKey(paramLayerID)){
-            this.getLayers().get(paramLayerID).setShown(true);
+    public void showLayer(Layer paramLayer) {
+        if(this.getLayers().contains(paramLayer)){
+            this.getLayers().get(getLayerIndex(paramLayer)).setVisible(true);
             this.getInfiniteCanvasPlugin().repaint();
         }
 
     }
 
-    public void toggleLayerShown(int paramLayerID) {
-        if(this.getLayers().containsKey(paramLayerID)){
-            if(this.getLayers().get(paramLayerID).isShown()) {
-                this.getLayers().get(paramLayerID).setShown(false);
+    public void toggleLayerShown(Layer paramLayer) {
+        if(this.getLayers().contains(paramLayer)){
+            if(this.getLayers().get(getLayerIndex(paramLayer)).isVisible()) {
+                this.getLayers().get(getLayerIndex(paramLayer)).setVisible(false);
             } else {
-                this.getLayers().get(paramLayerID).setShown(true);
+                this.getLayers().get(getLayerIndex(paramLayer)).setVisible(true);
             }
             this.getInfiniteCanvasPlugin().repaint();
         }
     }
 
     public void deleteLayer(Layer paramLayer) {
-        if(this.getLayerOrder().contains(paramLayer.getLayerID())){
-            this.getLayerOrder().remove(this.getLayerOrder().indexOf(paramLayer.getLayerID()));
+        if(this.getLayers().contains(paramLayer)){
+            this.getLayers().remove(this.getLayers().indexOf(paramLayer));
         }
-        if(this.getLayers().containsKey(paramLayer.getLayerID())){
-            this.getLayers().remove(paramLayer.getLayerID());
+        if(this.getLayers().contains(paramLayer)){
+            this.getLayers().remove(paramLayer);
         }
         if(this.getActiveLayer() == paramLayer) {
-            if(this.getLayerOrder().size() == 0){
+            if(this.getLayers().size() == 0){
                 this.setActiveLayer(null);
             } else {
-                this.setActiveLayer(this.getLayers().get(this.getLayerOrder().get(0)));
+                this.setActiveLayer(this.getLayers().get(0));
             }
         }
         this.getInfiniteCanvasPlugin().getApplication().getNotificationManager().displayNotification(Notification.ColourModes.INFO, "Layer Deleted", paramLayer.getTitle() + " has been deleted.", 15 );
@@ -120,50 +93,46 @@ public class LayerManager {
         this.getInfiniteCanvasPlugin().repaint();
     }
 
-    // Move layers down the arraylist not down the canvas
-
-    public void moveLayerDown(int paramLayerID) {
-        if(!this.getLayerOrder().contains(paramLayerID)) {
+    public void moveLayerDown(Layer paramLayer) {
+        if(!this.getLayers().contains(paramLayer)) {
             return;
         }
 
-        if(this.getLayerOrder().get(this.getLayerOrder().size() - 1) == paramLayerID) {
+        if(this.getLayers().get(this.getLayers().size() - 1) == paramLayer) {
             return;
         }
 
-        int locationInArray = layerOrder.indexOf(paramLayerID);
-        layerOrder.add( locationInArray+ 2, paramLayerID);
-        layerOrder.remove(locationInArray);
+        int locationInArray = this.getLayers().indexOf(paramLayer);
+        this.getLayers().add( locationInArray+ 2, paramLayer);
+        this.getLayers().remove(locationInArray);
 
         this.getInfiniteCanvasPlugin().repaint();
     }
 
-    public void moveLayerUp(int paramLayerID) {
-        if(!this.getLayerOrder().contains(paramLayerID)) {
+    public void moveLayerUp(Layer paramLayer) {
+        if(!this.getLayers().contains(paramLayer)) {
             return;
         }
 
-        if(this.getLayerOrder().get(0) == paramLayerID) {
+        if(this.getLayers().get(0) == paramLayer) {
             return;
         }
 
-        int locationInArray = layerOrder.indexOf(paramLayerID);
-        layerOrder.remove(locationInArray);
-        layerOrder.add( locationInArray - 1, paramLayerID);
+        int locationInArray = this.getLayers().indexOf(paramLayer);
+        this.getLayers().remove(locationInArray);
+        this.getLayers().add( locationInArray - 1, paramLayer);
 
         this.getInfiniteCanvasPlugin().repaint();
     }
 
     public void createNewLayer() {
-        this.setLayerCount(this.getLayerCount() + 1);
+        this.setLayerNumberCounter(this.getLayerNumberCounter() + 1);
 
-        int layerID = generateLayerID();
-        Layer layer = new Layer(this, layerID);
+        Layer layer = new DrawingLayer(this);
 
-        layer.setTitle("Layer " + this.getLayerCount());
+        layer.setTitle("Layer " + this.getLayerNumberCounter());
 
-        this.getLayers().put(layerID, layer);
-        this.getLayerOrder().add(0, layerID);
+        this.getLayers().add(0, layer);
 
         this.setActiveLayer(layer);
 
@@ -171,39 +140,59 @@ public class LayerManager {
         this.getInfiniteCanvasPlugin().repaint();
     }
 
+    /*
+
+                LOADING AND SAVING
+
+     */
+
+    public JSONObject save() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+
+        ArrayList<JSONObject> layerData = new ArrayList<>();
+        for (Layer layer : this.getLayers()) {
+            layerData.add(layer.save());
+        }
+
+        jsonObject.put("layerData", layerData);
+        jsonObject.put("activeLayer", this.getLayerIndex(this.getActiveLayer()));
+        jsonObject.put("layerNumberCounter", this.getLayerNumberCounter());
+
+        return jsonObject;
+    }
+
+    public void load(JSONObject paramSavedJSON) throws Exception {
+
+        this.setLayers(new ArrayList<>());
+
+        this.setLayerNumberCounter(paramSavedJSON.getInt("layerNumberCounter"));
+
+        for(Object layerDataObj : paramSavedJSON.getJSONArray("layerData")) {
+            JSONObject layerData = (JSONObject) layerDataObj;
+
+            Layer layer = null;
+            switch(LayerType.valueOf(layerData.getString("layerType"))) {
+                case DRAWING:
+                    layer = new DrawingLayer(this);
+                    layer.load(layerData);
+                    break;
+                default:
+                    break;
+            }
+
+            this.getLayers().add(layer);
+
+        }
+
+        this.setActiveLayer(this.getLayers().get(paramSavedJSON.getInt("activeLayer")));
+    }
+
     @Getter
     @Setter
-    private Random random;
-
-    public int generateLayerID() {
-        while(true) {
-            int id = this.getRandom().nextInt(Integer.MAX_VALUE);
-            if(!this.getLayers().containsKey(id)) {
-                return id;
-            }
-        }
-    }
-
-    public void setActiveLayer(Layer paramLayer) {
-        this.activeLayer = paramLayer;
-        this.getInfiniteCanvasPlugin().redrawLayers();
-    }
-
-    public ArrayList<Integer> getVisibleLayersInRenderOrder() {
-        ArrayList<Integer> visibleLayers = new ArrayList<>();
-        for(Integer layerID : this.getLayerOrder()) {
-            if(this.getLayers().get(layerID).isShown()) {
-                visibleLayers.add(0, layerID);
-            }
-        }
-        return visibleLayers;
-    }
+    private int layerNumberCounter;
 
     public LayerManager(InfiniteCanvasPlugin paramInfiniteCanvasPlugin) {
         this.setInfiniteCanvasPlugin(paramInfiniteCanvasPlugin);
-        this.setRandom(new Random());
-        this.setLayers(new HashMap<>());
-        this.setLayerOrder(new ArrayList<>());
-        this.setLayerCount(0);
+        this.setLayers(new ArrayList<>());
     }
 }

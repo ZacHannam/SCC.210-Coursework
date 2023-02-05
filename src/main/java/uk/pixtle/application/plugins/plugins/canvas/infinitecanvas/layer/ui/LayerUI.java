@@ -1,12 +1,12 @@
-package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer;
+package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.DynamicAnchor;
-import uk.pixtle.util.JSONImport;
 import uk.pixtle.util.ResourceHandler;
 
 import javax.swing.*;
@@ -34,11 +34,35 @@ public class LayerUI extends JPanel {
         }
     }
 
+    @Getter
+    @Setter
+    JLabel typeText;
+
+    private void createTypeText() {
+
+        AnchoredComponent typeTextAnchors = new AnchoredComponent();
+        typeTextAnchors.createAnchor(Anchor.DirectionType.Y, -16);
+        typeTextAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+        typeTextAnchors.createAnchor(Anchor.DirectionType.X, 125);
+        typeTextAnchors.createAnchor(Anchor.DirectionType.X, 10);
+
+        Font font = new Font("Courier", Font.PLAIN, 12);
+        JLabel typeText = new JLabel(this.getLayer().getLayerType().getDescription());
+        typeText.setAlignmentX(0);
+        typeText.setAlignmentY(1);
+        typeText.setFont(font);
+
+        this.setTypeText(typeText);
+        super.add(typeText, typeTextAnchors);
+
+
+    }
+
     private void createTitle() {
 
         AnchoredComponent titleAnchors = new AnchoredComponent();
-        titleAnchors.createAnchor(Anchor.DirectionType.Y, -12);
-        titleAnchors.createAnchor(Anchor.DirectionType.Y, 12);
+        titleAnchors.createAnchor(Anchor.DirectionType.Y, -18);
+        titleAnchors.createAnchor(Anchor.DirectionType.Y, 6);
         titleAnchors.createAnchor(Anchor.DirectionType.X, 125);
         titleAnchors.createAnchor(Anchor.DirectionType.X, 8);
 
@@ -65,7 +89,7 @@ public class LayerUI extends JPanel {
 
     private void updateVisibleIcon() {
         Image image = null;
-        if(this.getLayer().isShown()) {
+        if(this.getLayer().isVisible()) {
             image = new ImageIcon(ResourceHandler.getResourceURL("Visible.png")).getImage();
         } else {
             image = new ImageIcon(ResourceHandler.getResourceURL("notVisible.png")).getImage();
@@ -94,7 +118,7 @@ public class LayerUI extends JPanel {
         visibleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                getLayer().getLayerManager().toggleLayerShown(getLayer().getLayerID());
+                getLayer().getLayerManager().toggleLayerShown(getLayer());
                 updateVisibleIcon();
             }
         });
@@ -152,7 +176,6 @@ public class LayerUI extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 getLayer().setOpacity((float) ((float) opacitySlider.getValue() / 100.0));
-                getLayer().getLayerManager().getInfiniteCanvasPlugin().repaint();
             }
         });
 
@@ -266,6 +289,7 @@ public class LayerUI extends JPanel {
 
         this.createVisibleButton();
         this.createTitle();
+        this.createTypeText();
         this.activeCheck();
     }
 }
