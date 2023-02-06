@@ -38,34 +38,67 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
     }
 
     public void exportFile(String PATH){
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        //final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        System.out.println("Hello");
 
-        InfiniteCanvasPlugin infiniteCanvas = new InfiniteCanvasPlugin(super.getApplication());
-        LayerManager lm = new LayerManager(infiniteCanvas);
+        InfiniteCanvasPlugin infiniteCanvas = (InfiniteCanvasPlugin) super.getApplication().getPluginManager().getActiveCanvasPlugin();
+
+        LayerManager lm = infiniteCanvas.getLayerManager();
+
+
+
         ArrayList<Layer> layers = lm.getLayers();
-        layers.forEach((l) -> {
-            switch (l.getLayerType()) {
-                case DRAWING:
-                    DrawingLayer currentLayer = (DrawingLayer)l;
-                    HashMap chunkMap = currentLayer.getChunkMap();
-                    chunkMap.forEach((s, c) -> {
-                        //System.out.printf("Current chunk - %s : %s\n",s,c);
-                        System.out.printf("Current String working on: %s\n", s);
-                        String[] ChunkString = s.toString().split(":");
-                        Long CurrentX = Long.parseLong(ChunkString[0]);
-                        Long CurrentY = Long.parseLong(ChunkString[1]);
-                        System.out.printf("%l : %l\n", CurrentX, CurrentY);
-                    });
-                    break;
-                case IMAGE:
+        System.out.print(layers);
+        try{
+            layers.forEach((l) -> {
+                System.out.println("Reached");
+                final long[] smallestX = { 999999999 };
+                final long[] biggestX = { 0 };
+                final long[] smallestY = { 999999999 };
+                final long[] biggestY = { 0 };
+                switch (l.getLayerType()) {
+                    case DRAWING:
+                        DrawingLayer currentLayer = (DrawingLayer)l;
+                        HashMap chunkMap = currentLayer.getChunkMap();
+                        chunkMap.forEach((s, c) -> {
+                            //System.out.printf("Current chunk - %s : %s\n",s,c);
+                            //System.out.printf("Current String working on: %s\n", s);
+                            String[] ChunkString = s.toString().split(":");
+                            Long currentX = Long.parseLong(ChunkString[0]);
+                            Long currentY = Long.parseLong(ChunkString[1]);
+                            //System.out.printf("%d : %d\n", currentX, currentY);
+                            if(currentX> biggestX[0])
+                                biggestX[0] = currentX;
 
-                    break;
-                default:
+                            if(currentX< smallestX[0])
+                                smallestX[0] = currentX;
 
-                    break;
-            }
+                            if(currentY > biggestY[0])
+                                biggestY[0] = currentY;
 
-        });
+                            if(currentY < smallestY[0])
+                                smallestY[0] = currentY;
+
+
+                        });
+                        break;
+                    case IMAGE:
+
+                        break;
+                    default:
+
+                        break;
+                }
+                System.out.printf("Big and small x %d : %d\n", biggestX[0], smallestX[0]);
+                System.out.printf("Big and small y %d : %d\n", biggestY[0], smallestY[0]);
+            });
+
+        }
+        catch (Exception e)
+        {
+            System.out.print(e);
+        }
+
 
         //HashMap chunkMap = super.getApplication().getPluginManager().getActiveCanvasPlugin().getChunkMap();
 
