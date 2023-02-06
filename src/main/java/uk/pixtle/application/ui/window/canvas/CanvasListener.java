@@ -50,7 +50,6 @@ public class CanvasListener implements MouseListener {
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("Mouse Start: " + e.getX() + " " + e.getY());
     }
 
     /**
@@ -63,8 +62,6 @@ public class CanvasListener implements MouseListener {
 
         if(!(getParentCanvas().getApplication().getPluginManager().getActivatePlugin() instanceof PluginDrawableExpansion)) return;
 
-        Point lastPoint = new Point(e.getX(), e.getY());
-
         int originalCanvasPositionX = e.getX();
         int originalCanvasPositionY = e.getY();
 
@@ -75,12 +72,111 @@ public class CanvasListener implements MouseListener {
         int differenceY = originalMousePointerY - originalCanvasPositionY;
 
         this.setCurrentlyPressed(true);
+        this.setTimer(new Timer());
+
+        Point lastPoint = new Point(e.getX(), e.getY());
 
         this.setTimerTask(new TimerTask() {
             @Override
             public void run() {
-
                 int currentMousePointerX = (int) MouseInfo.getPointerInfo().getLocation().getX();
+                int currentMousePointerY = (int) MouseInfo.getPointerInfo().getLocation().getY();
+
+                // Bresenham's Line Algorithm (https://www.javatpoint.com/computer-graphics-bresenhams-line-algorithm)
+
+                int x1 = (int) lastPoint.getX();
+                int y1 = (int) lastPoint.getY();
+
+                int x2 = currentMousePointerX - differenceX;
+                int y2 = currentMousePointerY - differenceY;
+
+                ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(x2, y2, x2 - x1, y2 - y1);
+
+                int d = 0;
+
+                int dx = Math.abs(x2 - x1);
+                int dy = Math.abs(y2 - y1);
+
+                int dx2 = 2 * dx;
+                int dy2 = 2 * dy;
+
+                int ix = x1 < x2 ? 1 : -1;
+                int iy = y1 < y2 ? 1 : -1;
+
+                int x = x1;
+                int y = y1;
+
+                if (dx >= dy) {
+                    while (true) {
+                        ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(x, y, 0, 0);
+                        if (x == x2)
+                            break;
+                        x += ix;
+                        d += dy2;
+                        if (d > dx) {
+                            y += iy;
+                            d -= dx2;
+                        }
+                    }
+                } else {
+                    while (true) {
+                        ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(x, y, 0, 0);
+
+                        if (y == y2)
+                            break;
+                        y += iy;
+                        d += dx2;
+                        if (d > dy) {
+                            x += ix;
+                            d -= dy2;
+                        }
+                    }
+                }
+
+                lastPoint.setLocation( new Point(x2, y2));
+            }
+        });
+
+        this.getTimer().schedule(this.getTimerTask(), 0, 5);
+    }
+
+    /**
+     * Invoked when a mouse button has been released on a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        this.stopTimerTask();
+    }
+
+    /**
+     * Invoked when the mouse enters a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    /**
+     * Invoked when the mouse exits a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mouseExited(MouseEvent e) {
+        this.mouseReleased(e);
+    }
+
+    public CanvasListener(Canvas paramParentCanvas) {
+        this.setParentCanvas(paramParentCanvas);
+        this.setTimer(new Timer());
+    }
+}
+
+/*
+ int currentMousePointerX = (int) MouseInfo.getPointerInfo().getLocation().getX();
                 int currentMousePointerY = (int) MouseInfo.getPointerInfo().getLocation().getY();
 
                 int calculatedX = currentMousePointerX - differenceX;
@@ -128,57 +224,17 @@ public class CanvasListener implements MouseListener {
                             smallestNewLocationY = newLocationY;
                             smallestNewLocationX = newLocationX;
                         }
+
+
                     }
+                    currentPixelX = smallestNewLocationX;
+                    currentPixelY = smallestNewLocationY;
 
                     ((PluginDrawableExpansion) getParentCanvas().getApplication().getPluginManager().getActivatePlugin()).mouseCanvasEvent(smallestNewLocationX, smallestNewLocationY, differenceX, differenceY);
 
                     if(currentPixelX == calculatedX && currentPixelY == calculatedY) {
                         break;
                     }
-                    currentPixelX = smallestNewLocationX;
-                    currentPixelY = smallestNewLocationY;
+
                 }
-
-
-                lastPoint.setLocation( new Point(calculatedX, calculatedY));
-            }
-        });
-
-        this.getTimer().schedule(this.getTimerTask(), 0, 10);
-    }
-
-    /**
-     * Invoked when a mouse button has been released on a component.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        this.stopTimerTask();
-    }
-
-    /**
-     * Invoked when the mouse enters a component.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        System.out.println("Mouse Entered Canvas");
-    }
-
-    /**
-     * Invoked when the mouse exits a component.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void mouseExited(MouseEvent e) {
-        this.stopTimerTask();
-    }
-
-    public CanvasListener(Canvas paramParentCanvas) {
-        this.setParentCanvas(paramParentCanvas);
-        this.setTimer(new Timer());
-    }
-}
+ */

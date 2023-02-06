@@ -13,13 +13,13 @@ public class Drawing {
 
     @Getter
     @Setter
-    Color[][] drawingMap;
+    ColorAndAlpha[][] drawingMap;
 
-    public void setColor(int paramX, int paramY, Color paramColor) {
-        this.getDrawingMap()[paramX][paramY] = paramColor;
+    public void setColor(int paramX, int paramY, Color paramColor, float paramAlpha) {
+        this.getDrawingMap()[paramX][paramY] = new ColorAndAlpha(paramColor, paramAlpha);
     }
 
-    public Color getColor(int paramX, int paramY) {
+    public ColorAndAlpha getColor(int paramX, int paramY) {
         return this.getDrawingMap()[paramX][paramY];
     }
 
@@ -27,7 +27,7 @@ public class Drawing {
         this.setHeight(height);
         this.setWidth(width);
 
-        this.setDrawingMap(new Color[width][height]);
+        this.setDrawingMap(new ColorAndAlpha[width][height]);
     }
 
 }

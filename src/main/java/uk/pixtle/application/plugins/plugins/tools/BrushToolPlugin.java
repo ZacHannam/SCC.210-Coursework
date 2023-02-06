@@ -71,6 +71,51 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
     };
 
     @ToolSetting
+    private ToolSettingEntry<Integer> brushOpacity = new ToolSettingEntry<Integer>(100){
+
+        @Override
+        public void notifyVariableChange(Integer paramVar) {
+            renderDrawing();
+        }
+
+        @Override
+        public boolean validateInput(Integer paramInput) {
+            return true;
+        }
+
+        @Override
+        public String getTitle() {
+            return "Brush Opacity";
+        }
+
+        @Override
+        public InputDevice getInputDevice() {
+            return new SliderInputDevice(this) {
+
+                @Override
+                public int getMinValue() {
+                    return 1;
+                }
+
+                @Override
+                public int getMaxValue() {
+                    return 100;
+                }
+
+                @Override
+                public void renderer(JSlider paramSlider) {
+
+                }
+
+                @Override
+                public boolean paintCurrentValue() {
+                    return true;
+                }
+            };
+        }
+    };
+
+    @ToolSetting
     private ToolSettingEntry<String> brushType = new ToolSettingEntry<String>(){
 
         @Override
@@ -116,8 +161,6 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
     Drawing renderedDrawing;
 
     private void renderDrawing() {
-        System.out.println("Render drawing");
-
         if(!this.isPluginActive()) return;
 
         Drawing drawing = new Drawing(brushSize.getValue(), brushSize.getValue());
@@ -131,7 +174,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
                 for(int i = 0; i < drawing.getHeight(); i++) {
                     for(int j = 0; j < drawing.getWidth(); j++) {
                         if(Math.sqrt(Math.pow((centreX - j), 2) + Math.pow((centreY - i), 2)) <= centreY) {
-                            drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor());
+                            drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
                         }
                     }
                 }
@@ -141,7 +184,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
                 for(int i = 0; i < drawing.getHeight(); i++) {
                     for(int j = 0; j < drawing.getWidth(); j++) {
-                        drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor());
+                        drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
                     }
                 }
 
