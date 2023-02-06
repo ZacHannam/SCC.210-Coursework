@@ -34,14 +34,35 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
     public void exportFile(String PATH){
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        HashMap map=super.getApplication().getPluginManager().getActiveCanvasPlugin().getChunkMap();
-        //Need to iterate through chunks?
+        HashMap chunkMap = super.getApplication().getPluginManager().getActiveCanvasPlugin().getChunkMap();
+        //Need to iterate through chunks? Smallest x, biggest y
+        int Y;
+        int X;
 
+
+        System.out.print("Full chunkMap = " + chunkMap + "\n");
+
+        try{
+            chunkMap.forEach((s, c) -> {
+                System.out.printf("Current chunk - %s : %s\n",s,c);
+                System.out.printf("Current String working on: %s\n", s);
+                String[] ChunkString = s.toString().split(":");
+                Long CurrentX = Long.parseLong(ChunkString[0]);
+                Long CurrentY = Long.parseLong(ChunkString[1]);
+                System.out.printf("%l : %l\n", CurrentX, CurrentY);
+            });
+        }
+        catch (Exception e)
+        {
+            System.out.print(e);
+        }
+
+        //cip code
         //BufferedImage exportImg = new BufferedImage();
         //ImageIO.write(this.getActualImage(), "png", byteArrayOutputStream);
-
-
     }
+
+
 
     @MenuBarItem(PATH = "file:Export")
     public void export() {
