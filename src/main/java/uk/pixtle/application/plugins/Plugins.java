@@ -16,6 +16,7 @@ public enum Plugins {
     BRUSH_TOOL(BrushToolPlugin.class),
     FILE_LOADER(FileLoaderPlugin.class),
     COLOUR_DROPPER(ColourDropperPlugin.class);
+    ERASER_TOOL(EraserToolPlugin.class);
 
     @Getter
     @Setter
