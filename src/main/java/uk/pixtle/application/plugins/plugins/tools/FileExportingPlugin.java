@@ -39,23 +39,19 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
     public void exportFile(String PATH){
         //final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        System.out.println("Hello");
 
         InfiniteCanvasPlugin infiniteCanvas = (InfiniteCanvasPlugin) super.getApplication().getPluginManager().getActiveCanvasPlugin();
-
         LayerManager lm = infiniteCanvas.getLayerManager();
-
-
 
         ArrayList<Layer> layers = lm.getLayers();
         System.out.print(layers);
         try{
             layers.forEach((l) -> {
                 System.out.println("Reached");
-                final long[] smallestX = { 999999999 };
-                final long[] biggestX = { 0 };
-                final long[] smallestY = { 999999999 };
-                final long[] biggestY = { 0 };
+                final int[] smallestX = { 999999999 };
+                final int[] biggestX = { 0 };
+                final int[] smallestY = { 999999999 };
+                final int[] biggestY = { 0 };
                 switch (l.getLayerType()) {
                     case DRAWING:
                         DrawingLayer currentLayer = (DrawingLayer)l;
@@ -64,8 +60,8 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
                             //System.out.printf("Current chunk - %s : %s\n",s,c);
                             //System.out.printf("Current String working on: %s\n", s);
                             String[] ChunkString = s.toString().split(":");
-                            Long currentX = Long.parseLong(ChunkString[0]);
-                            Long currentY = Long.parseLong(ChunkString[1]);
+                            int currentX = Integer.parseInt(ChunkString[0]);
+                            int currentY = Integer.parseInt(ChunkString[1]);
                             //System.out.printf("%d : %d\n", currentX, currentY);
                             if(currentX> biggestX[0])
                                 biggestX[0] = currentX;
@@ -81,6 +77,12 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
 
                         });
+                        int topPixelY = smallestY[0] * currentLayer.getPixelsPerChunk();
+                        int topPixelX = smallestX[0] * currentLayer.getPixelsPerChunk();
+                        int bottomPixelY = (biggestY[0]+1)  * (currentLayer.getPixelsPerChunk() - 1);
+                        int bottomPixelX = (biggestX[0]+1)  * (currentLayer.getPixelsPerChunk() - 1);
+                        System.out.printf("Big and small %d : %d\n",topPixelX, topPixelY);
+                        System.out.printf("Big and small %d : %d\n", bottomPixelX, bottomPixelY);
                         break;
                     case IMAGE:
 
@@ -89,8 +91,8 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
                         break;
                 }
-                System.out.printf("Big and small x %d : %d\n", biggestX[0], smallestX[0]);
-                System.out.printf("Big and small y %d : %d\n", biggestY[0], smallestY[0]);
+                //System.out.printf("Big and small x %d : %d\n", biggestX[0], smallestX[0]);
+                //System.out.printf("Big and small y %d : %d\n", biggestY[0], smallestY[0]);
             });
 
         }
@@ -100,34 +102,7 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
         }
 
 
-        //HashMap chunkMap = super.getApplication().getPluginManager().getActiveCanvasPlugin().getChunkMap();
 
-        //Need to iterate through chunks Smallest x, biggest y
-        //Iterate through layers
-        int Y;
-        int X;
-
-/*
-        System.out.print("Full chunkMap = " + chunkMap + "\n");
-
-        try{
-            chunkMap.forEach((s, c) -> {
-                System.out.printf("Current chunk - %s : %s\n",s,c);
-                System.out.printf("Current String working on: %s\n", s);
-                String[] ChunkString = s.toString().split(":");
-                Long CurrentX = Long.parseLong(ChunkString[0]);
-                Long CurrentY = Long.parseLong(ChunkString[1]);
-                System.out.printf("%l : %l\n", CurrentX, CurrentY);
-            });
-        }
-        catch (Exception e)
-        {
-            System.out.print(e);
-        }
-*/
-        //cip code
-        //BufferedImage exportImg = new BufferedImage();
-        //ImageIO.write(this.getActualImage(), "png", byteArrayOutputStream);
     }
 
 
