@@ -30,7 +30,7 @@ public class ColourPlugin extends Plugin implements PluginMiniToolExpansion {
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 410;
+        return 420;
     }
 
     @Override

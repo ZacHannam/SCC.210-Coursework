@@ -1,4 +1,4 @@
-package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer;
+package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui;
 
 import lombok.Getter;
 import lombok.Setter;
