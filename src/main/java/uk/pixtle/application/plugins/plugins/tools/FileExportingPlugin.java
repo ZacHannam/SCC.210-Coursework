@@ -8,17 +8,20 @@ import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.awt.image.*;
 
 public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExpansion {
     public FileExportingPlugin(Application paramApplication) {
@@ -39,6 +42,7 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
     public void exportFile(String PATH){
         //final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        BufferedImage image;
 
         InfiniteCanvasPlugin infiniteCanvas = (InfiniteCanvasPlugin) super.getApplication().getPluginManager().getActiveCanvasPlugin();
         LayerManager lm = infiniteCanvas.getLayerManager();
@@ -85,7 +89,12 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
                         System.out.printf("Big and small %d : %d\n", bottomPixelX, bottomPixelY);
                         break;
                     case IMAGE:
-
+                        ImageLayer currentLayerImage = (ImageLayer) l;
+                        Point topLeftPixel = currentLayerImage.getTopLeftPixel();
+                        Point bottomRightPixel = currentLayerImage.getBottomRightPixel();
+                        int height=bottomRightPixel.y - topLeftPixel.y;
+                        int width=bottomRightPixel.x - topLeftPixel.x;
+                        //image = new BufferedImage(width,height, BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST); //won't work as needs to be final for lambda.
                         break;
                     default:
 
