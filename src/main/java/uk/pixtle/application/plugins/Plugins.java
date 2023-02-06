@@ -8,6 +8,7 @@ import uk.pixtle.application.plugins.plugins.tools.BrushToolPlugin;
 import uk.pixtle.application.plugins.plugins.tools.ColourDropperPlugin;
 import uk.pixtle.application.plugins.plugins.tools.FileLoaderPlugin;
 import uk.pixtle.application.plugins.plugins.tools.colourplugin.ColourPlugin;
+import uk.pixtle.application.plugins.plugins.tools.colourplugin.EraserToolPlugin;
 
 public enum Plugins {
 
@@ -15,7 +16,8 @@ public enum Plugins {
     COLOUR_PLUGIN(ColourPlugin.class),
     BRUSH_TOOL(BrushToolPlugin.class),
     FILE_LOADER(FileLoaderPlugin.class),
-    COLOUR_DROPPER(ColourDropperPlugin.class);
+    COLOUR_DROPPER(ColourDropperPlugin.class),
+    ERASER_TOOL(EraserToolPlugin.class);
 
     @Getter
     @Setter
