@@ -139,7 +139,7 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
 
                 @Override
                 public String[] getValues() {
-                    return new String[]{"Sphere", "Block", "Triangle", "Diamond"};
+                    return new String[]{"Sphere", "Block", "Triangle", "Crown", "Diamond"};
                 }
             };
         }
@@ -207,6 +207,34 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
                 }
                 break;
             case "Crown":
+                int start3 = drawing.getWidth()/2;
+                int end3 = drawing.getWidth()/2;
+                for(int i =drawing.getHeight()/2-1; i>=0; i--){
+                    for(int j = start3; j >=0; j--){
+                        drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
+                    }
+                    for(int j = end3; j < drawing.getWidth(); j++){
+                        drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
+                    }
+                    start3 --;
+                    end3++;
+                }
+                int start2 = 0;
+                int end2 = drawing.getWidth();
+
+                for(int i = drawing.getHeight()/2; i>=0; i=i-1){
+
+                    for(int j = start2; j<end2; j++){
+                        drawing.setColor(j, i, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
+                        int next = i+1;
+                        drawing.setColor(j, next, super.getApplication().getColourManager().getActiveColor(), (float) this.brushOpacity.getValue() / 100);
+
+                    }
+                    start2 = start2 + 1;
+                    end2 = end2 -1;
+
+                }
+                break;
 
             case "Diamond":
                 int start4 = 0;
