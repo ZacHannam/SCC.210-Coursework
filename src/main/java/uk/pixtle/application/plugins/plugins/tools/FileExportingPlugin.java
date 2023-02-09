@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.awt.image.*;
+import java.util.Objects;
 
 public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExpansion {
     public FileExportingPlugin(Application paramApplication) {
@@ -79,10 +80,15 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
         });
 
+
         BufferedImage newImg = new BufferedImage(biggestWidth[0],biggestHeight[0],BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);
         Graphics2D g2 = (Graphics2D) newImg.createGraphics();
-        g2.setPaint(infiniteCanvas.getBackgroundColor());
-        g2.fillRect(0,0,biggestWidth[0], biggestHeight[0]);
+        if(!Objects.equals(infiniteCanvas.getBackgroundColor(), new Color(255, 255, 255)))
+        {
+            g2.setPaint(infiniteCanvas.getBackgroundColor());
+            g2.fillRect(0,0,biggestWidth[0], biggestHeight[0]);
+        }
+
 
         layers.forEach((l) -> {
             switch (l.getLayerType()) {
