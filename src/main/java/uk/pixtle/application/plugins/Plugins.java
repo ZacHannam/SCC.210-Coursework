@@ -14,8 +14,8 @@ public enum Plugins {
     BRUSH_TOOL(BrushToolPlugin.class),
     FILE_LOADER(FileLoaderPlugin.class),
     FILE_EXPORTER(FileExportingPlugin.class),
-    COLOUR_DROPPER(ColourDropperPlugin.class),
-    TEXT_TOOL(TextToolPlugin.class);
+    COLOUR_DROPPER(ColourDropperPlugin.class);
+
 
     @Getter
     @Setter
