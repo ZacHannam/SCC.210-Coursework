@@ -12,6 +12,11 @@ public abstract class Plugin {
 
     public void onLoadingFinish() {}
 
+    public void onEnable(){}
+
+    public void onDisable(){
+    }
+
     public Plugin(Application paramApplication) {
         this.setApplication(paramApplication);
     }

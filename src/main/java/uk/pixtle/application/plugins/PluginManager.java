@@ -203,11 +203,12 @@ public class PluginManager extends ApplicationComponent {
             super.getApplication().getUIManager().getWindow().getMiniToolList().removeToolSettingsPanel();
         }
 
+        Plugin previousPlugin = this.getActivatePlugin();
+
         this.setActivatePlugin(paramPlugin);
 
-        if(paramPlugin instanceof ToolPlugin) {
-            ((ToolPlugin) paramPlugin).onEnable();
-        }
+        if(previousPlugin != null) previousPlugin.onDisable();
+        paramPlugin.onEnable();
     }
 
     public void callOnLoadingFinish() {
@@ -232,8 +233,6 @@ public class PluginManager extends ApplicationComponent {
         this.registerAllPlugins();
         this.loadAllPlugins();
         this.setDefaultPlugin();
-
-        this.callOnLoadingFinish();
 
     }
 

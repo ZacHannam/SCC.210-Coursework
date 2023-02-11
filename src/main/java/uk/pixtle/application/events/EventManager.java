@@ -7,6 +7,9 @@ import uk.pixtle.application.ApplicationComponent;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.Event;
 
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

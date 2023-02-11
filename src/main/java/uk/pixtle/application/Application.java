@@ -44,5 +44,7 @@ public class Application {
         this.setColourManager(new ColourManager(this));
         this.setPluginManager(new PluginManager(this));
         this.setNotificationManager(new NotificationManager(this));
+
+        this.getPluginManager().callOnLoadingFinish();
     }
 }
