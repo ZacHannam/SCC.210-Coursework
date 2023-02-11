@@ -4,11 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.plugins.plugins.*;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
-import uk.pixtle.application.plugins.plugins.tools.BrushToolPlugin;
-import uk.pixtle.application.plugins.plugins.tools.ColourDropperPlugin;
-import uk.pixtle.application.plugins.plugins.tools.FileLoaderPlugin;
+import uk.pixtle.application.plugins.plugins.tools.*;
 import uk.pixtle.application.plugins.plugins.tools.colourplugin.ColourPlugin;
 import uk.pixtle.application.plugins.plugins.tools.colourplugin.EraserToolPlugin;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListenerPlugin;
 
 public enum Plugins {
 
@@ -17,7 +16,8 @@ public enum Plugins {
     BRUSH_TOOL(BrushToolPlugin.class),
     FILE_LOADER(FileLoaderPlugin.class),
     COLOUR_DROPPER(ColourDropperPlugin.class),
-    ERASER_TOOL(EraserToolPlugin.class);
+    ERASER_TOOL(EraserToolPlugin.class),
+    KEY_LISTENER(KeyListenerPlugin.class);
 
     @Getter
     @Setter

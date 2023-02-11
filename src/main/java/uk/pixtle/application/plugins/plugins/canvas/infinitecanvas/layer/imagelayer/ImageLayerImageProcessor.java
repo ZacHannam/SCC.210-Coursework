@@ -1,5 +1,6 @@
 package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer;
 
+import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerImageProcessor;
@@ -39,13 +40,39 @@ public class ImageLayerImageProcessor extends LayerImageProcessor {
             image = outputImage;
         }
 
+        // Draw the border
+
+        int indentX = 0, indentY = 0;
+        Application application = this.getLayer().getLayerManager().getInfiniteCanvasPlugin().getApplication();
+        if(application.getPluginManager().getActivatePlugin() == infiniteCanvasPlugin && this.getLayer().getLayerManager().getActiveLayer() == imageLayer) {
+            BufferedImage newImage = new BufferedImage(image.getWidth() + 20, image.getHeight() + 20, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = (Graphics2D) newImage.getGraphics();
+            g2d.setPaint(Color.blue);
+            g2d.fillRect(10, 5, newImage.getWidth() - 15, 5);
+            g2d.fillRect(newImage.getWidth() - 10, 10, 5, newImage.getHeight() - 15);
+            g2d.fillRect(5, newImage.getHeight() - 10, newImage.getWidth() - 10, 5);
+            g2d.fillRect(5, 5, 5, newImage.getHeight() - 10 );
+            g2d.drawImage(image, 10, 10, null);
+
+            g2d.setPaint(Color.black);
+            for(int x = 0, i = 0; x < 2; x++, i += newImage.getWidth() - 20) {
+                for(int y = 0, j = 0; y < 2; y++, j += newImage.getWidth() - 20) {
+                    g2d.fillOval(i, j, 20, 20);
+                }
+            }
+
+            image = newImage;
+
+            indentX = 10; indentY = 10;
+        }
+
         BufferedImage bufferedImage = new BufferedImage(canvasUI.getWidth(), canvasUI.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
 
         int differenceX = (int) imageLayer.getTopLeftPixel().getX() - infiniteCanvasPlugin.getCurrentPixelX();
         int differenceY = (int) imageLayer.getTopLeftPixel().getY() - infiniteCanvasPlugin.getCurrentPixelY();
 
-        g2d.drawImage(image, (int) Math.floor(differenceX * infiniteCanvasPlugin.getZoom()), (int) Math.floor(differenceY * infiniteCanvasPlugin.getZoom()), null);
+        g2d.drawImage(image, (int) Math.floor(differenceX * infiniteCanvasPlugin.getZoom()) - indentX, (int) Math.floor(differenceY * infiniteCanvasPlugin.getZoom()) - indentY, null);
 
         return bufferedImage;
     }

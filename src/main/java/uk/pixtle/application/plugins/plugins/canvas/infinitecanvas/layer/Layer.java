@@ -69,7 +69,7 @@ public abstract class Layer {
         }
 
         this.opacity = paramOpacity;
-        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint(true);
     }
 
     @Getter
@@ -82,7 +82,7 @@ public abstract class Layer {
 
         this.visible = paramVisible;
 
-        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint(true);
     }
 
     @Getter
@@ -94,7 +94,7 @@ public abstract class Layer {
         }
         this.blurred = paramBlurred;
 
-        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint(true);
     }
 
     @Getter
@@ -106,7 +106,7 @@ public abstract class Layer {
         }
         this.invertColours = paramInvertColours;
 
-        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint(true);
     }
 
     @Getter
@@ -118,7 +118,7 @@ public abstract class Layer {
         }
         this.flipY = paramFlipY;
 
-        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint(true);
     }
 
     @Getter
@@ -130,7 +130,7 @@ public abstract class Layer {
         }
         this.flipX = paramFlipX;
 
-        this.getLayerManager().getInfiniteCanvasPlugin().repaint();
+        this.getLayerManager().getInfiniteCanvasPlugin().repaint(true);
     }
 
 

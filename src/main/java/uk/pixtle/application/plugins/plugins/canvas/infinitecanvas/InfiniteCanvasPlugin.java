@@ -7,13 +7,11 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
-import uk.pixtle.application.plugins.plugins.canvas.drawing.ColorAndAlpha;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerImageProcessor;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.Chunk;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.BackgroundLayerUI;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.LayerUIDrawer;
@@ -96,6 +94,22 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     /*
 
+                ONENABLE / DISABLE
+
+     */
+
+    @Override
+    public void onEnable(){
+        this.repaint(true);
+    }
+
+    @Override
+    public void onDisable() {
+        this.repaint(true);
+    }
+
+    /*
+
                 ZOOM / SCALE SETTINGS
 
      */
@@ -106,7 +120,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         currentPixelX += (int) Math.ceil(((1.0 / this.getZoom()) * paramCurrentPixelX));
         currentPixelY += (int) Math.ceil(((1.0 / this.getZoom()) * paramCurrentPixelY));
 
-        this.repaint();
+        this.repaint(true);
     }
 
     public double mapZoom(int paramZoom) {
@@ -145,7 +159,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.setCurrentPixelY(this.getCurrentPixelY() + differenceY);
 
         this.setZoom(paramScale);
-        this.repaint();
+        this.repaint(true);
     }
 
 
@@ -177,7 +191,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
             this.getBackgroundLayerUI().updateBackgroundColourPreview(this.getBackgroundColor());
         }
 
-        super.repaint();
+        this.repaint(true);
     }
 
 
@@ -355,7 +369,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.getLayerManager().load(paramSavedJSON.getJSONObject("layerManager"));
         this.getZoomToolSlider().setValue(this.inverseMapZoom(this.getZoom()));
 
-        this.repaint();
+        this.repaint(false);
         this.redrawLayers();
     }
 
@@ -445,7 +459,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         }
 
         ((DrawingLayer) this.getLayerManager().getActiveLayer()).printImageOnCanvas(paramScreenX, paramScreenY, paramDrawing, paramCenter);
-        super.repaint();
+        this.repaint(false);
     }
 
     /**
@@ -463,8 +477,10 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
      */
 
-    public void repaint() {
-        this.getLayerManager().setReRender(true);
+    public void repaint(boolean paramReRender) {
+        if(paramReRender) {
+            this.getLayerManager().setReRender(true);
+        }
         super.repaint();
     }
 

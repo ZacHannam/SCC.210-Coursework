@@ -1,5 +1,7 @@
 package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer;
 
+import uk.pixtle.application.Application;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerImageProcessor;
 import uk.pixtle.application.ui.window.canvas.CanvasUI;

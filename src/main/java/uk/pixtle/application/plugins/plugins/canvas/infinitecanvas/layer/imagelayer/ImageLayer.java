@@ -94,6 +94,18 @@ public class ImageLayer extends Layer {
         return true;
     }
 
+    @Override
+    public void onLayerEnable() {
+        super.setReRender(true);
+        super.getLayerManager().getInfiniteCanvasPlugin().repaint(false);
+    }
+
+    @Override
+    public void onLayerDisable() {
+        super.setReRender(true);
+        super.getLayerManager().getInfiniteCanvasPlugin().repaint(false);
+    }
+
     /*
 
                     CONSTRUCTOR
