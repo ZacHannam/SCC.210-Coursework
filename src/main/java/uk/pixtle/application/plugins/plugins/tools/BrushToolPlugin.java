@@ -8,6 +8,8 @@ import uk.pixtle.application.events.events.ColourChangeEvent;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.PluginKeyListenerPolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
@@ -17,8 +19,14 @@ import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
-public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion {
+public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion, PluginKeyListenerPolicy {
+
+    @KeyListener(KEY = KeyEvent.VK_B, MODIFIERS = 0)
+    public void hello() {
+        super.getApplication().getPluginManager().activatePlugin(this);
+    }
 
     @Override
     public String getIconFilePath() {
@@ -95,6 +103,96 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
                 @Override
                 public int getMinValue() {
                     return 1;
+                }
+
+                @Override
+                public int getMaxValue() {
+                    return 100;
+                }
+
+                @Override
+                public void renderer(JSlider paramSlider) {
+
+                }
+
+                @Override
+                public boolean paintCurrentValue() {
+                    return true;
+                }
+            };
+        }
+    };
+
+    @ToolSetting
+    private ToolSettingEntry<Integer> brushStep = new ToolSettingEntry<Integer>(1){
+
+        @Override
+        public void notifyVariableChange(Integer paramVar) {
+            renderDrawing();
+        }
+
+        @Override
+        public boolean validateInput(Integer paramInput) {
+            return true;
+        }
+
+        @Override
+        public String getTitle() {
+            return "Brush Step";
+        }
+
+        @Override
+        public InputDevice getInputDevice() {
+            return new SliderInputDevice(this) {
+
+                @Override
+                public int getMinValue() {
+                    return 1;
+                }
+
+                @Override
+                public int getMaxValue() {
+                    return 300;
+                }
+
+                @Override
+                public void renderer(JSlider paramSlider) {
+
+                }
+
+                @Override
+                public boolean paintCurrentValue() {
+                    return true;
+                }
+            };
+        }
+    };
+
+    @ToolSetting
+    private ToolSettingEntry<Integer> brushSoftness = new ToolSettingEntry<Integer>(20){
+
+        @Override
+        public void notifyVariableChange(Integer paramVar) {
+            renderDrawing();
+        }
+
+        @Override
+        public boolean validateInput(Integer paramInput) {
+            return true;
+        }
+
+        @Override
+        public String getTitle() {
+            return "Brush Softness";
+        }
+
+        @Override
+        public InputDevice getInputDevice() {
+            return new SliderInputDevice(this) {
+
+                @Override
+                public int getMinValue() {
+                    return 0;
                 }
 
                 @Override
@@ -269,14 +367,36 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
                 break;
         }
 
+        if(brushSoftness.getValue() != 0) {
+            Drawing newDrawing = new Drawing(drawing.getWidth(), drawing.getHeight());
+            int centrePixelX = newDrawing.getWidth() / 2;
+            int centrePixelY = newDrawing.getHeight() / 2;
+            double maxDistance = Math.sqrt(Math.pow(centrePixelX - newDrawing.getWidth(), 2) + Math.pow(centrePixelY - newDrawing.getHeight(), 2));
+
+            for(int i = 0; i < drawing.getHeight(); i++) {
+                for(int j = 0; j < drawing.getWidth(); j++) {
+                    if(drawing.getColor(j, i) == null) continue;
+
+
+                    double distance = Math.sqrt(Math.pow(centrePixelX - j, 2) + Math.pow(centrePixelY - i, 2));
+
+                    double mappedDistance = ((distance / maxDistance) * 10.0);
+                    int softnessAtPixel = 255-(int) Math.floor(((1/20.0) * Math.pow(mappedDistance, 2)) * (255/ 5.0) * (brushSoftness.getValue() / 100.0));
+
+                    float newAlpha = drawing.getColor(j, i).getAlpha() * (float) (softnessAtPixel / 255.0);
+
+                    newDrawing.setColor(j, i, drawing.getColor(j, i).getColor(), newAlpha);
+                }
+            }
+            drawing = newDrawing;
+        }
+
 
         this.setRenderedDrawing(drawing);
-        this.changed = true;
 
     }
 
     int lastX = -1, lastY = -1;
-    boolean changed = true;
     @Override
     public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY,  int paramDifferenceX, int paramDifferenceY) {
 
@@ -284,15 +404,23 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
             renderDrawing();
         }
 
-        if(paramCalculatedX != lastX || paramCalculatedY != lastY || changed) {
-            int x = paramCalculatedX, y = paramCalculatedY;
+        if(paramCalculatedX == lastX && paramCalculatedY == lastY) return;
 
-            super.getApplication().getPluginManager().getActiveCanvasPlugin().printImageOnCanvas(x, y, this.getRenderedDrawing(), true);
+        if(lastX != -1 && lastY != -1) {
+            int longestSize = Math.max(this.getRenderedDrawing().getWidth(), this.getRenderedDrawing().getHeight());
 
-            lastX = paramCalculatedX;
-            lastY = paramCalculatedY;
-            changed = false;
+            double minDistance = (brushStep.getValue() / 100.0) * longestSize;
+            double distance = Math.sqrt(Math.pow(paramCalculatedX - lastX, 2) + Math.pow(paramCalculatedY - lastY, 2));
+
+            if(distance < minDistance) return;
         }
+
+        int x = paramCalculatedX, y = paramCalculatedY;
+
+        super.getApplication().getPluginManager().getActiveCanvasPlugin().printImageOnCanvas(x, y, this.getRenderedDrawing(), true);
+
+        lastX = paramCalculatedX;
+        lastY = paramCalculatedY;
 
     }
 

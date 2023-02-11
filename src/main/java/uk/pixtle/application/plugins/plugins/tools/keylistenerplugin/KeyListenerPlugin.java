@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class KeyListenerPlugin extends ToolPlugin implements PluginKeyListenerPolicy{
 
-    //@KeyListener(KEY = KeyEvent.VK_LEFT, MODIFIERS = 0) EXAMPLE
+    // @KeyListener(KEY = KeyEvent.VK_LEFT, MODIFIERS = KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK) EXAMPLE
 
     public void loadAllKeyStrokes() {
         final JLayeredPane panel = super.getApplication().getUIManager().getWindow().getLayeredPane();
