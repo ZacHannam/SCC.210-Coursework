@@ -199,6 +199,11 @@ public abstract class Layer {
         this.loadLayerData(paramSavedData.getJSONObject("layerData"));
     }
 
+    public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY, int paramDifferenceX, int paramDifferenceY) {
+
+        this.getLayerManager().getInfiniteCanvasPlugin().updateCurrentPixel(-paramDifferenceX, -paramDifferenceY);
+    }
+
     /*
 
                 CONSTRUCTOR

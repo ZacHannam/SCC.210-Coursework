@@ -3,9 +3,12 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+import uk.pixtle.application.events.events.LayerChangeEvent;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textlayer.TextLayer;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
@@ -45,6 +48,8 @@ public class LayerManager {
 
         this.activeLayer = paramLayer;
         this.getActiveLayer().onLayerEnable();
+
+        this.getInfiniteCanvasPlugin().getApplication().getEventManager().callEvent(new LayerChangeEvent(paramLayer));
 
         // REPAINT UI
     }
@@ -206,7 +211,7 @@ public class LayerManager {
         textLayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //createNewLayer(LayerType.TEXT);
+                createNewLayer(LayerType.TEXT);
                 typeSelector.setVisible(false);
             }
         });
@@ -284,6 +289,9 @@ public class LayerManager {
                 break;
             case IMAGE:
                 layer = new ImageLayer(this);
+                break;
+            case TEXT:
+                layer = new TextLayer(this);
                 break;
         }
 

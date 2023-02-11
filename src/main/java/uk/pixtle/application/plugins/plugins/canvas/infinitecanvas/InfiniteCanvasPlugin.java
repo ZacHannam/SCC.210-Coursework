@@ -220,7 +220,11 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     @Override
     public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY, int paramDifferenceX, int paramDifferenceY) {
 
-        this.updateCurrentPixel(-paramDifferenceX, -paramDifferenceY);
+        if(this.getLayerManager().getActiveLayer() == null) {
+            updateCurrentPixel(-paramDifferenceX, -paramDifferenceY);
+            return;
+        }
+        this.getLayerManager().getActiveLayer().mouseCanvasEvent(paramCalculatedX, paramCalculatedY, paramDifferenceX, paramDifferenceY);
     }
 
     /*
@@ -378,6 +382,14 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     ABSTRACT METHODS
 
      */
+
+    public Point translateScreenPixel(int x, int y) {
+
+        int cX = (int) Math.floor(this.getCurrentPixelX() + ((1 / this.getZoom()) * x));
+        int cY = (int) Math.floor(this.getCurrentPixelY() + ((1 / this.getZoom()) * y));
+
+        return new Point(cX, cY);
+    }
 
     @Getter
     @Setter

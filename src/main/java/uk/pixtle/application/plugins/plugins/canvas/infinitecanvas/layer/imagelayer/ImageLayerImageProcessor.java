@@ -15,8 +15,12 @@ public class ImageLayerImageProcessor extends LayerImageProcessor {
     public BufferedImage getLayerAsBufferedImage() {
         ImageLayer imageLayer = (ImageLayer) this.getLayer();
 
-        if(imageLayer.getImage() == null){
+        if(imageLayer.getActualImage() == null){
             return null;
+        }
+
+        if(imageLayer.getScaledImage() == null) {
+            imageLayer.recreateScaledImage();
         }
 
         // check if rendered
@@ -30,11 +34,11 @@ public class ImageLayerImageProcessor extends LayerImageProcessor {
         //if(imageLayer.getBottomRightPixel().getX() < infiniteCanvasPlugin.getCurrentPixelX()) return null;
         //if(imageLayer.getBottomRightPixel().getY() < infiniteCanvasPlugin.getCurrentPixelY()) return null;
 
-        BufferedImage image = imageLayer.getImage();
+        BufferedImage image = imageLayer.getScaledImage();
 
         if(infiniteCanvasPlugin.getZoom() != 1) {
-            Image img = imageLayer.getImage().getScaledInstance((int) Math.ceil(imageLayer.getImage().getWidth() * infiniteCanvasPlugin.getZoom()), (int) Math.ceil(imageLayer.getImage().getHeight() * infiniteCanvasPlugin.getZoom()), Image.SCALE_FAST);
-            BufferedImage outputImage = new BufferedImage((int) Math.ceil(imageLayer.getImage().getWidth() * infiniteCanvasPlugin.getZoom()), (int) Math.ceil(imageLayer.getImage().getWidth() * infiniteCanvasPlugin.getZoom()), BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);
+            Image img = imageLayer.getScaledImage().getScaledInstance((int) Math.ceil(imageLayer.getScaledImage().getWidth() * infiniteCanvasPlugin.getZoom()), (int) Math.ceil(imageLayer.getScaledImage().getHeight() * infiniteCanvasPlugin.getZoom()), Image.SCALE_SMOOTH);
+            BufferedImage outputImage = new BufferedImage((int) Math.ceil(imageLayer.getScaledImage().getWidth() * infiniteCanvasPlugin.getZoom()), (int) Math.ceil(imageLayer.getScaledImage().getHeight() * infiniteCanvasPlugin.getZoom()), BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);
             outputImage.getGraphics().drawImage(img, 0, 0, null);
 
             image = outputImage;
@@ -56,7 +60,7 @@ public class ImageLayerImageProcessor extends LayerImageProcessor {
 
             g2d.setPaint(Color.black);
             for(int x = 0, i = 0; x < 2; x++, i += newImage.getWidth() - 20) {
-                for(int y = 0, j = 0; y < 2; y++, j += newImage.getWidth() - 20) {
+                for(int y = 0, j = 0; y < 2; y++, j += newImage.getHeight() - 20) {
                     g2d.fillOval(i, j, 20, 20);
                 }
             }

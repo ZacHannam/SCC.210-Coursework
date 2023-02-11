@@ -30,8 +30,6 @@ public class KeyListenerPlugin extends ToolPlugin implements PluginKeyListenerPo
                     KeyStroke keyStroke = KeyStroke.getKeyStroke(a.KEY(), a.MODIFIERS());
                     String mapKey = entry.getKey().toString() + "-" + method.getName();
 
-                    System.out.println(mapKey);
-
                     panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, mapKey);
 
                     panel.getActionMap().put(mapKey, new AbstractAction()

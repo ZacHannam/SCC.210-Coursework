@@ -5,7 +5,8 @@ import lombok.Setter;
 
 public enum LayerType {
     DRAWING("Drawing"),
-    IMAGE("Image");
+    IMAGE("Image"),
+    TEXT("Text");
 
     @Getter
     @Setter

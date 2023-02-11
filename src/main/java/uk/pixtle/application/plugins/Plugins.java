@@ -17,6 +17,8 @@ public enum Plugins {
     FILE_LOADER(FileLoaderPlugin.class),
     COLOUR_DROPPER(ColourDropperPlugin.class),
     ERASER_TOOL(EraserToolPlugin.class),
+    TEXT_TOOL(TextToolPlugin.class),
+    FILE_EXPORTER(FileExportingPlugin.class),
     KEY_LISTENER(KeyListenerPlugin.class);
 
     @Getter
