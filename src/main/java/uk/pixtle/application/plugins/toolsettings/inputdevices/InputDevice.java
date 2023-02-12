@@ -8,7 +8,9 @@ public abstract class InputDevice {
 
     public enum InputDeviceType {
         SLIDER,
-        DROP_DOWN;
+        TEXT_AREA,
+        DROP_DOWN,
+        COLOUR_BUTTON;
     }
 
     @Getter

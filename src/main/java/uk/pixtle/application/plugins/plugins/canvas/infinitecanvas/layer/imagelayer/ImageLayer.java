@@ -222,7 +222,7 @@ public class ImageLayer extends Layer {
     @Override
     public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY, int paramDifferenceX, int paramDifferenceY) {
 
-        if(System.currentTimeMillis() - this.getLastClickTime() > 15) {
+        if(System.currentTimeMillis() - this.getLastClickTime() > 250) {
             this.setDragged(0);
         }
 
@@ -272,33 +272,27 @@ public class ImageLayer extends Layer {
             this.setDragged(3);
         }
 
-        if(this.getDragged() == 0) {
 
-            if(translatedPixel.getY() < this.getBottomRightPixel().getY() && translatedPixel.getY() > this.getTopLeftPixel().getY()
-            && translatedPixel.getX() < this.getBottomRightPixel().getX() && translatedPixel.getX() > this.getTopLeftPixel().getX()) {
+        if(this.getDragged() == 5 || (translatedPixel.getY() < this.getBottomRightPixel().getY() && translatedPixel.getY() > this.getTopLeftPixel().getY()
+                && translatedPixel.getX() < this.getBottomRightPixel().getX() && translatedPixel.getX() > this.getTopLeftPixel().getX())) {
 
-                int moveX = (int) Math.round(paramDifferenceX * (1 / infiniteCanvasPlugin.getZoom()));
-                int moveY = (int) Math.round(paramDifferenceY * (1 / infiniteCanvasPlugin.getZoom()));
-                this.setBottomRightPixel(new Point((int) this.getBottomRightPixel().getX() + moveX, (int) this.getBottomRightPixel().getY() + moveY));
-                this.setTopLeftPixel(new Point((int) this.getTopLeftPixel().getX() + moveX, (int) this.getTopLeftPixel().getY() + moveY));
+            int moveX = (int) Math.round(paramDifferenceX * (1 / infiniteCanvasPlugin.getZoom()));
+            int moveY = (int) Math.round(paramDifferenceY * (1 / infiniteCanvasPlugin.getZoom()));
+            this.setBottomRightPixel(new Point((int) this.getBottomRightPixel().getX() + moveX, (int) this.getBottomRightPixel().getY() + moveY));
+            this.setTopLeftPixel(new Point((int) this.getTopLeftPixel().getX() + moveX, (int) this.getTopLeftPixel().getY() + moveY));
 
-                super.setReRender(true);
-                infiniteCanvasPlugin.repaint(false);
+            super.setReRender(true);
+            infiniteCanvasPlugin.repaint(false);
 
-            } else {
-                super.mouseCanvasEvent(paramCalculatedX, paramCalculatedY, paramDifferenceX, paramDifferenceY);
-            }
+            this.setDragged(5);
+
+        } else {
+            super.mouseCanvasEvent(paramCalculatedX, paramCalculatedY, paramDifferenceX, paramDifferenceY);
         }
 
         if(this.getDragged() != 0) {
             this.setLastClickTime(System.currentTimeMillis());
         }
-
-
-
-
-
-
     }
     /*
 

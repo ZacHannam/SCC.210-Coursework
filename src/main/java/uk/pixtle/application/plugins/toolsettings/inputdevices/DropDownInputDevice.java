@@ -2,6 +2,7 @@ package uk.pixtle.application.plugins.toolsettings.inputdevices;
 
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 
+import javax.swing.*;
 import java.util.List;
 
 public abstract class DropDownInputDevice extends InputDevice {
@@ -16,4 +17,5 @@ public abstract class DropDownInputDevice extends InputDevice {
     }
 
     public abstract String[] getValues();
+    public abstract void renderer(JComboBox<String> paramComboBox);
 }

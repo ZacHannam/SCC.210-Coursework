@@ -7,6 +7,7 @@ import uk.pixtle.application.plugins.plugins.tools.ToolPlugin;
 import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +38,10 @@ public class KeyListenerPlugin extends ToolPlugin implements PluginKeyListenerPo
                         public void actionPerformed(ActionEvent event)
                         {
                             try {
+
+                                Component c = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+                                if(c instanceof JTextField || c instanceof JTextArea) return;
+
                                 method.invoke(plugin);
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();

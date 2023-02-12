@@ -3,17 +3,26 @@ package uk.pixtle.application.ui.window.minitoollist;
 import lombok.Getter;
 import lombok.Setter;
 import org.w3c.dom.Text;
+import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
+import uk.pixtle.application.plugins.toolsettings.inputdevices.ColourButtonInputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.DropDownInputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
+import uk.pixtle.application.plugins.toolsettings.inputdevices.TextAreaInputDevice;
+import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
+import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
+import uk.pixtle.application.ui.layouts.anchorlayout.anchors.DynamicAnchor;
 
+import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -90,6 +99,8 @@ public final class ToolSettingsPanel extends JPanel {
 
                     panel.add(comboBox);
 
+                    ((DropDownInputDevice) toolSettingEntry.getInputDevice()).renderer(comboBox);
+
                     ((ToolSettingEntry<String>) toolSettingEntry).setValue((String) comboBox.getSelectedItem());
                     ((ToolSettingEntry<String>) toolSettingEntry).notifyVariableChange((String) comboBox.getSelectedItem());
 
@@ -102,7 +113,87 @@ public final class ToolSettingsPanel extends JPanel {
                     });
 
                     break;
+                case TEXT_AREA:
 
+                    JTextArea textArea = new JTextArea();
+
+                    panel.add(textArea);
+
+                    textArea.setText(((TextAreaInputDevice) toolSettingEntry.getInputDevice()).defaultText());
+                    ((ToolSettingEntry<String>) toolSettingEntry).notifyVariableChange((String) textArea.getText());
+
+                    textArea.setPreferredSize(new Dimension(getDefaultWidth(), 100));
+                    textArea.setLineWrap(true);
+
+                    ((TextAreaInputDevice) toolSettingEntry.getInputDevice()).renderer(textArea);
+
+                    textArea.getDocument().addDocumentListener(new DocumentListener() {
+                        private void notifyVariableChange() {
+                            ((ToolSettingEntry<String>) toolSettingEntry).setValue((String) textArea.getText());
+                            ((ToolSettingEntry<String>) toolSettingEntry).notifyVariableChange((String) textArea.getText());
+                        }
+                        @Override
+                        public void insertUpdate(DocumentEvent e) {
+                            this.notifyVariableChange();
+                        }
+
+                        @Override
+                        public void removeUpdate(DocumentEvent e) {
+                            this.notifyVariableChange();
+                        }
+
+                        @Override
+                        public void changedUpdate(DocumentEvent e) {
+                            this.notifyVariableChange();
+                        }
+                    });
+                    break;
+                case COLOUR_BUTTON:
+
+
+                    ColourButton cb = new ColourButton();
+                    panel.add(cb);
+                    cb.setColour(((ColourButtonInputDevice) toolSettingEntry.getInputDevice()).defaultColour());
+
+                    ((ColourButtonInputDevice) toolSettingEntry.getInputDevice()).renderer(cb);
+
+                    ColourManager colourManager = (((ColourButtonInputDevice) toolSettingEntry.getInputDevice()).colourManager());
+
+                    cb.addMouseListener(new MouseListener() {
+                        private void notifyVariableChange() {
+                            Color color = colourManager.getActiveColor();
+                            ((ToolSettingEntry<Color>) toolSettingEntry).setValue(color);
+                            ((ToolSettingEntry<Color>) toolSettingEntry).notifyVariableChange(color);
+                            cb.setColour(color);
+                        }
+
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            this.notifyVariableChange();
+                        }
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            this.notifyVariableChange();
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+
+                        }
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+
+                        }
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+
+                        }
+                    });
+
+                    break;
                 default:
                     break;
             }

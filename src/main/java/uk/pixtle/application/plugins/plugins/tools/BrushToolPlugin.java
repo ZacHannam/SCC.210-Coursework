@@ -239,6 +239,11 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
                 public String[] getValues() {
                     return new String[]{"Sphere", "Block", "Triangle", "Crown", "Diamond"};
                 }
+
+                @Override
+                public void renderer(JComboBox<String> paramComboBox) {
+
+                }
             };
         }
     };
