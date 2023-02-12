@@ -286,12 +286,12 @@ public class ImageLayer extends Layer {
 
             this.setDragged(5);
 
-        } else {
-            super.mouseCanvasEvent(paramCalculatedX, paramCalculatedY, paramDifferenceX, paramDifferenceY);
         }
 
         if(this.getDragged() != 0) {
             this.setLastClickTime(System.currentTimeMillis());
+        } else {
+            super.mouseCanvasEvent(paramCalculatedX, paramCalculatedY, paramDifferenceX, paramDifferenceY);
         }
     }
     /*
