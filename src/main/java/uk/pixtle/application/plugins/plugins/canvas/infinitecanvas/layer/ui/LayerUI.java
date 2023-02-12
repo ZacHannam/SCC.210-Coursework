@@ -3,6 +3,7 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui;
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
@@ -71,6 +72,12 @@ public class LayerUI extends JPanel {
         title.setText(this.getLayer().getTitle());
         this.setTitle(title);
         super.add(title, titleAnchors);
+
+        if(this.getLayer().getLayerType() == LayerType.TEXT) {
+            title.setEditable(false);
+        }
+
+        title.setCaretPosition(0);
 
         title.addActionListener(new ActionListener() {
             @Override
@@ -432,5 +439,7 @@ public class LayerUI extends JPanel {
         this.createTitle();
         this.createTypeText();
         this.activeCheck();
+
+        super.setToolTipText("Drag to move layers up or down");
     }
 }

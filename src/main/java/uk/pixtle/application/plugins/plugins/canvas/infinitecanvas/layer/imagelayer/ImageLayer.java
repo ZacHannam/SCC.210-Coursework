@@ -20,8 +20,8 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.Base64;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ImageLayer extends Layer {
@@ -49,12 +49,32 @@ public class ImageLayer extends Layer {
 
     @Override
     public JSONObject saveLayerData() throws Exception {
-        return null;
+        JSONObject jsonObject = new JSONObject();
+
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageIO.write(this.getActualImage(), "png", byteArrayOutputStream);
+        jsonObject.put("image", Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray()));
+
+        jsonObject.put("topLeftPixelX", (int) this.getTopLeftPixel().getX());
+        jsonObject.put("topLeftPixelY", (int) this.getTopLeftPixel().getY());
+        jsonObject.put("bottomRightPixelX", (int) this.getBottomRightPixel().getX());
+        jsonObject.put("bottomRightPixelY", (int) this.getBottomRightPixel().getY());
+
+        return jsonObject;
     }
 
     @Override
     public void loadLayerData(JSONObject paramSavedData) throws Exception {
 
+        byte[] bytes = Base64.getDecoder().decode(paramSavedData.getString("image"));
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        BufferedImage bufferedImage = ImageIO.read(inputStream);
+        this.setActualImage(bufferedImage);
+
+        this.setTopLeftPixel(new Point(paramSavedData.getInt("topLeftPixelX"), paramSavedData.getInt("topLeftPixelY")));
+        this.setBottomRightPixel(new Point(paramSavedData.getInt("bottomRightPixelX"), paramSavedData.getInt("bottomRightPixelY")));
+
+        this.recreateScaledImage();
     }
 
     @Override

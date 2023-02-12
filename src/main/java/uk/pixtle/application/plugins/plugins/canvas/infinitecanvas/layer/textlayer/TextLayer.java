@@ -65,6 +65,8 @@ public class TextLayer extends Layer {
     public void setText(String paramText) {
         if(paramText == this.getText()) return;
 
+        this.setTitle(paramText);
+
         this.text = paramText;
         this.variableChangeRepaint();
     }
@@ -99,11 +101,26 @@ public class TextLayer extends Layer {
 
     @Override
     public JSONObject saveLayerData() throws Exception {
-        return null;
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("text", this.getText());
+        jsonObject.put("textSize", this.getTextSize());
+        jsonObject.put("font", this.getFontType());
+        jsonObject.put("foregroundColor", this.getForegroundColor());
+        jsonObject.put("topLeftPixelX", (int) this.getTopLeftPixel().getX());
+        jsonObject.put("topLeftPixelY", (int) this.getTopLeftPixel().getY());
+
+        return jsonObject;
     }
 
     @Override
     public void loadLayerData(JSONObject paramSavedData) throws Exception {
+
+        this.setText(paramSavedData.getString("text"));
+        this.setTextSize(paramSavedData.getInt("textSize"));
+        this.setFont(paramSavedData.getString("font"));
+        this.setForegroundColor(InfiniteCanvasPlugin.decodeColour(paramSavedData.getString("foregroundColor")));
+        this.setTopLeftPixel(new Point(paramSavedData.getInt("topLeftPixelX"), paramSavedData.getInt("topLeftPixelY")));
 
     }
 
@@ -132,6 +149,8 @@ public class TextLayer extends Layer {
         int leftX = (int) centerPixel.getX() - (int) Math.floor(textWidth / 2);
 
         this.setTopLeftPixel(new Point(leftX, topY));
+
+        super.setTitle(DEFAULT_TEXT);
 
         return true;
     }

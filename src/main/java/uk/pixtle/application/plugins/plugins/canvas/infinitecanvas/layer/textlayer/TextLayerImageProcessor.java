@@ -32,6 +32,10 @@ public class TextLayerImageProcessor extends LayerImageProcessor {
         Font font = new Font(textLayer.getFontType(), Font.PLAIN, textLayer.getTextSize());
         Dimension size = textLayer.getDimensions();
 
+        if(size.getWidth() == 0 || size.getHeight() == 0) {
+            return null;
+        }
+
         BufferedImage image = new BufferedImage((int) size.getWidth(), (int) size.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics2D = (Graphics2D) image.getGraphics();
         graphics2D.setFont(font);

@@ -137,11 +137,8 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
         grap.drawImage(dlip2.getLayerAsBufferedImage(), null, 0,0);
 
 
-
-        System.out.print(layers);
         try{
             layers.forEach((l) -> {
-                System.out.println("Reached");
                 final int[] smallestX = { 999999999 };
                 final int[] biggestX = { 0 };
                 final int[] smallestY = { 999999999 };
@@ -179,8 +176,6 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
                         int topPixelX = smallestX[0] * currentLayer.getPixelsPerChunk();
                         int bottomPixelY = (biggestY[0]+1)  * (currentLayer.getPixelsPerChunk() - 1);
                         int bottomPixelX = (biggestX[0]+1)  * (currentLayer.getPixelsPerChunk() - 1);
-                        System.out.printf("Big and small %d : %d\n",topPixelX, topPixelY);
-                        System.out.printf("Big and small %d : %d\n", bottomPixelX, bottomPixelY);
                         break;
                     case IMAGE:
                         ImageLayer currentLayerImage = (ImageLayer) l;
@@ -229,7 +224,6 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
         if(option == JFileChooser.APPROVE_OPTION)
         {
             File fileToSave = fileChooser.getSelectedFile();
-            System.out.println("Save as file: " + fileToSave.getAbsolutePath());
             String path = fileToSave.getAbsolutePath();
             if(!path.endsWith(".png")) {
                 path += ".png";
