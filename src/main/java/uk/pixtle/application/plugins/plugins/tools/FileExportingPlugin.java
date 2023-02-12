@@ -11,6 +11,8 @@ import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawing
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayerImageProcessor;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayerImageProcessor;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textlayer.TextLayer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textlayer.TextLayerImageProcessor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.imageio.ImageIO;
@@ -74,6 +76,15 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
                     if (layerAsImageimg.getWidth() > biggestWidth[0])
                         biggestWidth[0] = layerAsImageimg.getWidth();
                     break;
+                case TEXT:
+                    TextLayer currentLayerText = (TextLayer) l;
+                    TextLayerImageProcessor tlip = new TextLayerImageProcessor(currentLayerText);
+                    BufferedImage layerAsImagetxt = tlip.getLayerAsBufferedImage();
+                    if (layerAsImagetxt.getHeight() > biggestHeight[0])
+                        biggestHeight[0] = layerAsImagetxt.getHeight();
+                    if (layerAsImagetxt.getWidth() > biggestWidth[0])
+                        biggestWidth[0] = layerAsImagetxt.getWidth();
+                    break;
                 default:
                     break;
             }
@@ -104,6 +115,11 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
                     BufferedImage layerAsImageimg = ilip.getLayerAsBufferedImage();
                     g2.drawImage(layerAsImageimg,null,0,0);
                     break;
+                case TEXT:
+                    TextLayer currentLayerText = (TextLayer) l;
+                    TextLayerImageProcessor tlip = new TextLayerImageProcessor(currentLayerText);
+                    BufferedImage layerAsImagetxt = tlip.getLayerAsBufferedImage();
+                    g2.drawImage(layerAsImagetxt, null,0,0);
                 default:
                     break;
                 }
