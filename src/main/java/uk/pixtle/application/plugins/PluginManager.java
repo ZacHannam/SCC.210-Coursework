@@ -233,7 +233,6 @@ public class PluginManager extends ApplicationComponent {
         this.registerAllPlugins();
         this.loadAllPlugins();
         this.setDefaultPlugin();
-
     }
 
 }

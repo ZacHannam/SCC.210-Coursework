@@ -150,6 +150,11 @@ public class FileLoaderPlugin extends Plugin implements PluginMiniToolExpansion 
 
     }
 
+    @MenuBarItem(PATH = "file:New File")
+    public void newFile() {
+        super.getApplication().getPluginManager().getActiveCanvasPlugin().reset();
+    }
+
     // ---------------------- MINI TOOL EXPANSION METHODS ----------------------
 
     @Getter

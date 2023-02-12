@@ -30,4 +30,6 @@ public abstract class CanvasPlugin extends Plugin implements PluginToolExpansion
     public CanvasPlugin(Application paramApplication) {
         super(paramApplication);
     }
+
+    public abstract void reset();
 }

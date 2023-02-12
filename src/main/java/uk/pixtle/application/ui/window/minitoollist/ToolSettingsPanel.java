@@ -89,8 +89,6 @@ public final class ToolSettingsPanel extends JPanel {
                         });
                     }
 
-                    ((ToolSettingEntry<Integer>) toolSettingEntry).notifyVariableChange(slider.getValue());
-
                     break;
 
                 case DROP_DOWN:
@@ -102,7 +100,6 @@ public final class ToolSettingsPanel extends JPanel {
                     ((DropDownInputDevice) toolSettingEntry.getInputDevice()).renderer(comboBox);
 
                     ((ToolSettingEntry<String>) toolSettingEntry).setValue((String) comboBox.getSelectedItem());
-                    ((ToolSettingEntry<String>) toolSettingEntry).notifyVariableChange((String) comboBox.getSelectedItem());
 
                     comboBox.addActionListener(new ActionListener() {
                         @Override
@@ -120,7 +117,6 @@ public final class ToolSettingsPanel extends JPanel {
                     panel.add(textArea);
 
                     textArea.setText(((TextAreaInputDevice) toolSettingEntry.getInputDevice()).defaultText());
-                    ((ToolSettingEntry<String>) toolSettingEntry).notifyVariableChange((String) textArea.getText());
 
                     textArea.setPreferredSize(new Dimension(getDefaultWidth(), 100));
                     textArea.setLineWrap(true);

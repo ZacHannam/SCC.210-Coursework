@@ -322,10 +322,11 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     }
 
     public void redrawLayers() {
-        this.getMiniToolPanel().updateHeight(this.getLayerManager().getLayers().size() * 50 + 85);
 
+        this.getMiniToolPanel().updateHeight(this.getLayerManager().getLayers().size() * 50 + 85);
         this.getLayerUIDrawer().repaint();
         this.getLayerUIDrawer().revalidate();
+
         this.getMiniToolPanel().revalidate();
         this.getMiniToolPanel().repaint();
     }
@@ -336,7 +337,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
      */
 
-    private Color decodeColour(String paramColour) {
+    public static Color decodeColour(String paramColour) {
 
         String cut = paramColour.substring(15, paramColour.length() - 1);
         String[] parts = cut.split(",");
@@ -505,7 +506,16 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     public InfiniteCanvasPlugin(Application paramApplication) {
         super(paramApplication);
 
-        // Layers
         this.loadDefaultVariables();
+        zoomToolSetting.notifyVariableChange(this.inverseMapZoom(this.getZoom()));
+    }
+
+    @Override
+    public void reset() {
+        this.setLayerManager(new LayerManager(this));
+        this.getLayerUIDrawer().setLayerManager(this.getLayerManager());
+        this.onLoadingFinish();
+
+        this.repaint(true);
     }
 }

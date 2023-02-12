@@ -62,7 +62,7 @@ public class LayerManager {
 
     public void setReRender(boolean paramReRender) {
         for(Layer layer : this.getLayers()) {
-            layer.setReRender(paramReRender);
+            if(layer!=null) layer.setReRender(paramReRender);
         }
     }
 
@@ -344,10 +344,18 @@ public class LayerManager {
             switch(LayerType.valueOf(layerData.getString("layerType"))) {
                 case DRAWING:
                     layer = new DrawingLayer(this);
-                    layer.load(layerData);
+                    break;
+                case TEXT:
+                    layer = new TextLayer(this);
+                    break;
+                case IMAGE:
+                    layer = new ImageLayer(this);
                     break;
                 default:
                     break;
+            }
+            if(layer != null) {
+                layer.load(layerData);
             }
 
             this.getLayers().add(layer);
