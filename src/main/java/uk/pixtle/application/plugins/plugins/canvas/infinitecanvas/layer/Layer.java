@@ -3,10 +3,8 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
-import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.Chunk;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.LayerImageProcessor;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public abstract class Layer {

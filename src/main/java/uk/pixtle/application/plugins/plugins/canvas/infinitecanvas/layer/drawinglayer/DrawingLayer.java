@@ -6,10 +6,10 @@ import org.json.JSONObject;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.ColorAndAlpha;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerImageProcessor;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.DrawingLayerImageProcessor;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.LayerImageProcessor;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
-import uk.pixtle.application.ui.window.canvas.CanvasUI;
 
 import java.util.HashMap;
 import java.util.Map;

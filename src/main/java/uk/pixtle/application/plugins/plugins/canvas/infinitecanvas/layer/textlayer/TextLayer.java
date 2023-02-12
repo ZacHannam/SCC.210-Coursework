@@ -3,13 +3,12 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textla
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerImageProcessor;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.LayerImageProcessor;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.TextLayerImageProcessor;
 
 import java.awt.*;
 import java.awt.event.AWTEventListener;
