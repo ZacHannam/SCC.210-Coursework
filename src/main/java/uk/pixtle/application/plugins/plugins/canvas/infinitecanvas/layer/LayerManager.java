@@ -13,6 +13,7 @@ import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.notifications.Notification;
+import uk.pixtle.util.ResourceHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -164,9 +165,10 @@ public class LayerManager {
         imageLayerAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
         imageLayerAnchors.createAnchor(Anchor.DirectionType.X, 150);
 
-        JButton imageLayerButton = new JButton("Image");
+        JButton imageLayerButton = new JButton();
         imageLayerButton.setOpaque(false);
         imageLayerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
+        imageLayerButton.setIcon(ResourceHandler.getResourceAsImageIcon("Picture_layer.png", "Image", 150, 150));
 
         imageLayerButton.addActionListener(new ActionListener() {
             @Override

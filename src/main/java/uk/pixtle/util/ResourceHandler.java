@@ -1,5 +1,8 @@
 package uk.pixtle.util;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 
 public final class ResourceHandler {
@@ -13,4 +16,9 @@ public final class ResourceHandler {
         return url;
     }
 
+    public static ImageIcon getResourceAsImageIcon(String paramFileName, String paramTitle, int paramWidth, int paramHeight) {
+        Image transformedImage = new ImageIcon(ResourceHandler.getResourceURL(paramFileName)).getImage().getScaledInstance(paramWidth, paramHeight, Image.SCALE_SMOOTH);
+
+        return new ImageIcon(transformedImage);
+    }
 }

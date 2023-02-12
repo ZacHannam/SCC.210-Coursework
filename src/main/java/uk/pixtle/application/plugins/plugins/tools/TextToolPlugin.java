@@ -180,7 +180,7 @@ public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion {
 
         @Override
         public String getTitle() {
-            return "Background Color";
+            return "Foreground Color";
         }
 
         @Override
