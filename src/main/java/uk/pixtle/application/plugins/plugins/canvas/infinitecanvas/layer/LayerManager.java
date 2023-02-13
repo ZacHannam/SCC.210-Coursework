@@ -267,6 +267,8 @@ public class LayerManager {
 
     public void createNewLayer() {
 
+        if(this.getInfiniteCanvasPlugin().isFullScreenMode()) return;
+
         if(this.getPopupMenu().isVisible()) {
             return;
         }
@@ -285,6 +287,8 @@ public class LayerManager {
     }
 
     public void createNewLayer(LayerType paramLayerType) {
+
+        if(this.getInfiniteCanvasPlugin().isFullScreenMode()) return;
 
         Layer layer = null;
         switch(paramLayerType) {

@@ -6,8 +6,6 @@ import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.Chunk;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.ChunkImageProcessor;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.LayerImageProcessor;
-import uk.pixtle.application.ui.window.canvas.CanvasUI;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -38,15 +36,11 @@ public class DrawingLayerImageProcessor extends LayerImageProcessor {
     @Override
     public BufferedImage getLayerAsBufferedImage() {
         try {
-            int currentPositionY = super.getInfiniteCanvasPlugin().getCurrentPixelY();
-            int currentPositionX = super.getInfiniteCanvasPlugin().getCurrentPixelX();
-
-            double zoom = super.getInfiniteCanvasPlugin().getZoom();
 
             HashMap<ChunkImageProcessor, Point> renderedChunks = new HashMap<>();
 
-            for (int i = 0, chunkIDY = (int) Math.floor(currentPositionY / this.getDrawingLayer().getPixelsPerChunk()); i < (int) Math.ceil((super.getCanvasUI().getHeight() + (currentPositionY % this.getDrawingLayer().getPixelsPerChunk() * zoom)) / (zoom * this.getDrawingLayer().getPixelsPerChunk())); i++, chunkIDY++) {
-                for (int j = 0, chunkIDX = (int) Math.floor(currentPositionX / this.getDrawingLayer().getPixelsPerChunk()); j < (int) Math.ceil((super.getCanvasUI().getWidth() + (currentPositionX % this.getDrawingLayer().getPixelsPerChunk() * zoom)) / (zoom * this.getDrawingLayer().getPixelsPerChunk())); j++, chunkIDX++) {
+            for (int i = 0, chunkIDY = (int) Math.floor(super.getCurrentPixelY() / this.getDrawingLayer().getPixelsPerChunk()); i < (int) Math.ceil((super.getHeight() + (super.getCurrentPixelY() % this.getDrawingLayer().getPixelsPerChunk() * super.getZoom())) / (super.getZoom() * this.getDrawingLayer().getPixelsPerChunk())); i++, chunkIDY++) {
+                for (int j = 0, chunkIDX = (int) Math.floor(super.getCurrentPixelX() / this.getDrawingLayer().getPixelsPerChunk()); j < (int) Math.ceil((super.getWidth() + (super.getCurrentPixelX() % this.getDrawingLayer().getPixelsPerChunk() * super.getZoom())) / (super.getZoom() * this.getDrawingLayer().getPixelsPerChunk())); j++, chunkIDX++) {
 
                     if (chunkIDY < 0 || chunkIDY > Integer.MAX_VALUE / this.getDrawingLayer().getPixelsPerChunk() || chunkIDX < 0 || chunkIDX > Integer.MAX_VALUE / this.getDrawingLayer().getPixelsPerChunk()) {
                         continue;
@@ -58,7 +52,8 @@ public class DrawingLayerImageProcessor extends LayerImageProcessor {
                         continue;
                     }
                     Chunk chunk = this.getDrawingLayer().getChunkAt(chunkIDX, chunkIDY);
-                    chunk.updateValues(zoom);
+
+                    chunk.updateValues(super.getZoom());
 
 
                     ChunkImageProcessor CIP = new ChunkImageProcessor(chunk);
@@ -76,13 +71,13 @@ public class DrawingLayerImageProcessor extends LayerImageProcessor {
 
             // Draw the chunks
 
-            BufferedImage bufferedImage = new BufferedImage(super.getCanvasUI().getWidth(), super.getCanvasUI().getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bufferedImage = new BufferedImage(super.getWidth(), super.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D bufferedImageGraphics = (Graphics2D) bufferedImage.getGraphics();
 
             for (Map.Entry<ChunkImageProcessor, Point> entry : renderedChunks.entrySet()) {
 
-                int widthIn = (int) Math.floor((-(currentPositionX % this.getDrawingLayer().getPixelsPerChunk()) * zoom) + (entry.getValue().getX() * this.getDrawingLayer().getPixelsPerChunk() * zoom));
-                int heightIn = (int) Math.floor((-(currentPositionY % this.getDrawingLayer().getPixelsPerChunk()) * zoom) + (entry.getValue().getY() * this.getDrawingLayer().getPixelsPerChunk() * zoom));
+                int widthIn = (int) Math.floor((-(super.getCurrentPixelX() % this.getDrawingLayer().getPixelsPerChunk()) * super.getZoom()) + (entry.getValue().getX() * this.getDrawingLayer().getPixelsPerChunk() * super.getZoom()));
+                int heightIn = (int) Math.floor((-(super.getCurrentPixelY() % this.getDrawingLayer().getPixelsPerChunk()) * super.getZoom()) + (entry.getValue().getY() * this.getDrawingLayer().getPixelsPerChunk() * super.getZoom()));
 
                 bufferedImageGraphics.drawImage(entry.getKey().getChunk().getLastRenderedImage(), widthIn, heightIn, null);
             }

@@ -2,12 +2,8 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagep
 
 import lombok.Getter;
 import lombok.Setter;
-import uk.pixtle.application.Application;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.LayerImageProcessor;
-import uk.pixtle.application.ui.window.canvas.CanvasUI;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -80,10 +76,10 @@ public class ImageLayerImageProcessor extends LayerImageProcessor {
         BufferedImage bufferedImage = new BufferedImage(paramWidth, paramHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
 
-        int differenceX = (int) this.getImageLayer().getTopLeftPixel().getX() - super.getInfiniteCanvasPlugin().getCurrentPixelX();
-        int differenceY = (int) this.getImageLayer().getTopLeftPixel().getY() - super.getInfiniteCanvasPlugin().getCurrentPixelY();
+        int differenceX = (int) this.getImageLayer().getTopLeftPixel().getX() - super.getCurrentPixelX();
+        int differenceY = (int) this.getImageLayer().getTopLeftPixel().getY() - super.getCurrentPixelY();
 
-        g2d.drawImage(paramImage.getBufferedImage(), (int) Math.floor(differenceX * super.getInfiniteCanvasPlugin().getZoom()) + paramImage.getOffsetX(), (int) Math.floor(differenceY * super.getInfiniteCanvasPlugin().getZoom()) + paramImage.getOffsetY(), null);
+        g2d.drawImage(paramImage.getBufferedImage(), (int) Math.floor(differenceX * super.getZoom()) + paramImage.getOffsetX(), (int) Math.floor(differenceY * super.getZoom()) + paramImage.getOffsetY(), null);
 
         return bufferedImage;
     }

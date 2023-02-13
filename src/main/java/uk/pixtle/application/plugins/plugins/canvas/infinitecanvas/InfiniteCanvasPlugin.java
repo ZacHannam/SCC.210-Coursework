@@ -212,6 +212,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.setCanvasLock(new ReentrantLock());
         this.setCurrentPixelX(Integer.MAX_VALUE / 2);
         this.setCurrentPixelY(Integer.MAX_VALUE / 2);
+        this.setFullScreenMode(false);
     }
 
     public Point getCenterPixel() {
@@ -231,6 +232,10 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Override
     public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY, int paramDifferenceX, int paramDifferenceY) {
+
+        if(this.isFullScreenMode()) {
+            return;
+        }
 
         if(this.getLayerManager().getActiveLayer() == null) {
             updateCurrentPixel(-paramDifferenceX, -paramDifferenceY);
@@ -404,69 +409,12 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         return new Point(cX, cY);
     }
 
-    @Getter
-    @Setter
-    private BufferedImage lastRenderedImage;
-
-    @Override
-    public void paint(Graphics paramGraphics) {
-        try {
-            this.getCanvasLock().lock();
-
-            if (this.getCanvasLock().getQueueLength() > 0) { // Only updates enough to show the last image available instead of inbetween ones saving time and processor
-                return;
-            }
-
-            int height = ((JPanel) super.getApplication().getUIManager().getWindow().getCanvas()).getHeight();
-            int width = ((JPanel) super.getApplication().getUIManager().getWindow().getCanvas()).getWidth();
-            Graphics2D graphics2D = (Graphics2D) paramGraphics;
-
-            // FILL BACKGROUND
-            BufferedImage backgroundImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            Graphics2D backgroundGraphics = (Graphics2D) backgroundImage.getGraphics();
-            backgroundGraphics.setPaint(this.getBackgroundColor());
-            backgroundGraphics.fillRect(0, 0, backgroundImage.getWidth(), backgroundImage.getHeight());
-
-            graphics2D.drawImage(backgroundImage, 0, 0, null);
-
-            ArrayList<LayerImageProcessor> layerImageProcessors = new ArrayList<>();
-
-            // DRAW LAYERS
-            for(int index = this.getLayerManager().getLayers().size() - 1; index >= 0; index--) {
-                Layer layer = this.getLayerManager().getLayers().get(index);
-
-                if(!layer.isVisible()) {
-                    continue;
-                }
-
-                LayerImageProcessor layerImageProcessor = layer.getLayerImageProcessor();
-                layerImageProcessor.start();
-                layerImageProcessors.add(layerImageProcessor);
-            }
-
-            for(LayerImageProcessor layerImageProcessor : layerImageProcessors) {
-                layerImageProcessor.join();
-            }
-
-            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics newImageGraphics = (Graphics2D) bufferedImage.getGraphics();
-
-            for(LayerImageProcessor layerImageProcessor : layerImageProcessors) {
-                newImageGraphics.drawImage(layerImageProcessor.getLayer().getLastRenderedImage(), 0, 0, null);
-            }
-
-            graphics2D.drawImage(bufferedImage, 0, 0, null);
-            this.setLastRenderedImage(bufferedImage);
-
-        } catch (InterruptedException e) {
-            // TO-DO exception
-        } finally {
-            this.getCanvasLock().unlock();
-        }
-    }
-
     @Override
     public void printImageOnCanvas(int paramScreenX, int paramScreenY, Drawing paramDrawing, boolean paramCenter) {
+
+        if(this.isFullScreenMode()) {
+            return;
+        }
 
         if(this.getLayerManager().getActiveLayer() == null) {
             super.getApplication().getNotificationManager().displayNotification(Notification.ColourModes.ERROR, "No Layer Found", "There is currently no active layer, please create or select one!", 10, false);
@@ -486,6 +434,10 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         ((DrawingLayer) this.getLayerManager().getActiveLayer()).printImageOnCanvas(paramScreenX, paramScreenY, paramDrawing, paramCenter);
         this.repaint(false);
     }
+
+    @Getter
+    @Setter
+    private BufferedImage lastRenderedImage;
 
     /**
      * Get the colour of an individual pixel on screen
@@ -531,8 +483,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.repaint(true);
     }
 
-    @KeyListener(KEY=KeyEvent.VK_Z, MODIFIERS = 0)
-    public void showFullImage() {
+    public BufferedImage getFullImage(boolean paramShowEditMenu) {
 
         int top = Integer.MAX_VALUE, left = Integer.MAX_VALUE;
         int bottom = Integer.MIN_VALUE, right = Integer.MIN_VALUE;
@@ -638,7 +589,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
         if(top == Integer.MAX_VALUE && left == Integer.MAX_VALUE && bottom == Integer.MIN_VALUE && right == Integer.MIN_VALUE) {
             // Image is empty
-            return;
+            return null;
         }
 
         int width = Math.abs(right - left);
@@ -646,15 +597,111 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         CanvasUI canvasUI = (CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas();
 
         double scale = Math.min((double) canvasUI.getWidth() / width, (double)canvasUI.getHeight() / height);
+
+
         int differenceX = (int) Math.round(canvasUI.getWidth() / scale - width);
         int differenceY = (int) Math.round(canvasUI.getHeight() / scale - height);
 
+        int currentY = top - differenceY / 2;
+        int currentX = left - differenceX / 2;
 
-        this.setZoom(scale);
-        this.setCurrentPixelY(top - differenceY / 2);
-        this.setCurrentPixelX(left - differenceX / 2);
+        return getLayersAsImage(currentX, currentY, canvasUI.getWidth(), canvasUI.getHeight(), scale, paramShowEditMenu);
 
+    }
+
+    public BufferedImage getLayersAsImage(int paramCurrentPixelX, int paramCurrentPixelY, int paramWidth, int paramHeight, double paramZoom, boolean paramShowEditMenu) {
+        try {
+
+            ArrayList<LayerImageProcessor> layerImageProcessors = new ArrayList<>();
+
+            // DRAW LAYERS
+            for (int index = this.getLayerManager().getLayers().size() - 1; index >= 0; index--) {
+                Layer layer = this.getLayerManager().getLayers().get(index);
+
+                if (!layer.isVisible()) {
+                    continue;
+                }
+
+                LayerImageProcessor layerImageProcessor = layer.getLayerImageProcessor();
+                layerImageProcessor.setBounds(paramCurrentPixelX, paramCurrentPixelY, paramWidth, paramHeight, paramZoom, paramShowEditMenu);
+                layerImageProcessor.start();
+                layerImageProcessors.add(layerImageProcessor);
+            }
+
+            for (LayerImageProcessor layerImageProcessor : layerImageProcessors) {
+                layerImageProcessor.join();
+            }
+
+            BufferedImage bufferedImage = new BufferedImage(paramWidth, paramHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics bufferedImageGraphics = bufferedImage.getGraphics();
+
+            for (LayerImageProcessor layerImageProcessor : layerImageProcessors) {
+                bufferedImageGraphics.drawImage(layerImageProcessor.getLayer().getLastRenderedImage(), 0, 0, null);
+            }
+
+            return bufferedImage;
+
+        }catch (InterruptedException e) {
+            // TO-DO exception
+        }
+        return null;
+    }
+
+    @Getter
+    public boolean fullScreenMode;
+
+    public void setFullScreenMode(boolean paramFullScreenMode) {
+        this.fullScreenMode = paramFullScreenMode;
         this.repaint(true);
+    }
 
+    @KeyListener(KEY=KeyEvent.VK_X, MODIFIERS = 0)//MODIFIERS = KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK)
+    public void toggleFullScreenMode() {
+        this.setFullScreenMode(!this.isFullScreenMode());
+    }
+
+    @Override
+    public void paint(Graphics paramGraphics) {
+        try {
+            this.getCanvasLock().lock();
+
+            if (this.getCanvasLock().getQueueLength() > 0) { // Only updates enough to show the last image available instead of inbetween ones saving time and processor
+                return;
+            }
+
+            CanvasUI canvasUI = (CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas();
+            int width = canvasUI.getWidth();
+            int height = canvasUI.getHeight();
+
+            Graphics2D graphics2D = (Graphics2D) paramGraphics;
+
+            graphics2D.setPaint(this.getBackgroundColor());
+            graphics2D.fillRect(0, 0, width, height);
+
+            if(this.isFullScreenMode()) {
+
+                // FILL BACKGROUND
+
+                BufferedImage bufferedImage = getFullImage(false);
+
+                graphics2D.drawImage(bufferedImage, 0, 0, null);
+                this.setLastRenderedImage(bufferedImage);
+
+                graphics2D.setPaint(Color.RED);
+                graphics2D.fillRect(0, 0, width, 5);
+                graphics2D.fillRect(0, height -5, width, 5);
+                graphics2D.fillRect(0, 5, 5, height - 10);
+                graphics2D.fillRect(width -5, 5, 5, height - 10);
+            } else {
+
+                BufferedImage bufferedImage = getLayersAsImage(this.getCurrentPixelX(), this.getCurrentPixelY(), width, height, this.getZoom(), true);
+
+                graphics2D.drawImage(bufferedImage, 0, 0, null);
+                this.setLastRenderedImage(bufferedImage);
+            }
+
+        } finally {
+            this.getCanvasLock().unlock();
+        }
     }
 }

@@ -2,12 +2,8 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagep
 
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.Text;
-import uk.pixtle.application.Application;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textlayer.TextLayer;
-import uk.pixtle.application.ui.window.canvas.CanvasUI;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -74,10 +70,10 @@ public class TextLayerImageProcessor extends LayerImageProcessor {
         BufferedImage bufferedImage = new BufferedImage(paramWidth, paramHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
 
-        int differenceX = (int) this.getTextLayer().getTopLeftPixel().getX() - super.getInfiniteCanvasPlugin().getCurrentPixelX();
-        int differenceY = (int) this.getTextLayer().getTopLeftPixel().getY() - super.getInfiniteCanvasPlugin().getCurrentPixelY();
+        int differenceX = (int) this.getTextLayer().getTopLeftPixel().getX() - super.getCurrentPixelX();
+        int differenceY = (int) this.getTextLayer().getTopLeftPixel().getY() - super.getCurrentPixelY();
 
-        g2d.drawImage(paramBufferedImage.getBufferedImage(), (int) Math.floor(differenceX * super.getInfiniteCanvasPlugin().getZoom()) + paramBufferedImage.getOffsetX(), (int) Math.floor(differenceY * super.getInfiniteCanvasPlugin().getZoom()) + paramBufferedImage.getOffsetY(), null);
+        g2d.drawImage(paramBufferedImage.getBufferedImage(), (int) Math.floor(differenceX * super.getZoom()) + paramBufferedImage.getOffsetX(), (int) Math.floor(differenceY * super.getZoom()) + paramBufferedImage.getOffsetY(), null);
 
         return bufferedImage;
     }
