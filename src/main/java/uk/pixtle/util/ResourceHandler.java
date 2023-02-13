@@ -16,7 +16,7 @@ public final class ResourceHandler {
         return url;
     }
 
-    public static ImageIcon getResourceAsImageIcon(String paramFileName, String paramTitle, int paramWidth, int paramHeight) {
+    public static ImageIcon getResourceAsImageIcon(String paramFileName, int paramWidth, int paramHeight) {
         Image transformedImage = new ImageIcon(ResourceHandler.getResourceURL(paramFileName)).getImage().getScaledInstance(paramWidth, paramHeight, Image.SCALE_SMOOTH);
 
         return new ImageIcon(transformedImage);

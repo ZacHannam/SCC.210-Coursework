@@ -3,16 +3,21 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
+import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.Chunk;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.LayerImageProcessor;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
+import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textlayer.TextLayer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.BackgroundLayerUI;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.LayerUIDrawer;
 import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
@@ -24,6 +29,7 @@ import uk.pixtle.application.plugins.toolsettings.inputdevices.InputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
+import uk.pixtle.application.ui.window.canvas.Canvas;
 import uk.pixtle.application.ui.window.canvas.CanvasUI;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 import uk.pixtle.application.ui.window.notifications.Notification;
@@ -35,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginMiniToolExpansion, PluginSavePolicy, PluginKeyListenerPolicy {
@@ -138,7 +145,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Getter
     @Setter
-    private double zoom;
+    public double zoom;
 
     public void zoomAround(double paramScale, int paramX, int paramY) {
 
@@ -522,5 +529,132 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.onLoadingFinish();
 
         this.repaint(true);
+    }
+
+    @KeyListener(KEY=KeyEvent.VK_Z, MODIFIERS = 0)
+    public void showFullImage() {
+
+        int top = Integer.MAX_VALUE, left = Integer.MAX_VALUE;
+        int bottom = Integer.MIN_VALUE, right = Integer.MIN_VALUE;
+
+        for(Layer layer : this.getLayerManager().getLayers()) {
+            switch(layer.getLayerType()) {
+                case DRAWING:
+
+                    DrawingLayer drawingLayer = (DrawingLayer) layer;
+
+                    for(Map.Entry<String, Chunk> chunk : drawingLayer.getChunkMap().entrySet()) {
+                        String[] split = chunk.getKey().split(":");
+
+                        // LEFT
+                        if(Integer.valueOf(split[0]) * drawingLayer.getPixelsPerChunk() < left) {
+                            int lCount = 0;
+                            x: for(int x = 0; x < drawingLayer.getPixelsPerChunk(); x++, lCount++) {
+                                y: for(int y = 0; y < drawingLayer.getPixelsPerChunk(); y++) {
+                                    int alpha = chunk.getValue().getActualImage().getRGB(x, y) >> 24;
+                                    if(alpha != 0) break x;
+                                }
+                            }
+
+                            if(lCount != drawingLayer.getPixelsPerChunk()) {
+                                left = Math.min(Integer.valueOf(split[0]) * drawingLayer.getPixelsPerChunk() + lCount, left);
+                            }
+                        }
+
+                        // RIGHT
+                        if(((Integer.valueOf(split[0])+1) * drawingLayer.getPixelsPerChunk()) - 1 > right) {
+                            int rCount = 0;
+                            x: for(int x = 0; x < drawingLayer.getPixelsPerChunk(); x++, rCount++) {
+                                y: for(int y = 0; y < drawingLayer.getPixelsPerChunk(); y++) {
+                                    int alpha = chunk.getValue().getActualImage().getRGB(drawingLayer.getPixelsPerChunk() - 1 - x, y) >> 24;
+                                    if(alpha != 0) break x;
+                                }
+                            }
+
+                            if(rCount != drawingLayer.getPixelsPerChunk()) {
+                                right = Math.max(((Integer.valueOf(split[0])+1) * drawingLayer.getPixelsPerChunk()) - rCount, right);
+                            }
+                        }
+
+                        // TOP
+                        if(Integer.valueOf(split[1]) * drawingLayer.getPixelsPerChunk() < top) {
+                            int tCount = 0;
+                            y: for(int y = 0; y < drawingLayer.getPixelsPerChunk(); y++, tCount++) {
+                                x: for(int x = 0; x < drawingLayer.getPixelsPerChunk(); x++) {
+                                    int alpha = chunk.getValue().getActualImage().getRGB(x, y) >> 24;
+                                    if(alpha != 0) break y;
+                                }
+                            }
+
+                            if(tCount != drawingLayer.getPixelsPerChunk()) {
+                                top = Math.min(Integer.valueOf(split[1]) * drawingLayer.getPixelsPerChunk() + tCount, top);
+                            }
+                        }
+
+                        // BOTTOM
+                        if(((Integer.valueOf(split[1])+1) * drawingLayer.getPixelsPerChunk()) - 1 > bottom) {
+                            int bCount = 0;
+                            y: for(int y = 0; y < drawingLayer.getPixelsPerChunk(); y++, bCount++) {
+                                x: for(int x = 0; x < drawingLayer.getPixelsPerChunk(); x++) {
+                                    int alpha = chunk.getValue().getActualImage().getRGB(x, drawingLayer.getPixelsPerChunk() - 1 - y) >> 24;
+                                    if(alpha != 0) break y;
+                                }
+                            }
+
+                            if(bCount != drawingLayer.getPixelsPerChunk()) {
+                                bottom = Math.max(((Integer.valueOf(split[1])+1) * drawingLayer.getPixelsPerChunk()) - bCount, bottom);
+                            }
+                        }
+                    }
+
+                    break;
+                case IMAGE:
+
+                    ImageLayer imageLayer = (ImageLayer) layer;
+
+                    left = Math.min((int) imageLayer.getTopLeftPixel().getX(), left);
+                    right = Math.max((int) imageLayer.getBottomRightPixel().getX(), right);
+
+                    top = Math.min((int) imageLayer.getTopLeftPixel().getY(), top);
+                    bottom = Math.max((int) imageLayer.getBottomRightPixel().getY(), bottom);
+
+                    break;
+                case TEXT:
+
+                    TextLayer textLayer = (TextLayer) layer;
+
+                    left = Math.min((int) textLayer.getTopLeftPixel().getX(), left);
+                    top = Math.min((int) textLayer.getTopLeftPixel().getY(), top);
+
+
+                    right = Math.max((int) (textLayer.getDimensions().getWidth() + textLayer.getTopLeftPixel().getX()), right);
+                    bottom = Math.max((int) (textLayer.getDimensions().getHeight() + textLayer.getTopLeftPixel().getY()), bottom);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if(top == Integer.MAX_VALUE && left == Integer.MAX_VALUE && bottom == Integer.MIN_VALUE && right == Integer.MIN_VALUE) {
+            // Image is empty
+            return;
+        }
+
+        int width = Math.abs(right - left);
+        int height = Math.abs(bottom - top);
+        CanvasUI canvasUI = (CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas();
+
+        double scale = Math.min((double) canvasUI.getWidth() / width, (double)canvasUI.getHeight() / height);
+        int differenceX = (int) Math.round(canvasUI.getWidth() / scale - width);
+        int differenceY = (int) Math.round(canvasUI.getHeight() / scale - height);
+
+
+        this.setZoom(scale);
+        this.setCurrentPixelY(top - differenceY / 2);
+        this.setCurrentPixelX(left - differenceX / 2);
+
+        this.repaint(true);
+
     }
 }

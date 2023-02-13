@@ -168,7 +168,7 @@ public class LayerManager {
         JButton imageLayerButton = new JButton();
         imageLayerButton.setOpaque(false);
         imageLayerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
-        imageLayerButton.setIcon(ResourceHandler.getResourceAsImageIcon("Picture_layer.png", "Image", 150, 150));
+        imageLayerButton.setIcon(ResourceHandler.getResourceAsImageIcon("Picture_layer.png", 150, 150));
 
         imageLayerButton.addActionListener(new ActionListener() {
             @Override
@@ -186,9 +186,10 @@ public class LayerManager {
         drawingLayerAnchors.createAnchor(Anchor.DirectionType.X, 150);
         drawingLayerAnchors.createAnchor(Anchor.DirectionType.X, 300);
 
-        JButton drawingLayerButton = new JButton("Drawing");
+        JButton drawingLayerButton = new JButton();
         drawingLayerButton.setOpaque(false);
         drawingLayerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
+        drawingLayerButton.setIcon(ResourceHandler.getResourceAsImageIcon("Drawing_layer.png", 150, 150));
 
         drawingLayerButton.addActionListener(new ActionListener() {
             @Override
@@ -206,9 +207,10 @@ public class LayerManager {
         textLayerAnchors.createAnchor(Anchor.DirectionType.X, 450);
         textLayerAnchors.createAnchor(Anchor.DirectionType.X, 300);
 
-        JButton textLayerButton = new JButton("Text");
+        JButton textLayerButton = new JButton();
         textLayerButton.setOpaque(false);
         textLayerButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, false));
+        textLayerButton.setIcon(ResourceHandler.getResourceAsImageIcon("Text_Layer.png", 150, 150));
 
         textLayerButton.addActionListener(new ActionListener() {
             @Override
