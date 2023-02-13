@@ -520,12 +520,17 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         return new Point(cX, cY);
     }
 
-    public BufferedImage getFullImage(boolean paramShowEditMenu) {
+    public int[] getImageScales() {
 
         int top = Integer.MAX_VALUE, left = Integer.MAX_VALUE;
         int bottom = Integer.MIN_VALUE, right = Integer.MIN_VALUE;
 
         for(Layer layer : this.getLayerManager().getLayers()) {
+
+            if(!layer.isVisible()) {
+                continue;
+            }
+
             switch(layer.getLayerType()) {
                 case DRAWING:
 
@@ -631,6 +636,22 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
         int width = Math.abs(right - left);
         int height = Math.abs(bottom - top);
+
+        return new int[] {left, top, width, height};
+    }
+
+    public BufferedImage getFullImage(boolean paramShowImage) {
+        int[] data = this.getImageScales();
+
+        if(data == null) {
+            return null;
+        }
+
+        int left = data[0];
+        int top = data[1];
+        int width = data[2];
+        int height = data[3];
+
         CanvasUI canvasUI = (CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas();
 
         double scale = Math.min((double) canvasUI.getWidth() / width, (double)canvasUI.getHeight() / height);
@@ -644,7 +665,23 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.setFullScreenModeScale(scale);
         this.setFullScreenModeTopLeftPixel(new Point(currentX, currentY));
 
-        return getLayersAsImage(currentX, currentY, canvasUI.getWidth(), canvasUI.getHeight(), scale, paramShowEditMenu);
+        return getLayersAsImage(currentX, currentY, canvasUI.getWidth(), canvasUI.getHeight(), scale, false);
+    }
+
+    public BufferedImage replicateCanvasAsImage() {
+
+        int[] data = this.getImageScales();
+
+        if(data == null) {
+            return null;
+        }
+
+        int left = data[0];
+        int top = data[1];
+        int width = data[2];
+        int height = data[3];
+
+        return getLayersAsImage(left, top, width, height, 1, false);
 
     }
 
