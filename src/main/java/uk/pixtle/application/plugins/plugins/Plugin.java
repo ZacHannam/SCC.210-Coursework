@@ -20,4 +20,9 @@ public abstract class Plugin {
     public Plugin(Application paramApplication) {
         this.setApplication(paramApplication);
     }
+
+    public boolean isPluginActive() {
+        return this.getApplication().getPluginManager().getActivatePlugin() == this;
+    }
+
 }

@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 import uk.pixtle.application.Application;
+import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
@@ -117,6 +118,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Override
     public void onDisable() {
+        if(this.isFullScreenMode()) this.setFullScreenMode(false);
         this.repaint(true);
     }
 
@@ -125,6 +127,18 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
                 ZOOM / SCALE SETTINGS
 
      */
+
+    public void moveCenterToPixel(Point paramPoint) {
+        CanvasUI canvasUI = ((CanvasUI) super.getApplication().getUIManager().getWindow().getCanvas());
+        int width = canvasUI.getWidth();
+        int height = canvasUI.getHeight();
+
+        int pixelsAcross = (int) Math.round(width / this.getZoom());
+        int pixelsDown = (int) Math.round(height / this.getZoom());
+
+        this.setCurrentPixelX((int) paramPoint.getX() - (pixelsAcross / 2));
+        this.setCurrentPixelY((int) paramPoint.getY() - (pixelsDown / 2));
+    }
 
     public void updateCurrentPixel(int paramCurrentPixelX, int paramCurrentPixelY) {
         if(paramCurrentPixelY == 0 && paramCurrentPixelX == 0) return;
@@ -234,6 +248,11 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     public void mouseCanvasEvent(int paramCalculatedX, int paramCalculatedY, int paramDifferenceX, int paramDifferenceY) {
 
         if(this.isFullScreenMode()) {
+            this.setFullScreenMode(false);
+            Point clickedPoint = this.translateScreenPixelInFullScreenMode(paramCalculatedX, paramCalculatedY);
+            if(!clickedPoint.equals(new Point(-1, -1))) {
+                this.moveCenterToPixel(clickedPoint);
+            }
             return;
         }
 
@@ -483,6 +502,24 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.repaint(true);
     }
 
+    @Getter
+    @Setter
+    private double fullScreenModeScale;
+
+    @Getter
+    @Setter
+    private Point fullScreenModeTopLeftPixel;
+
+    public Point translateScreenPixelInFullScreenMode(int x, int y) {
+
+        if(this.getFullScreenModeTopLeftPixel() == null) return new Point(-1, -1);
+
+        int cX = (int) Math.floor(this.getFullScreenModeTopLeftPixel().getX() + ((1 / this.getFullScreenModeScale()) * x));
+        int cY = (int) Math.floor(this.getFullScreenModeTopLeftPixel().getY() + ((1 / this.getFullScreenModeScale()) * y));
+
+        return new Point(cX, cY);
+    }
+
     public BufferedImage getFullImage(boolean paramShowEditMenu) {
 
         int top = Integer.MAX_VALUE, left = Integer.MAX_VALUE;
@@ -598,12 +635,14 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
         double scale = Math.min((double) canvasUI.getWidth() / width, (double)canvasUI.getHeight() / height);
 
-
         int differenceX = (int) Math.round(canvasUI.getWidth() / scale - width);
         int differenceY = (int) Math.round(canvasUI.getHeight() / scale - height);
 
         int currentY = top - differenceY / 2;
         int currentX = left - differenceX / 2;
+
+        this.setFullScreenModeScale(scale);
+        this.setFullScreenModeTopLeftPixel(new Point(currentX, currentY));
 
         return getLayersAsImage(currentX, currentY, canvasUI.getWidth(), canvasUI.getHeight(), scale, paramShowEditMenu);
 
@@ -652,10 +691,16 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     public void setFullScreenMode(boolean paramFullScreenMode) {
         this.fullScreenMode = paramFullScreenMode;
+
+        if(paramFullScreenMode && !isPluginActive()) {
+            super.getApplication().getPluginManager().activatePlugin(this);
+        }
+
         this.repaint(true);
     }
 
-    @KeyListener(KEY=KeyEvent.VK_X, MODIFIERS = 0)//MODIFIERS = KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK)
+
+    @KeyListener(KEY=KeyEvent.VK_X, MODIFIERS = 0) @MenuBarItem(PATH="Edit:X-Ray")
     public void toggleFullScreenMode() {
         this.setFullScreenMode(!this.isFullScreenMode());
     }
