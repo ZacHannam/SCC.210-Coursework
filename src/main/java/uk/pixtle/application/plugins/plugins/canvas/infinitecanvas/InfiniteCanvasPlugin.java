@@ -15,6 +15,8 @@ import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerTy
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.BackgroundLayerUI;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui.LayerUIDrawer;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.PluginKeyListenerPolicy;
 import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
@@ -30,11 +32,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginMiniToolExpansion, PluginSavePolicy {
+public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginMiniToolExpansion, PluginSavePolicy, PluginKeyListenerPolicy {
 
     /*
 
@@ -46,6 +49,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
     @Setter
     private JSlider zoomToolSlider;
 
+    @KeyListener(KEY = KeyEvent.VK_H, MODIFIERS = 0)
+    public void hand() {super.getApplication().getPluginManager().activatePlugin(this);}
     @ToolSetting
     private ToolSettingEntry<Integer> zoomToolSetting = new ToolSettingEntry<Integer>(1) {
 

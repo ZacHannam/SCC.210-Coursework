@@ -24,9 +24,7 @@ import java.awt.event.KeyEvent;
 public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion, PluginKeyListenerPolicy {
 
     @KeyListener(KEY = KeyEvent.VK_B, MODIFIERS = 0)
-    public void hello() {
-        super.getApplication().getPluginManager().activatePlugin(this);
-    }
+    public void brush() {super.getApplication().getPluginManager().activatePlugin(this);}
 
     @Override
     public String getIconFilePath() {
