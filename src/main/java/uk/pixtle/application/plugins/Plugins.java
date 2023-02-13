@@ -14,12 +14,12 @@ public enum Plugins {
     INFINITE_CANVAS_PLUGIN(InfiniteCanvasPlugin.class),
     COLOUR_PLUGIN(ColourPlugin.class),
     BRUSH_TOOL(BrushToolPlugin.class),
+    PEN_TOOL(PenToolPlugin.class),
     FILE_LOADER(FileLoaderPlugin.class),
     COLOUR_DROPPER(ColourDropperPlugin.class),
     ERASER_TOOL(EraserToolPlugin.class),
     TEXT_TOOL(TextToolPlugin.class),
     FILE_EXPORTER(FileExportingPlugin.class),
-    PEN_TOOL(PenToolPlugin.class),
     KEY_LISTENER(KeyListenerPlugin.class);
 
     @Getter
