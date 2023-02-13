@@ -19,6 +19,7 @@ public enum Plugins {
     ERASER_TOOL(EraserToolPlugin.class),
     TEXT_TOOL(TextToolPlugin.class),
     FILE_EXPORTER(FileExportingPlugin.class),
+    PEN_TOOL(PenToolPlugin.class),
     KEY_LISTENER(KeyListenerPlugin.class);
 
     @Getter

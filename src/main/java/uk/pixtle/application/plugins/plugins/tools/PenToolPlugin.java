@@ -1,4 +1,4 @@
-package uk.pixtle.application.plugins.plugins.tools.colourplugin;
+package uk.pixtle.application.plugins.plugins.tools;
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
