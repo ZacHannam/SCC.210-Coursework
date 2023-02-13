@@ -13,6 +13,8 @@ import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanva
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textlayer.TextLayer;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.PluginKeyListenerPolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.*;
@@ -21,8 +23,9 @@ import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
-public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion {
+public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginKeyListenerPolicy {
 
     @Getter
     @Setter
@@ -39,6 +42,9 @@ public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion {
     @Getter
     @Setter
     ColourButton foregroundColourButton;
+
+    @KeyListener(KEY = KeyEvent.VK_T, MODIFIERS = 0)
+    public void Text() {super.getApplication().getPluginManager().activatePlugin(this);}
 
     @ToolSetting
     private ToolSettingEntry<Integer> textSize = new ToolSettingEntry<Integer>(25){
