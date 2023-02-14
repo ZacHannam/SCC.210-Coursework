@@ -13,6 +13,8 @@ import uk.pixtle.application.plugins.Plugins;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.PluginKeyListenerPolicy;
 import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
@@ -27,15 +29,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpansion {
+public class FileLoaderPlugin extends Plugin implements PluginMiniToolExpansion, PluginKeyListenerPolicy {
 
     @Getter
     @Setter
     private String currentFile;
+
 
     // ---------------------- TEST METHODS ----------------------
 
@@ -102,7 +106,7 @@ public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpans
         }
     }
 
-    @MenuBarItem(PATH = "file:Save")
+    @MenuBarItem(PATH = "file:Save") @KeyListener(KEY=KeyEvent.VK_S, MODIFIERS = KeyEvent.CTRL_DOWN_MASK)
     public void save() {
         if(this.getCurrentFile() == null) {
             saveAs();
@@ -133,7 +137,7 @@ public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpans
 
     }
 
-    @MenuBarItem(PATH = "file:Load")
+    @MenuBarItem(PATH = "file:Load") @KeyListener(KEY=KeyEvent.VK_L, MODIFIERS = KeyEvent.CTRL_DOWN_MASK)
     public void load() {
         JFileChooser fileChooser = new JFileChooser();
         FileFilter fileFilter = new FileNameExtensionFilter("Pixtle File", "pix");

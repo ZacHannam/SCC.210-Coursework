@@ -45,14 +45,11 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
     public void exportFile(String PATH)
     {
-        //if layer is hidden code
-        System.out.print(PATH);
         InfiniteCanvasPlugin infiniteCanvas = (InfiniteCanvasPlugin) super.getApplication().getPluginManager().getActiveCanvasPlugin();
-
         BufferedImage finalImg = infiniteCanvas.getFullImage(false);
-        BufferedImage newImg = new BufferedImage(finalImg.getWidth(),finalImg.getHeight(),BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);
+        BufferedImage baseImage = new BufferedImage(finalImg.getWidth(),finalImg.getHeight(),BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);
 
-        Graphics2D g2 = (Graphics2D) newImg.createGraphics();
+        Graphics2D g2 = (Graphics2D) baseImage.createGraphics();
         if(!Objects.equals(infiniteCanvas.getBackgroundColor(), new Color(255, 255, 255)))
         {
             g2.setPaint(infiniteCanvas.getBackgroundColor());
@@ -62,7 +59,7 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
         g2.drawImage(finalImg,null,0,0);
         try
         {
-            ImageIO.write(newImg, "PNG", new File(PATH));
+            ImageIO.write(baseImage, "PNG", new File(PATH));
         }
         catch (Exception e)
         {

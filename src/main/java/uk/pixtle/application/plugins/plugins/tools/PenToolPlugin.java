@@ -8,6 +8,8 @@ import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.tools.ToolPlugin;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
+import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.PluginKeyListenerPolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
@@ -17,14 +19,18 @@ import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
-public class PenToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion {
+public class PenToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion, PluginKeyListenerPolicy {
 
 
     @Override
     public String getIconFilePath() {
         return "Pen-0001.png";
     }
+
+    @KeyListener(KEY = KeyEvent.VK_P, MODIFIERS = 0)
+    public void pen() {super.getApplication().getPluginManager().activatePlugin(this);}
 
     @ToolSetting
     private ToolSettingEntry<Integer> penSize = new ToolSettingEntry<Integer>(75){
