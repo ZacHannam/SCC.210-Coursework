@@ -4,10 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
-import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.canvas.Canvas;
 import uk.pixtle.application.ui.window.canvas.CanvasUI;
 import uk.pixtle.application.ui.window.color.ColorPanel;
+import uk.pixtle.application.ui.window.color.ColorPanelUI;
 import uk.pixtle.application.ui.window.menubar.MenuBar;
 import uk.pixtle.application.ui.window.menubar.MenuBarUI;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolList;
@@ -81,7 +81,7 @@ public class Window extends JFrame {
         this.setToolList(toolList);
         layeredPane.setLayer(toolList, 1);
 
-        ColorPanel colorPanel = new ColorPanel(paramApplication);
+        ColorPanelUI colorPanel = new ColorPanelUI(paramApplication);
         layeredPane.add(colorPanel, colorPanel.getAnchors());
         this.setColorPanel(colorPanel);
         layeredPane.setLayer(colorPanel, 1);

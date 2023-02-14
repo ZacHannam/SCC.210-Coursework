@@ -31,7 +31,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FileLoaderPlugin extends Plugin implements PluginMiniToolExpansion {
+public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpansion {
 
     @Getter
     @Setter
