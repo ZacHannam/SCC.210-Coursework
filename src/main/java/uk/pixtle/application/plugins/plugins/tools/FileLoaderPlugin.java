@@ -34,7 +34,7 @@ import java.io.*;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FileLoaderPlugin extends Plugin implements PluginMiniToolExpansion, PluginKeyListenerPolicy {
+public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpansion, PluginKeyListenerPolicy {
 
     @Getter
     @Setter
