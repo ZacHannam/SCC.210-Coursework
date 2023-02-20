@@ -2,6 +2,7 @@ package uk.pixtle.application.ui.window.toollist;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.expansions.PluginToolTipExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.util.ResourceHandler;
 
@@ -75,5 +76,9 @@ public class ToolButton extends JButton {
                 getParentToolList().toolClick(toolButton, getParentPlugin());
             }
         });
+
+        if(paramParentPlugin instanceof PluginToolTipExpansion) {
+            toolButton.setToolTipText(((PluginToolTipExpansion) paramParentPlugin).getToolTip());
+        }
     }
 }

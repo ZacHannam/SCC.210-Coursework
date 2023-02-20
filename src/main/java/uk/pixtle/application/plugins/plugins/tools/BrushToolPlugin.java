@@ -6,6 +6,7 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ColourChangeEvent;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
+import uk.pixtle.application.plugins.expansions.PluginToolTipExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
@@ -21,7 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion, PluginKeyListenerPolicy {
+public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion, PluginToolTipExpansion, PluginKeyListenerPolicy {
 
     @KeyListener(KEY = KeyEvent.VK_B, MODIFIERS = 0)
     public void brush() {super.getApplication().getPluginManager().activatePlugin(this);}
@@ -431,5 +432,10 @@ public class BrushToolPlugin extends ToolPlugin implements PluginToolExpansion, 
         super(paramApplication);
 
         super.getApplication().getEventManager().registerEvents(this);
+    }
+
+    @Override
+    public String getToolTip() {
+        return "Brush (B)";
     }
 }
