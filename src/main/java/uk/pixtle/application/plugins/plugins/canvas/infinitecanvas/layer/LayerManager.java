@@ -48,7 +48,9 @@ public class LayerManager {
         }
 
         this.activeLayer = paramLayer;
-        this.getActiveLayer().onLayerEnable();
+        if(this.getActiveLayer() != null) {
+            this.getActiveLayer().onLayerEnable();
+        }
 
         this.getInfiniteCanvasPlugin().getApplication().getEventManager().callEvent(new LayerChangeEvent(paramLayer));
 
