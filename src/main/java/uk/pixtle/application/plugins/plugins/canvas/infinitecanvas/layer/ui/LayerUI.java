@@ -112,7 +112,11 @@ public class LayerUI extends JPanel {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                leftClick(null);
+                if(getPopupMenu() != null && getPopupMenu().isVisible()) {
+                    closeActivePopupLayer();
+                } else {
+                    leftClick(null);
+                }
             }
         });
 
