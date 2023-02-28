@@ -2,6 +2,8 @@ package uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.ui;
 
 import lombok.Getter;
 import lombok.Setter;
+import uk.pixtle.application.plugins.PluginManager;
+import uk.pixtle.application.plugins.Plugins;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
@@ -17,6 +19,8 @@ import javax.swing.plaf.PopupMenuUI;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 
 public class LayerUI extends JPanel {
 
@@ -34,6 +38,61 @@ public class LayerUI extends JPanel {
         } else {
             super.setBackground(new Color(250, 249, 246));
         }
+    }
+
+    @Getter
+    @Setter
+    JLabel editTextButton;
+
+    private void createEditTextButton() {
+
+        AnchoredComponent typeTextAnchors = new AnchoredComponent();
+        typeTextAnchors.createAnchor(Anchor.DirectionType.Y, -16);
+        typeTextAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+        typeTextAnchors.createAnchor(Anchor.DirectionType.X, 125);
+        typeTextAnchors.createAnchor(Anchor.DirectionType.X, 50);
+
+        Font font = new Font("Courier", Font.PLAIN, 12);
+
+
+        JLabel editTextButton = new JLabel("<HTML><U>Edit Text</U></HTML>");
+
+        editTextButton.setForeground(Color.BLUE);
+
+        editTextButton.setAlignmentX(0);
+        editTextButton.setAlignmentY(1);
+        editTextButton.setFont(font);
+
+        editTextButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                PluginManager pluginManager = getLayer().getLayerManager().getInfiniteCanvasPlugin().getApplication().getPluginManager();
+                pluginManager.activatePlugin(pluginManager.getPluginByPluginType(Plugins.TEXT_TOOL));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+        this.setEditTextButton(editTextButton);
+        super.add(editTextButton, typeTextAnchors);
     }
 
     @Getter
@@ -472,6 +531,10 @@ public class LayerUI extends JPanel {
         this.createTypeText();
         this.activeCheck();
         this.createMoreOptionsButton();
+
+        if(paramLayer.getLayerType() == LayerType.TEXT) {
+            this.createEditTextButton();
+        }
 
         super.setToolTipText("Drag to move layers up or down");
     }
