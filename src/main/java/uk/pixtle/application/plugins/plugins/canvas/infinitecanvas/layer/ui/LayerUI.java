@@ -93,6 +93,38 @@ public class LayerUI extends JPanel {
 
     @Getter
     @Setter
+    private JButton moreOptionsButton;
+
+    private void createMoreOptionsButton() {
+
+        AnchoredComponent anchoredComponent = new AnchoredComponent();
+        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -18);
+        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -4);
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, -8);
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, -32);
+
+        JButton button = new JButton();
+        button.setOpaque(true);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setIcon(ResourceHandler.getResourceAsImageIcon("MoreOptionsButton.png", 20, 5));
+        this.setMoreOptionsButton(button);
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(getPopupMenu() != null && getPopupMenu().isVisible()) {
+                    closeActivePopupLayer();
+                } else {
+                    leftClick(null);
+                }
+            }
+        });
+
+        super.add(button, anchoredComponent);
+    }
+
+    @Getter
+    @Setter
     private JButton visibleButton;
 
     private void updateVisibleIcon() {
@@ -113,8 +145,8 @@ public class LayerUI extends JPanel {
     private void createVisibleButton() {
 
         AnchoredComponent visibleButtonAnchors = new AnchoredComponent();
-        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, -12);
-        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, 12);
+        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, -18);
+        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, 6);
         visibleButtonAnchors.createAnchor(Anchor.DirectionType.X, -8);
         visibleButtonAnchors.createAnchor(Anchor.DirectionType.X, DynamicAnchor.AnchorSize.MIN, 1, 1);
 
@@ -233,7 +265,7 @@ public class LayerUI extends JPanel {
 
                 if (event instanceof MouseEvent) {
                     MouseEvent m = (MouseEvent) event;
-                    if(((MouseEvent) event).getComponent().getParent() == popupMenu) {
+                    if(((MouseEvent) event).getComponent().getParent() == popupMenu || ((MouseEvent) event).getComponent() == getMoreOptionsButton()) {
                         return;
                     }
                     if (m.getID() == MouseEvent.MOUSE_CLICKED) {
@@ -243,7 +275,7 @@ public class LayerUI extends JPanel {
                 }
                 if (event instanceof WindowEvent) {
                     WindowEvent we = (WindowEvent) event;
-                    if(((WindowEvent) event).getComponent().getParent() == popupMenu) {
+                    if(((WindowEvent) event).getComponent().getParent() == popupMenu || ((WindowEvent) event).getComponent() == getMoreOptionsButton()) {
                         return;
                     }
                     if (we.getID() == WindowEvent.WINDOW_DEACTIVATED || we.getID() == WindowEvent.WINDOW_STATE_CHANGED) {
@@ -439,6 +471,7 @@ public class LayerUI extends JPanel {
         this.createTitle();
         this.createTypeText();
         this.activeCheck();
+        this.createMoreOptionsButton();
 
         super.setToolTipText("Drag to move layers up or down");
     }

@@ -283,7 +283,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     @Override
     public int getMiniToolPanelHeight() {
-        return 85;
+        return 110;
     }
 
     @Override
@@ -324,6 +324,18 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         textLabel.setText("Layers");
         paramMiniToolPanel.add(textLabel, textAnchors);
 
+        AnchoredComponent dragTextAnchors = new AnchoredComponent();
+        dragTextAnchors.createAnchor(Anchor.DirectionType.X, -35);
+        dragTextAnchors.createAnchor(Anchor.DirectionType.X, 5);
+        dragTextAnchors.createAnchor(Anchor.DirectionType.Y, 35);
+        dragTextAnchors.createAnchor(Anchor.DirectionType.Y, 60);
+
+        JLabel dragTextLabel = new JLabel("", SwingConstants.CENTER);
+        dragTextLabel.setText("<html>Drag layers up or down to change their order</html>");
+        dragTextLabel.setVerticalAlignment(1);
+        dragTextLabel.setFont(new Font("Calibri", Font.PLAIN, 10));
+        paramMiniToolPanel.add(dragTextLabel, dragTextAnchors);
+
         /*
         Layers
          */
@@ -331,7 +343,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         AnchoredComponent layersAnchor = new AnchoredComponent();
         layersAnchor.createAnchor(AnchoredComponent.StandardX.LEFT);
         layersAnchor.createAnchor(AnchoredComponent.StandardX.RIGHT);
-        layersAnchor.createAnchor(Anchor.DirectionType.Y, 35);
+        layersAnchor.createAnchor(Anchor.DirectionType.Y, 60);
         layersAnchor.createAnchor(Anchor.DirectionType.Y, -50);
 
         LayerUIDrawer layerUIDrawer = new LayerUIDrawer(this.getLayerManager());
@@ -359,7 +371,7 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
 
     public void redrawLayers() {
 
-        this.getMiniToolPanel().updateHeight(this.getLayerManager().getLayers().size() * 50 + 85);
+        this.getMiniToolPanel().updateHeight(this.getLayerManager().getLayers().size() * 50 + this.getMiniToolPanelHeight());
         this.getLayerUIDrawer().repaint();
         this.getLayerUIDrawer().revalidate();
 

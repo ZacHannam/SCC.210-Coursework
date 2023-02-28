@@ -137,7 +137,7 @@ public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpans
 
     }
 
-    @MenuBarItem(PATH = "file:Load") @KeyListener(KEY=KeyEvent.VK_L, MODIFIERS = KeyEvent.CTRL_DOWN_MASK)
+    @MenuBarItem(PATH = "file:Open File") @KeyListener(KEY=KeyEvent.VK_L, MODIFIERS = KeyEvent.CTRL_DOWN_MASK)
     public void load() {
         JFileChooser fileChooser = new JFileChooser();
         FileFilter fileFilter = new FileNameExtensionFilter("Pixtle File", "pix");
