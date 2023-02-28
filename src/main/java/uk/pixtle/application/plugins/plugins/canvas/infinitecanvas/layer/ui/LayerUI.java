@@ -66,6 +66,7 @@ public class LayerUI extends JPanel {
         editTextButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                getLayer().getLayerManager().setActiveLayer(getLayer());
                 PluginManager pluginManager = getLayer().getLayerManager().getInfiniteCanvasPlugin().getApplication().getPluginManager();
                 pluginManager.activatePlugin(pluginManager.getPluginByPluginType(Plugins.TEXT_TOOL));
             }
