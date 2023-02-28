@@ -265,7 +265,7 @@ public class LayerUI extends JPanel {
 
                 if (event instanceof MouseEvent) {
                     MouseEvent m = (MouseEvent) event;
-                    if(((MouseEvent) event).getComponent().getParent() == popupMenu) {
+                    if(((MouseEvent) event).getComponent().getParent() == popupMenu || ((MouseEvent) event).getComponent() == getMoreOptionsButton()) {
                         return;
                     }
                     if (m.getID() == MouseEvent.MOUSE_CLICKED) {
@@ -275,7 +275,7 @@ public class LayerUI extends JPanel {
                 }
                 if (event instanceof WindowEvent) {
                     WindowEvent we = (WindowEvent) event;
-                    if(((WindowEvent) event).getComponent().getParent() == popupMenu) {
+                    if(((WindowEvent) event).getComponent().getParent() == popupMenu || ((WindowEvent) event).getComponent() == getMoreOptionsButton()) {
                         return;
                     }
                     if (we.getID() == WindowEvent.WINDOW_DEACTIVATED || we.getID() == WindowEvent.WINDOW_STATE_CHANGED) {

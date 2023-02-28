@@ -13,6 +13,7 @@ public class PaletteButton extends JButton
     {
         super.setOpaque(true);
         super.setBorder(BorderFactory.createLineBorder(Color.black, 1, false));
+        super.setToolTipText("Left click to get the colour or right click to set the colour");
     }
 
 
