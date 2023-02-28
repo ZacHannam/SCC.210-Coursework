@@ -93,6 +93,34 @@ public class LayerUI extends JPanel {
 
     @Getter
     @Setter
+    private JButton moreOptionsButton;
+
+    private void createMoreOptionsButton() {
+
+        AnchoredComponent anchoredComponent = new AnchoredComponent();
+        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -18);
+        anchoredComponent.createAnchor(Anchor.DirectionType.Y, -4);
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, -8);
+        anchoredComponent.createAnchor(Anchor.DirectionType.X, -32);
+
+        JButton button = new JButton();
+        button.setOpaque(true);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setIcon(ResourceHandler.getResourceAsImageIcon("MoreOptionsButton.png", 20, 5));
+        this.setMoreOptionsButton(button);
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                leftClick(null);
+            }
+        });
+
+        super.add(button, anchoredComponent);
+    }
+
+    @Getter
+    @Setter
     private JButton visibleButton;
 
     private void updateVisibleIcon() {
@@ -113,8 +141,8 @@ public class LayerUI extends JPanel {
     private void createVisibleButton() {
 
         AnchoredComponent visibleButtonAnchors = new AnchoredComponent();
-        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, -12);
-        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, 12);
+        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, -18);
+        visibleButtonAnchors.createAnchor(Anchor.DirectionType.Y, 6);
         visibleButtonAnchors.createAnchor(Anchor.DirectionType.X, -8);
         visibleButtonAnchors.createAnchor(Anchor.DirectionType.X, DynamicAnchor.AnchorSize.MIN, 1, 1);
 
@@ -439,6 +467,7 @@ public class LayerUI extends JPanel {
         this.createTitle();
         this.createTypeText();
         this.activeCheck();
+        this.createMoreOptionsButton();
 
         super.setToolTipText("Drag to move layers up or down");
     }
