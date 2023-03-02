@@ -8,6 +8,7 @@ import org.json.JSONString;
 import org.json.JSONTokener;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.events.annotations.EventHandler;
+import uk.pixtle.application.events.events.CanvasResetEvent;
 import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.Plugins;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
@@ -16,6 +17,7 @@ import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
 import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.PluginKeyListenerPolicy;
 import uk.pixtle.application.plugins.policies.PluginSavePolicy;
+import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
@@ -154,9 +156,80 @@ public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpans
 
     }
 
+    @EventHandler
+    public void canvasResetEvent(CanvasResetEvent event) {
+        this.setCurrentFile(null);
+    }
+
     @MenuBarItem(PATH = "file:New File")
     public void newFile() {
-        super.getApplication().getPluginManager().getActiveCanvasPlugin().reset();
+
+        JDialog dialog = new JDialog(this.getApplication().getUIManager().getWindow(), true);
+        dialog.setSize(new Dimension(300, 140));
+        dialog.setLocationRelativeTo(this.getApplication().getUIManager().getWindow());
+        dialog.setLayout(new AnchorLayout());
+
+        AnchoredComponent textAnchors = new AnchoredComponent();
+        textAnchors.createAnchor(AnchoredComponent.StandardX.RIGHT);
+        textAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
+        textAnchors.createAnchor(Anchor.DirectionType.Y, 40);
+        textAnchors.createAnchor(AnchoredComponent.StandardY.TOP);
+
+        JLabel text = new JLabel("<html><center>Are you sure you would like to create a new file without saving?<center></html>", SwingConstants.CENTER);
+        dialog.add(text, textAnchors);
+
+        AnchoredComponent saveFirstButtonAnchors = new AnchoredComponent();
+        saveFirstButtonAnchors.createAnchor(Anchor.DirectionType.X, 100);
+        saveFirstButtonAnchors.createAnchor(AnchoredComponent.StandardX.LEFT);
+        saveFirstButtonAnchors.createAnchor(Anchor.DirectionType.Y, 40);
+        saveFirstButtonAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+
+        JButton saveFirstButton = new JButton("Save File");
+        dialog.add(saveFirstButton, saveFirstButtonAnchors);
+
+        saveFirstButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                save();
+                getApplication().getPluginManager().getActiveCanvasPlugin().reset();
+                dialog.setVisible(false);
+            }
+        });
+
+        AnchoredComponent yesButtonAnchors = new AnchoredComponent();
+        yesButtonAnchors.createAnchor(Anchor.DirectionType.X, 200);
+        yesButtonAnchors.createAnchor(Anchor.DirectionType.X, 100);
+        yesButtonAnchors.createAnchor(Anchor.DirectionType.Y, 40);
+        yesButtonAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+
+        JButton yesButton = new JButton("Confirm");
+        dialog.add(yesButton, yesButtonAnchors);
+
+        yesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getApplication().getPluginManager().getActiveCanvasPlugin().reset();
+                dialog.setVisible(false);
+            }
+        });
+
+        AnchoredComponent cancelButtonAnchors = new AnchoredComponent();
+        cancelButtonAnchors.createAnchor(Anchor.DirectionType.X, 200);
+        cancelButtonAnchors.createAnchor(Anchor.DirectionType.X, 300);
+        cancelButtonAnchors.createAnchor(Anchor.DirectionType.Y, 40);
+        cancelButtonAnchors.createAnchor(AnchoredComponent.StandardY.BOTTOM);
+
+        JButton cancelButton = new JButton("Cancel");
+        dialog.add(cancelButton, cancelButtonAnchors);
+
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.setVisible(false);
+            }
+        });
+
+        dialog.setVisible(true);
     }
 
     // ---------------------- MINI TOOL EXPANSION METHODS ----------------------
@@ -227,7 +300,7 @@ public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpans
         loadButtonAnchoredComponent.createAnchor(AnchoredComponent.StandardX.LEFT);
         loadButtonAnchoredComponent.createAnchor(Anchor.DirectionType.Y, 110);
 
-        JButton loadButton = new JButton("Load");
+        JButton loadButton = new JButton("Load File");
         loadButton.setBorder(BorderFactory.createLineBorder(Color.lightGray, 3, true));
         paramMiniToolPanel.add(loadButton, loadButtonAnchoredComponent);
 

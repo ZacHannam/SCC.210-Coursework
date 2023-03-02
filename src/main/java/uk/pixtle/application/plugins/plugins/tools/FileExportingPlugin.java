@@ -45,6 +45,10 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
     public void exportFile(String PATH)
     {
+        if(!(super.getApplication().getPluginManager().getActivatePlugin() instanceof InfiniteCanvasPlugin)) {
+            // TO-DO error
+            return;
+        }
         InfiniteCanvasPlugin infiniteCanvas = (InfiniteCanvasPlugin) super.getApplication().getPluginManager().getActiveCanvasPlugin();
         BufferedImage finalImg = infiniteCanvas.getFullImage(false);
         BufferedImage baseImage = new BufferedImage(finalImg.getWidth(),finalImg.getHeight(),BufferedImage.TYPE_INT_ARGB | BufferedImage.SCALE_FAST);

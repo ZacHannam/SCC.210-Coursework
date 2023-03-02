@@ -214,6 +214,10 @@ public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion, P
 
 
     public TextLayer getActiveTextLayer() {
+        if(!(super.getApplication().getPluginManager().getActivatePlugin() instanceof InfiniteCanvasPlugin)) {
+            // TO-DO error
+            return null;
+        }
         Layer layer =  ((InfiniteCanvasPlugin) this.getApplication().getPluginManager().getActiveCanvasPlugin()).getLayerManager().getActiveLayer();
         if(layer instanceof TextLayer) return (TextLayer) layer;
         return null;
@@ -243,6 +247,11 @@ public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion, P
 
     @Override
     public void onEnable() {
+
+        if(!(super.getApplication().getPluginManager().getActivatePlugin() instanceof InfiniteCanvasPlugin)) {
+            // TO-DO error
+            return;
+        }
 
         InfiniteCanvasPlugin infiniteCanvasPlugin = (InfiniteCanvasPlugin) super.getApplication().getPluginManager().getActiveCanvasPlugin();
         if(infiniteCanvasPlugin.getLayerManager().getActiveLayer().getLayerType() != LayerType.TEXT) {

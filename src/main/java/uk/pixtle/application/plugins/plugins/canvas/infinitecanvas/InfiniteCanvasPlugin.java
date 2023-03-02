@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 import uk.pixtle.application.Application;
+import uk.pixtle.application.events.events.CanvasResetEvent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
@@ -512,6 +513,8 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         this.onLoadingFinish();
 
         this.repaint(true);
+
+        this.getApplication().getEventManager().callEvent(new CanvasResetEvent(this));
     }
 
     @Getter
