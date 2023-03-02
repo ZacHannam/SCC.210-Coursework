@@ -1,11 +1,9 @@
 package uk.pixtle.application.plugins.plugins.tools.colourplugin;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
 
 public class PaletteButton extends JButton
 {

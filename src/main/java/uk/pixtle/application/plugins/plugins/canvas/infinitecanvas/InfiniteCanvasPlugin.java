@@ -9,6 +9,7 @@ import uk.pixtle.application.events.events.CanvasResetEvent;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
+import uk.pixtle.application.plugins.expansions.PluginToolTipExpansion;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.canvas.CanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
@@ -46,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginMiniToolExpansion, PluginSavePolicy, PluginKeyListenerPolicy {
+public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawableExpansion, PluginMiniToolExpansion, PluginSavePolicy, PluginKeyListenerPolicy, PluginToolTipExpansion {
 
     /*
 
@@ -269,6 +270,13 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
                 PLUGIN MINI TOOL EXPANSION
 
      */
+
+    @MenuBarItem(PATH = "Edit:Create Layer")
+    public void createLayer() {
+        this.getLayerManager().createNewLayer();
+    }
+
+
 
     @Getter
     @Setter
@@ -800,5 +808,10 @@ public class InfiniteCanvasPlugin extends CanvasPlugin implements PluginDrawable
         } finally {
             this.getCanvasLock().unlock();
         }
+    }
+
+    @Override
+    public String getToolTip() {
+        return "Canvas Tool (H)";
     }
 }

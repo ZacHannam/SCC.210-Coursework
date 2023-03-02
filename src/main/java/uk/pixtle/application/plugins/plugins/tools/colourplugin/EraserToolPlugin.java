@@ -1,27 +1,27 @@
 package uk.pixtle.application.plugins.plugins.tools.colourplugin;
+
 import lombok.Getter;
 import lombok.Setter;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ColourChangeEvent;
 import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
-import uk.pixtle.application.plugins.plugins.Plugin;
+import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
+import uk.pixtle.application.plugins.expansions.PluginToolTipExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.drawing.Drawing;
 import uk.pixtle.application.plugins.plugins.tools.ToolPlugin;
 import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.KeyListener;
 import uk.pixtle.application.plugins.plugins.tools.keylistenerplugin.PluginKeyListenerPolicy;
 import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
-import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
-import uk.pixtle.application.plugins.toolsettings.inputdevices.DropDownInputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.InputDevice;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.SliderInputDevice;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Color;
 import java.awt.event.KeyEvent;
 
-public class EraserToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion, PluginKeyListenerPolicy {
+public class EraserToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginDrawableExpansion, PluginKeyListenerPolicy, PluginToolTipExpansion {
 
     @Override
     public String getIconFilePath() {
@@ -125,4 +125,8 @@ public class EraserToolPlugin extends ToolPlugin implements PluginToolExpansion,
         super.getApplication().getEventManager().registerEvents(this);
     }
 
+    @Override
+    public String getToolTip() {
+        return "Eraser Tool (E)";
+    }
 }

@@ -4,14 +4,6 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerManager;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.drawinglayer.DrawingLayer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.DrawingLayerImageProcessor;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imagelayer.ImageLayer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.ImageLayerImageProcessor;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.textlayer.TextLayer;
-import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.imageprocessors.TextLayerImageProcessor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.imageio.ImageIO;
@@ -21,9 +13,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExpansion {

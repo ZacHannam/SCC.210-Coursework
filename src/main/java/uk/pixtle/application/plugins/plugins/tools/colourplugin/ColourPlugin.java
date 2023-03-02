@@ -7,7 +7,6 @@ import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.ColourChangeEvent;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
-import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.tools.ToolPlugin;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchorLayout;
 import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;

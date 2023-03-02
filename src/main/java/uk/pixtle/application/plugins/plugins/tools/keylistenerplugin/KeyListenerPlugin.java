@@ -4,11 +4,10 @@ import uk.pixtle.application.Application;
 import uk.pixtle.application.plugins.Plugins;
 import uk.pixtle.application.plugins.plugins.Plugin;
 import uk.pixtle.application.plugins.plugins.tools.ToolPlugin;
-import uk.pixtle.application.plugins.policies.PluginSavePolicy;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

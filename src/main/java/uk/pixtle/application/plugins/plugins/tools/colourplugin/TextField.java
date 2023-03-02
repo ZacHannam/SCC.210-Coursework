@@ -1,7 +1,6 @@
 package uk.pixtle.application.plugins.plugins.tools.colourplugin;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 

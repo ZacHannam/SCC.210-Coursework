@@ -4,12 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
-import org.json.JSONString;
-import org.json.JSONTokener;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.CanvasResetEvent;
-import uk.pixtle.application.events.events.ExampleEvent;
 import uk.pixtle.application.plugins.Plugins;
 import uk.pixtle.application.plugins.annotations.MenuBarItem;
 import uk.pixtle.application.plugins.expansions.PluginMiniToolExpansion;
@@ -22,8 +19,6 @@ import uk.pixtle.application.ui.layouts.anchorlayout.AnchoredComponent;
 import uk.pixtle.application.ui.layouts.anchorlayout.anchors.Anchor;
 import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 import uk.pixtle.application.ui.window.notifications.Notification;
-import uk.pixtle.application.ui.window.notifications.Notifications;
-import uk.pixtle.util.JSONImport;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -32,11 +27,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Scanner;
 
-public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpansion, PluginKeyListenerPolicy {
+public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpansion, PluginKeyListenerPolicy{
 
     @Getter
     @Setter
@@ -321,6 +318,5 @@ public class FileLoaderPlugin extends ToolPlugin implements PluginMiniToolExpans
 
         this.setCurrentFile(null);
     }
-
 }
 

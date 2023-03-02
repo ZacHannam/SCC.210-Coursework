@@ -2,13 +2,12 @@ package uk.pixtle.application.plugins.plugins.tools;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.Text;
 import uk.pixtle.application.Application;
 import uk.pixtle.application.colour.ColourManager;
 import uk.pixtle.application.events.annotations.EventHandler;
 import uk.pixtle.application.events.events.LayerChangeEvent;
-import uk.pixtle.application.plugins.expansions.PluginDrawableExpansion;
 import uk.pixtle.application.plugins.expansions.PluginToolExpansion;
+import uk.pixtle.application.plugins.expansions.PluginToolTipExpansion;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.InfiniteCanvasPlugin;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.Layer;
 import uk.pixtle.application.plugins.plugins.canvas.infinitecanvas.layer.LayerType;
@@ -19,13 +18,12 @@ import uk.pixtle.application.plugins.toolsettings.ToolSetting;
 import uk.pixtle.application.plugins.toolsettings.ToolSettingEntry;
 import uk.pixtle.application.plugins.toolsettings.inputdevices.*;
 import uk.pixtle.application.ui.window.minitoollist.ColourButton;
-import uk.pixtle.application.ui.window.minitoollist.MiniToolPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginKeyListenerPolicy {
+public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion, PluginKeyListenerPolicy, PluginToolTipExpansion {
 
     @Getter
     @Setter
@@ -280,5 +278,10 @@ public class TextToolPlugin extends ToolPlugin implements PluginToolExpansion, P
         super(paramApplication);
 
         super.getApplication().getEventManager().registerEvents(this);
+    }
+
+    @Override
+    public String getToolTip() {
+        return "Text (T)";
     }
 }
