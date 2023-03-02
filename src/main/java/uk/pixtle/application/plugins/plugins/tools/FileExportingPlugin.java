@@ -34,7 +34,7 @@ public class FileExportingPlugin extends ToolPlugin implements PluginMiniToolExp
 
     public void exportFile(String PATH)
     {
-        if(!(super.getApplication().getPluginManager().getActivatePlugin() instanceof InfiniteCanvasPlugin)) {
+        if(!(super.getApplication().getPluginManager().getActiveCanvasPlugin() instanceof InfiniteCanvasPlugin)) {
             // TO-DO error
             return;
         }
